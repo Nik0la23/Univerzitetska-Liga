@@ -50,23 +50,98 @@
         <div class="form-group">
             <label for="homeTeamPoints">Home Team Points</label>
             <input type="number" class="form-control" id="homeTeamPoints" name="homeTeamPoints"
-                   th:value="${match.homeTeamPoints}" min="0" required>
+                   th:value="${match.homeTeamPoints}" min="0" required readonly>
         </div>
         <div class="form-group">
             <label for="awayTeamPoints">Away Team Points</label>
             <input type="number" class="form-control" id="awayTeamPoints" name="awayTeamPoints"
-                   th:value="${match.awayTeamPoints}" min="0" required>
+                   th:value="${match.awayTeamPoints}" min="0" required readonly>
         </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Home Team Quarter Points</h4>
+                <div class="form-group">
+                    <label for="homeTeamQ1Points">Q1 Points</label>
+                    <input type="number" class="form-control quarter-points" id="homeTeamQ1Points" name="homeTeamQ1Points"
+                           th:value="${match.homeTeamQ1Points}" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="homeTeamQ2Points">Q2 Points</label>
+                    <input type="number" class="form-control quarter-points" id="homeTeamQ2Points" name="homeTeamQ2Points"
+                           th:value="${match.homeTeamQ2Points}" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="homeTeamQ3Points">Q3 Points</label>
+                    <input type="number" class="form-control quarter-points" id="homeTeamQ3Points" name="homeTeamQ3Points"
+                           th:value="${match.homeTeamQ3Points}" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="homeTeamQ4Points">Q4 Points</label>
+                    <input type="number" class="form-control quarter-points" id="homeTeamQ4Points" name="homeTeamQ4Points"
+                           th:value="${match.homeTeamQ4Points}" min="0" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>Away Team Quarter Points</h4>
+                <div class="form-group">
+                    <label for="awayTeamQ1Points">Q1 Points</label>
+                    <input type="number" class="form-control quarter-points" id="awayTeamQ1Points" name="awayTeamQ1Points"
+                           th:value="${match.awayTeamQ1Points}" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="awayTeamQ2Points">Q2 Points</label>
+                    <input type="number" class="form-control quarter-points" id="awayTeamQ2Points" name="awayTeamQ2Points"
+                           th:value="${match.awayTeamQ2Points}" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="awayTeamQ3Points">Q3 Points</label>
+                    <input type="number" class="form-control quarter-points" id="awayTeamQ3Points" name="awayTeamQ3Points"
+                           th:value="${match.awayTeamQ3Points}" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="awayTeamQ4Points">Q4 Points</label>
+                    <input type="number" class="form-control quarter-points" id="awayTeamQ4Points" name="awayTeamQ4Points"
+                           th:value="${match.awayTeamQ4Points}" min="0" required>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
             <label for="startTime">Start Time</label>
             <input type="datetime-local" class="form-control" id="startTime" name="startTime"
                    th:value="${#temporals.format(match.startTime, 'yyyy-MM-dd''T''HH:mm')}" >
         </div>
-<!--        <div class="form-group">-->
-<!--            <label for="endTime">End Time</label>-->
-<!--            <input type="datetime-local" class="form-control" id="endTime" name="endTime"-->
-<!--                   th:value="${#temporals.format(match.endTime, 'yyyy-MM-dd''T''HH:mm')}" >-->
-<!--        </div>-->
+
+        <script>
+            // Auto-calculate total points when quarter points change
+            document.addEventListener('DOMContentLoaded', function() {
+                const homeQuarterInputs = ['homeTeamQ1Points', 'homeTeamQ2Points', 'homeTeamQ3Points', 'homeTeamQ4Points'];
+                const awayQuarterInputs = ['awayTeamQ1Points', 'awayTeamQ2Points', 'awayTeamQ3Points', 'awayTeamQ4Points'];
+
+                function updateTotalPoints() {
+                    let homeTotal = 0;
+                    let awayTotal = 0;
+
+                    homeQuarterInputs.forEach(id => {
+                        homeTotal += parseInt(document.getElementById(id).value) || 0;
+                    });
+
+                    awayQuarterInputs.forEach(id => {
+                        awayTotal += parseInt(document.getElementById(id).value) || 0;
+                    });
+
+                    document.getElementById('homeTeamPoints').value = homeTotal;
+                    document.getElementById('awayTeamPoints').value = awayTotal;
+                }
+
+                // Add event listeners to all quarter point inputs
+                document.querySelectorAll('.quarter-points').forEach(input => {
+                    input.addEventListener('input', updateTotalPoints);
+                });
+            });
+        </script>
+
         <button type="submit" class="btn btn-primary">Update Match</button>
     </form>
 </div>

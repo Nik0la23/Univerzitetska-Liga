@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-LigaApplication<Liga>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "mk.ukim.finki.wp.liga.LigaApplication",
+            "projectName": "Liga",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

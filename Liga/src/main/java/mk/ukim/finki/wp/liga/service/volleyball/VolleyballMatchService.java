@@ -30,7 +30,7 @@ public interface VolleyballMatchService {
     VolleyballMatch updatePlayoffMatchPoints(Long id, VolleyballTeam homeTeam, VolleyballTeam awayTeam, int homeTeamPoints, int awayTeamPoints, List<VolleyballPlayer> homeScorers, List<VolleyballPlayer> awayScorers);
     List<VolleyballMatch> createSemiFinalMatches();
     List<VolleyballMatch> createFinalMatch();
-    void updateLiveStats(Long volleyballMatchId, int pointsScored, Long playerId);
+    void updateLiveStats(Long volleyballMatchId, int pointsScored, Long playerId, int currentSet);
     void finishMatch(Long matchId);
     public void processMatchStats(Long matchId);
 

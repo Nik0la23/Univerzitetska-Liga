@@ -12,6 +12,8 @@ public interface BasketballMatchService {
     BasketballMatch findById(Long id);
     BasketballMatch create(BasketballTeam homeTeam, BasketballTeam awayTeam, int homeTeamPoints, int awayTeamPoints, LocalDateTime startTime);
     BasketballMatch update(Long id, BasketballTeam homeTeam, BasketballTeam awayTeam, int homeTeamPoints, int awayTeamPoints, LocalDateTime startTime);
+    BasketballMatch updateQuarterPoints(Long id, int quarter, int homeTeamPoints, int awayTeamPoints);
+    Map<Integer, int[]> getQuarterPoints(Long id);
     BasketballMatch delete(Long id);
     //void updateTeamStatistics(BasketballMatch match);
 

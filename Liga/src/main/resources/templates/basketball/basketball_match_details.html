@@ -27,6 +27,24 @@
             list-style-type: none;
             padding: 0;
         }
+        .quarters-table {
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+        .quarters-table th, .quarters-table td {
+            text-align: center;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .quarters-table th {
+            background-color: #f8f9fa;
+        }
+        .total-score {
+            font-weight: bold;
+            background-color: #e9ecef;
+        }
     </style>
 </head>
 <body>
@@ -61,6 +79,37 @@
             </ul>
         </div>
     </div>
+
+    <table class="quarters-table">
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>Q1</th>
+                <th>Q2</th>
+                <th>Q3</th>
+                <th>Q4</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td th:text="${match.homeTeam.teamName}">Home Team</td>
+                <td th:text="${match.homeTeamQ1Points}">0</td>
+                <td th:text="${match.homeTeamQ2Points}">0</td>
+                <td th:text="${match.homeTeamQ3Points}">0</td>
+                <td th:text="${match.homeTeamQ4Points}">0</td>
+                <td class="total-score" th:text="${match.homeTeamPoints}">0</td>
+            </tr>
+            <tr>
+                <td th:text="${match.awayTeam.teamName}">Away Team</td>
+                <td th:text="${match.awayTeamQ1Points}">0</td>
+                <td th:text="${match.awayTeamQ2Points}">0</td>
+                <td th:text="${match.awayTeamQ3Points}">0</td>
+                <td th:text="${match.awayTeamQ4Points}">0</td>
+                <td class="total-score" th:text="${match.awayTeamPoints}">0</td>
+            </tr>
+        </tbody>
+    </table>
 
     <a href="/basketball/matches" class="btn btn-secondary">Back to Matches</a>
 </div>

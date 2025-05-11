@@ -209,26 +209,26 @@ public class VolleyballMatchController {
 
     @PostMapping("/edit_live")
     public String editLiveMatchPost(@RequestParam Long playerId,
-//                                    @RequestParam LocalDateTime timeScored,
                                     @RequestParam Long volleyballMatchId,
                                     @RequestParam int points,
                                     @RequestParam int assists,
                                     @RequestParam int blocks,
-                                    @RequestParam int servings) {
-
+                                    @RequestParam int servings,
+                                    @RequestParam int currentSet) {
 
         VolleyballPlayer player = volleyballPlayerService.findById(playerId);
         VolleyballMatch volleyballMatch = volleyballMatchService.findById(volleyballMatchId);
 
+        // Update player match stats
         VolleyballPlayerMatchStats existingPlayerScored = volleyballPlayerMatchStatsService.findByPlayerAndVolleyballMatch(player, volleyballMatch);
         if (existingPlayerScored != null) {
             existingPlayerScored.setServings(existingPlayerScored.getServings() + servings);
             existingPlayerScored.setBlocks(existingPlayerScored.getBlocks() + blocks);
             existingPlayerScored.setAssists(existingPlayerScored.getAssists() + assists);
-            existingPlayerScored.setScoredPoints(existingPlayerScored.getScoredPoints()+points);
+            existingPlayerScored.setScoredPoints(existingPlayerScored.getScoredPoints() + points);
             volleyballPlayerMatchStatsService.save(existingPlayerScored);
         } else {
-            VolleyballPlayerMatchStats newPlayerScored = new VolleyballPlayerMatchStats(player, volleyballMatch, 0,0,0,0);
+            VolleyballPlayerMatchStats newPlayerScored = new VolleyballPlayerMatchStats(player, volleyballMatch, 0, 0, 0, 0);
             newPlayerScored.setServings(servings);
             newPlayerScored.setBlocks(blocks);
             newPlayerScored.setAssists(assists);
@@ -236,19 +236,24 @@ public class VolleyballMatchController {
             volleyballPlayerMatchStatsService.save(newPlayerScored);
         }
 
+        // Update player statistics
         volleyballPlayerService.addAppearances(playerId);
         volleyballPlayerService.addAssists(playerId, assists);
         volleyballPlayerService.addPoints(playerId, points);
         volleyballPlayerService.addBlocks(playerId, blocks);
         volleyballPlayerService.addServings(playerId, servings);
 
-        VolleyballTeam team = volleyballTeamService.listAllTeams().stream().filter(t -> t.getPlayers().contains(player)).findFirst().get();
+        // Update team and match statistics
+        VolleyballTeam team = volleyballTeamService.listAllTeams().stream()
+                .filter(t -> t.getPlayers().contains(player))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Player's team not found"));
+
         volleyballTeamService.updateStats(team.getVolleyball_team_id());
-        volleyballMatchService.updateLiveStats(volleyballMatchId, points, playerId);
+        volleyballMatchService.updateLiveStats(volleyballMatchId, points, playerId, currentSet);
 
         return "redirect:/volleyball/matches";
     }
-
 
     @PostMapping("/edit")
     public String updateMatch(

@@ -1,22 +1,135 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Match Details</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .set-score {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .match-details {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .team-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .sets-won {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .match-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .table th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 <header class="bg-primary text-white p-3">
     <div class="container">
-        <h1 class="mb-0">Match Details</h1>
+        <h1 class="mb-0">Volleyball Match Details</h1>
     </div>
 </header>
-<div class="container">
-    <p><strong>Home Team:</strong> <span th:text="${match.homeTeam.getTeamName()}">Home Team Name</span></p>
-    <p><strong>Away Team:</strong> <span th:text="${match.awayTeam.getTeamName()}">Away Team Name</span></p>
-    <p><strong>Start Time:</strong> <span th:text="${#temporals.format(match.startTime, 'dd-MM-yyyy HH:mm')}">Start Time</span></p>
-    <p><strong>End Time:</strong> <span th:text="${#temporals.format(match.endTime, 'dd-MM-yyyy HH:mm')}">End Time</span></p>
-    <a th:href="@{/volleyball/matches/edit-form/{id}(id=${match.getVolleyball_match_id()})}" class="btn btn-warning">Edit Match</a>
-    <a th:href="@{/volleyball/matches}" class="btn btn-primary">Back to Matches</a>
+
+<div class="container mt-4">
+    <div class="match-details">
+        <div class="row align-items-center">
+            <div class="col-md-5 text-center">
+                <div class="team-name" th:text="${match.homeTeam.teamName}">Home Team</div>
+                <div class="sets-won" th:text="${match.homeTeamPoints}">0</div>
+                <div>sets won</div>
+            </div>
+            <div class="col-md-2 text-center">
+                <div class="h2">VS</div>
+            </div>
+            <div class="col-md-5 text-center">
+                <div class="team-name" th:text="${match.awayTeam.teamName}">Away Team</div>
+                <div class="sets-won" th:text="${match.awayTeamPoints}">0</div>
+                <div>sets won</div>
+            </div>
+        </div>
+
+        <div class="match-info">
+            <h3>Set Scores</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>Set 1</th>
+                        <th>Set 2</th>
+                        <th>Set 3</th>
+                        <th>Set 4</th>
+                        <th>Set 5</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td th:text="${match.homeTeam.teamName}">Home Team</td>
+                        <td th:text="${match.homeTeamSet1Points}">0</td>
+                        <td th:text="${match.homeTeamSet2Points}">0</td>
+                        <td th:text="${match.homeTeamSet3Points}">0</td>
+                        <td th:text="${match.homeTeamSet4Points}">0</td>
+                        <td th:text="${match.homeTeamSet5Points}">0</td>
+                    </tr>
+                    <tr>
+                        <td th:text="${match.awayTeam.teamName}">Away Team</td>
+                        <td th:text="${match.awayTeamSet1Points}">0</td>
+                        <td th:text="${match.awayTeamSet2Points}">0</td>
+                        <td th:text="${match.awayTeamSet3Points}">0</td>
+                        <td th:text="${match.awayTeamSet4Points}">0</td>
+                        <td th:text="${match.awayTeamSet5Points}">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="match-info">
+            <h3>Match Information</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Start Time:</strong> <span th:text="${#temporals.format(match.startTime, 'dd-MM-yyyy HH:mm')}">Start Time</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>End Time:</strong> <span th:text="${#temporals.format(match.endTime, 'dd-MM-yyyy HH:mm')}">End Time</span></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Current Set:</strong> <span th:text="${match.currentSet}">1</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Match Status:</strong> 
+                        <span th:if="${match.matchFinished}" class="badge badge-success">Completed</span>
+                        <span th:unless="${match.matchFinished}" class="badge badge-warning">In Progress</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a th:href="@{/volleyball/matches}" class="btn btn-secondary">Back to Matches</a>
+        <a th:if="${!match.matchFinished}" 
+           th:href="@{/volleyball/matches/edit_live/{id}(id=${match.volleyball_match_id})}" 
+           class="btn btn-primary">Edit Live Match</a>
+    </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>

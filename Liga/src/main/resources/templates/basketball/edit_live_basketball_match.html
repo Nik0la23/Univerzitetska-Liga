@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Live Football Match</title>
+    <title>Edit Live Match</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
@@ -48,36 +49,93 @@
         <h1 class="mb-0">Edit Live Basketball Match</h1>
     </div>
 </header>
-<form action="/basketball/matches/edit_live" method="post">
-    <input type="hidden" name="basketballMatchId" th:value="${match.basketball_match_id}">
+<div class="container mt-4">
+    <form action="/basketball/matches/edit_live" method="post">
+        <input type="hidden" name="basketballMatchId" th:value="${match.basketball_match_id}">
 
-    <label for="teamId">Select Team:</label>
-    <select id="teamId" name="teamId">
-        <option value="">Select Team</option>
-        <option th:each="team : ${teams}" th:value="${team.getId()}" th:text="${team.getTeamName()}"></option>
-    </select>
+        <div class="form-group">
+            <label for="teamId">Select Team:</label>
+            <select class="form-control" id="teamId" name="teamId">
+                <option value="">Select Team</option>
+                <option th:each="team : ${teams}" th:value="${team.getId()}" th:text="${team.getTeamName()}"></option>
+            </select>
+        </div>
 
-    <label for="playerId">Select Player:</label>
-    <select id="playerId" name="playerId">
-        <option value="">Select Player</option>
-        <option th:each="player : ${players}" th:value="${player.getBasketball_player_id()}" th:text="${player.getSurname()}"></option>
-    </select>
+        <div class="form-group">
+            <label for="playerId">Select Player:</label>
+            <select class="form-control" id="playerId" name="playerId">
+                <option value="">Select Player</option>
+                <option th:each="player : ${players}" th:value="${player.getBasketball_player_id()}" th:text="${player.getSurname()}"></option>
+            </select>
+        </div>
 
-    <div id="playerForm" style="display: none;">
-<!--        <label for="timeScored">Time Scored:</label>-->
-<!--        <input type="datetime-local" id="timeScored" name="timeScored" required>-->
+        <div class="form-group">
+            <label for="quarter">Quarter:</label>
+            <select class="form-control" id="quarter" name="quarter" required>
+                <option value="1">Quarter 1</option>
+                <option value="2">Quarter 2</option>
+                <option value="3">Quarter 3</option>
+                <option value="4">Quarter 4</option>
+            </select>
+        </div>
 
-        <label for="pointsScored">Points Scored:</label>
-        <input type="number" id="pointsScored" name="pointsScored" required>
+        <div id="playerForm">
+            <div class="form-group">
+                <label for="pointsScored">Points Scored:</label>
+                <input type="number" class="form-control" id="pointsScored" name="pointsScored" required>
+            </div>
 
-        <label for="assistsScored">Assists Scored:</label>
-        <input type="number" id="assistsScored" name="assistsScored" required>
+            <div class="form-group">
+                <label for="assistsScored">Assists:</label>
+                <input type="number" class="form-control" id="assistsScored" name="assistsScored" required>
+            </div>
 
-        <label for="reboundsScored">Rebounds:</label>
-        <input type="number" id="reboundsScored" name="reboundsScored" required>
+            <div class="form-group">
+                <label for="reboundsScored">Rebounds:</label>
+                <input type="number" class="form-control" id="reboundsScored" name="reboundsScored" required>
+            </div>
 
-        <button type="submit">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+
+    <div class="mt-4">
+        <h3>Current Score</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>Q1</th>
+                    <th>Q2</th>
+                    <th>Q3</th>
+                    <th>Q4</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td th:text="${match.homeTeam.teamName}">Home Team</td>
+                    <td th:text="${match.homeTeamQ1Points}">0</td>
+                    <td th:text="${match.homeTeamQ2Points}">0</td>
+                    <td th:text="${match.homeTeamQ3Points}">0</td>
+                    <td th:text="${match.homeTeamQ4Points}">0</td>
+                    <td th:text="${match.homeTeamPoints}">0</td>
+                </tr>
+                <tr>
+                    <td th:text="${match.awayTeam.teamName}">Away Team</td>
+                    <td th:text="${match.awayTeamQ1Points}">0</td>
+                    <td th:text="${match.awayTeamQ2Points}">0</td>
+                    <td th:text="${match.awayTeamQ3Points}">0</td>
+                    <td th:text="${match.awayTeamQ4Points}">0</td>
+                    <td th:text="${match.awayTeamPoints}">0</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-</form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>

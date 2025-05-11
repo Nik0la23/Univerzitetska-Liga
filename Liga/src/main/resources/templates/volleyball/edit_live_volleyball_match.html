@@ -1,101 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Edit Live Volleyball Match</title>
-
-  <script type="text/javascript" th:inline="javascript">
-    /*<![CDATA[*/
-    const players = /*[[${dtoPlayers}]]*/ [];
-    /*]]>*/
-    // console.log(players); // Use console.log instead of alert for debugging
-  </script>
-
-  <script>
-
-    document.addEventListener("DOMContentLoaded", function() {
-      const teamSelect = document.getElementById("teamId");
-      const playerSelect = document.getElementById("playerId");
-      const playerForm = document.getElementById("playerForm");
-      function updatePlayerOptions() {
-        const selectedTeamId = teamSelect.value;
-        playerSelect.innerHTML = '<option value="">Select Player</option>'; // Reset options
-
-        // Filter and add players to the select element
-        for (let i = 0; i < players.length; i++) {
-          const player = players[i];
-          console.log("Players: " ,players);
-          if (player.teamId == selectedTeamId) {
-            const option = document.createElement("option");
-            console.log("Player ID:" ,players[i].volleyball_player_id);
-            console.log("Team ID:", player.teamId);
-            option.value = player.volleyball_player_id;
-            option.text = player.name + ' ' + player.surname;
-            playerSelect.add(option);
-          }
+    <meta charset="UTF-8">
+    <title>Edit Live Match</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .set-score {
+            font-size: 1.2em;
+            font-weight: bold;
         }
-
-        // Show or hide the form based on team selection
-        playerForm.style.display = selectedTeamId ? "block" : "none";
-      }
-
-      teamSelect.addEventListener("change", updatePlayerOptions);
-    });
-    document.getElementById("playerForm").onsubmit = function() {
-      const teamValue = document.getElementById("teamId").value;
-      const playerValue = document.getElementById("playerId").value;
-      console.log("Team ID:", teamValue);
-      console.log("Player ID:", playerValue);
-      if (!teamValue || !playerValue || teamValue === "undefined" || playerValue === "undefined") {
-        alert("Please select both a team and a player.");
-        return false; // Prevent form submission
-      }
-
-      return true; // Allow form submission
-    };
-
-
-  </script>
+        .current-set {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 <header class="bg-primary text-white p-3">
-  <div class="container">
-    <h1 class="mb-0">Edit Live Volleyball Match</h1>
-  </div>
+    <div class="container">
+        <h1 class="mb-0">Edit Live Volleyball Match</h1>
+    </div>
 </header>
-<form action="/volleyball/matches/edit_live" method="post">
-  <input type="hidden" name="volleyballMatchId" th:value="${match.volleyball_match_id}">
 
-  <label for="teamId">Select Team:</label>
-  <select id="teamId" name="teamId">
-    <option value="">Select Team</option>
-    <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}"></option>
-  </select>
+<div class="container mt-4">
+    <div class="current-set mb-4">
+        <h3>Match Score</h3>
+        <div class="row">
+            <div class="col">
+                <h4 th:text="${match.homeTeam.teamName}">Home Team</h4>
+                <span class="h2" th:text="${match.homeTeamPoints}">0</span> sets
+            </div>
+            <div class="col">
+                <h4 th:text="${match.awayTeam.teamName}">Away Team</h4>
+                <span class="h2" th:text="${match.awayTeamPoints}">0</span> sets
+            </div>
+        </div>
+        
+        <h3 class="mt-4">Set Scores</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>Set 1</th>
+                    <th>Set 2</th>
+                    <th>Set 3</th>
+                    <th>Set 4</th>
+                    <th>Set 5</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td th:text="${match.homeTeam.teamName}">Home Team</td>
+                    <td th:text="${match.homeTeamSet1Points}">0</td>
+                    <td th:text="${match.homeTeamSet2Points}">0</td>
+                    <td th:text="${match.homeTeamSet3Points}">0</td>
+                    <td th:text="${match.homeTeamSet4Points}">0</td>
+                    <td th:text="${match.homeTeamSet5Points}">0</td>
+                </tr>
+                <tr>
+                    <td th:text="${match.awayTeam.teamName}">Away Team</td>
+                    <td th:text="${match.awayTeamSet1Points}">0</td>
+                    <td th:text="${match.awayTeamSet2Points}">0</td>
+                    <td th:text="${match.awayTeamSet3Points}">0</td>
+                    <td th:text="${match.awayTeamSet4Points}">0</td>
+                    <td th:text="${match.awayTeamSet5Points}">0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-  <label for="playerId">Select Player:</label>
-  <select id="playerId" name="playerId">
-    <option value="">Select Player</option>
-<!--    <option th:each="player : ${players}" th:value="${player.getVolleyball_player_id()}" th:text="${player.getSurname()}"></option>-->
-  </select>
+    <form action="/volleyball/matches/edit_live" method="post">
+        <input type="hidden" name="volleyballMatchId" th:value="${match.volleyball_match_id}">
+        <input type="hidden" name="currentSet" th:value="${match.currentSet}">
 
-  <div id="playerForm" style="display: none;">
-<!--    <label for="timeScored">Time Scored:</label>-->
-<!--    <input type="datetime-local" id="timeScored" name="timeScored" required>-->
+        <div class="form-group">
+            <label for="teamId">Select Team:</label>
+            <select class="form-control" id="teamId" name="teamId" required>
+                <option value="">Select Team</option>
+                <option th:each="team : ${teams}" 
+                        th:value="${team.getVolleyball_team_id()}" 
+                        th:text="${team.getTeamName()}"></option>
+            </select>
+        </div>
 
-    <label for="points">Points Scored:</label>
-    <input type="number" id="points" name="points" required>
+        <div class="form-group">
+            <label for="playerId">Select Player:</label>
+            <select class="form-control" id="playerId" name="playerId" required>
+                <option value="">Select Player</option>
+            </select>
+        </div>
 
-    <label for="assists">Assists Scored:</label>
-    <input type="number" id="assists" name="assists" required>
+        <div class="form-group">
+            <label for="points">Points Scored:</label>
+            <input type="number" class="form-control" id="points" name="points" required min="0" max="5">
+            <small class="form-text text-muted">Enter points scored in the current set</small>
+        </div>
 
-    <label for="blocks">Blocks:</label>
-    <input type="number" id="blocks" name="blocks" required>
+        <div class="form-group">
+            <label for="assists">Assists:</label>
+            <input type="number" class="form-control" id="assists" name="assists" required min="0">
+        </div>
 
-    <label for="servings">Servings:</label>
-    <input type="number" id="servings" name="servings" required>
+        <div class="form-group">
+            <label for="blocks">Blocks:</label>
+            <input type="number" class="form-control" id="blocks" name="blocks" required min="0">
+        </div>
 
-    <button type="submit">Submit</button>
-  </div>
-</form>
+        <div class="form-group">
+            <label for="servings">Service Points:</label>
+            <input type="number" class="form-control" id="servings" name="servings" required min="0">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Score</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<script th:inline="javascript">
+    const players = /*[[${dtoPlayers}]]*/ [];
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        const teamSelect = document.getElementById("teamId");
+        const playerSelect = document.getElementById("playerId");
+        
+        function updatePlayerOptions() {
+            const selectedTeamId = teamSelect.value;
+            playerSelect.innerHTML = '<option value="">Select Player</option>';
+            
+            players.forEach(player => {
+                if (player.teamId == selectedTeamId) {
+                    const option = document.createElement("option");
+                    option.value = player.volleyball_player_id;
+                    option.text = player.name + ' ' + player.surname;
+                    playerSelect.add(option);
+                }
+            });
+        }
+        
+        teamSelect.addEventListener("change", updatePlayerOptions);
+    });
+</script>
 </body>
 </html>

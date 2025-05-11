@@ -150,6 +150,14 @@ public class BasketballMatchController {
             @RequestParam Long awayTeamId,
             @RequestParam int homeTeamPoints,
             @RequestParam int awayTeamPoints,
+            @RequestParam int homeTeamQ1Points,
+            @RequestParam int homeTeamQ2Points,
+            @RequestParam int homeTeamQ3Points,
+            @RequestParam int homeTeamQ4Points,
+            @RequestParam int awayTeamQ1Points,
+            @RequestParam int awayTeamQ2Points,
+            @RequestParam int awayTeamQ3Points,
+            @RequestParam int awayTeamQ4Points,
             @RequestParam String startTime) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
@@ -158,7 +166,14 @@ public class BasketballMatchController {
         BasketballTeam homeTeam = basketballTeamService.findById(homeTeamId);
         BasketballTeam awayTeam = basketballTeamService.findById(awayTeamId);
 
-        basketballMatchService.createAndAddToFixtures(homeTeam, awayTeam, homeTeamPoints, awayTeamPoints, start);
+        BasketballMatch match = basketballMatchService.createAndAddToFixtures(homeTeam, awayTeam, homeTeamPoints, awayTeamPoints, start);
+        
+        // Update quarter points
+        basketballMatchService.updateQuarterPoints(match.getBasketball_match_id(), 1, homeTeamQ1Points, awayTeamQ1Points);
+        basketballMatchService.updateQuarterPoints(match.getBasketball_match_id(), 2, homeTeamQ2Points, awayTeamQ2Points);
+        basketballMatchService.updateQuarterPoints(match.getBasketball_match_id(), 3, homeTeamQ3Points, awayTeamQ3Points);
+        basketballMatchService.updateQuarterPoints(match.getBasketball_match_id(), 4, homeTeamQ4Points, awayTeamQ4Points);
+        
         return "redirect:/basketball/matches";
     }
 
@@ -179,16 +194,30 @@ public class BasketballMatchController {
             @RequestParam Long awayTeamId,
             @RequestParam int homeTeamPoints,
             @RequestParam int awayTeamPoints,
+            @RequestParam int homeTeamQ1Points,
+            @RequestParam int homeTeamQ2Points,
+            @RequestParam int homeTeamQ3Points,
+            @RequestParam int homeTeamQ4Points,
+            @RequestParam int awayTeamQ1Points,
+            @RequestParam int awayTeamQ2Points,
+            @RequestParam int awayTeamQ3Points,
+            @RequestParam int awayTeamQ4Points,
             @RequestParam String startTime) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         LocalDateTime start = LocalDateTime.parse(startTime, formatter);
 
-
         BasketballTeam homeTeam = basketballTeamService.findById(homeTeamId);
         BasketballTeam awayTeam = basketballTeamService.findById(awayTeamId);
 
         basketballMatchService.update(id, homeTeam, awayTeam, homeTeamPoints, awayTeamPoints, start);
+        
+        // Update quarter points
+        basketballMatchService.updateQuarterPoints(id, 1, homeTeamQ1Points, awayTeamQ1Points);
+        basketballMatchService.updateQuarterPoints(id, 2, homeTeamQ2Points, awayTeamQ2Points);
+        basketballMatchService.updateQuarterPoints(id, 3, homeTeamQ3Points, awayTeamQ3Points);
+        basketballMatchService.updateQuarterPoints(id, 4, homeTeamQ4Points, awayTeamQ4Points);
+
         return "redirect:/basketball/matches";
     }
 
@@ -224,12 +253,11 @@ public class BasketballMatchController {
 
     @PostMapping("/edit_live")
     public String editLiveMatchPost(@RequestParam Long playerId,
-//                                    @RequestParam LocalDateTime timeScored,
                                     @RequestParam Long basketballMatchId,
                                     @RequestParam int pointsScored,
                                     @RequestParam int assistsScored,
-                                    @RequestParam int reboundsScored) {
-
+                                    @RequestParam int reboundsScored,
+                                    @RequestParam int quarter) {
 
         BasketballPlayer player = basketballPlayerService.findById(playerId);
         BasketballMatch basketballMatch = basketballMatchService.findById(basketballMatchId);
@@ -254,8 +282,12 @@ public class BasketballMatchController {
         basketballPlayerService.addRebounds(playerId, reboundsScored);
 
         BasketballTeam team = basketballTeamService.listAllTeams().stream().filter(t -> t.getPlayers().contains(player)).findFirst().get();
-        //basketballTeamService.updateStats(team.getId());
+        
+        // Update quarter points
         basketballMatchService.updateLiveStats(basketballMatchId, pointsScored, playerId);
+        basketballMatchService.updateQuarterPoints(basketballMatchId, quarter, 
+            team == basketballMatch.getHomeTeam() ? pointsScored : 0, 
+            team == basketballMatch.getAwayTeam() ? pointsScored : 0);
 
         return "redirect:/basketball/matches";
     }

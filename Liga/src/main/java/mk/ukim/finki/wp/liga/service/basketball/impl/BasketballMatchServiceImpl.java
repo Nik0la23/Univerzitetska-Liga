@@ -67,6 +67,57 @@ public class BasketballMatchServiceImpl implements BasketballMatchService {
 
     @Override
     @Transactional
+    public BasketballMatch updateQuarterPoints(Long id, int quarter, int homeTeamPoints, int awayTeamPoints) {
+        BasketballMatch match = this.findById(id);
+        
+        switch (quarter) {
+            case 1:
+                match.setHomeTeamQ1Points(homeTeamPoints);
+                match.setAwayTeamQ1Points(awayTeamPoints);
+                break;
+            case 2:
+                match.setHomeTeamQ2Points(homeTeamPoints);
+                match.setAwayTeamQ2Points(awayTeamPoints);
+                break;
+            case 3:
+                match.setHomeTeamQ3Points(homeTeamPoints);
+                match.setAwayTeamQ3Points(awayTeamPoints);
+                break;
+            case 4:
+                match.setHomeTeamQ4Points(homeTeamPoints);
+                match.setAwayTeamQ4Points(awayTeamPoints);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid quarter number: " + quarter);
+        }
+        
+        // Update total points
+        int totalHomePoints = match.getHomeTeamQ1Points() + match.getHomeTeamQ2Points() + 
+                            match.getHomeTeamQ3Points() + match.getHomeTeamQ4Points();
+        int totalAwayPoints = match.getAwayTeamQ1Points() + match.getAwayTeamQ2Points() + 
+                            match.getAwayTeamQ3Points() + match.getAwayTeamQ4Points();
+        
+        match.setHomeTeamPoints(totalHomePoints);
+        match.setAwayTeamPoints(totalAwayPoints);
+        
+        return basketballMatchRepository.save(match);
+    }
+
+    @Override
+    public Map<Integer, int[]> getQuarterPoints(Long id) {
+        BasketballMatch match = this.findById(id);
+        Map<Integer, int[]> quarterPoints = new HashMap<>();
+        
+        quarterPoints.put(1, new int[]{match.getHomeTeamQ1Points(), match.getAwayTeamQ1Points()});
+        quarterPoints.put(2, new int[]{match.getHomeTeamQ2Points(), match.getAwayTeamQ2Points()});
+        quarterPoints.put(3, new int[]{match.getHomeTeamQ3Points(), match.getAwayTeamQ3Points()});
+        quarterPoints.put(4, new int[]{match.getHomeTeamQ4Points(), match.getAwayTeamQ4Points()});
+        
+        return quarterPoints;
+    }
+
+    @Override
+    @Transactional
     public BasketballMatch delete(Long id) {
         BasketballMatch bm = basketballMatchRepository.findById(id).orElseThrow(InvalidBasketballMatchException::new);
         if(bm.getEndTime().isBefore(LocalDateTime.now())){

@@ -55,20 +55,99 @@
         </div>
         <div class="form-group">
             <label for="homeTeamPoints">Home Team Points</label>
-            <input type="number" class="form-control" id="homeTeamPoints" name="homeTeamPoints" min="0" required>
+            <input type="number" class="form-control" id="homeTeamPoints" name="homeTeamPoints" min="0" required readonly>
         </div>
         <div class="form-group">
             <label for="awayTeamPoints">Away Team Points</label>
-            <input type="number" class="form-control" id="awayTeamPoints" name="awayTeamPoints" min="0" required>
+            <input type="number" class="form-control" id="awayTeamPoints" name="awayTeamPoints" min="0" required readonly>
         </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Home Team Quarter Points</h4>
+                <div class="form-group">
+                    <label for="homeTeamQ1Points">Q1 Points</label>
+                    <input type="number" class="form-control quarter-points" id="homeTeamQ1Points" name="homeTeamQ1Points"
+                           value="0" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="homeTeamQ2Points">Q2 Points</label>
+                    <input type="number" class="form-control quarter-points" id="homeTeamQ2Points" name="homeTeamQ2Points"
+                           value="0" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="homeTeamQ3Points">Q3 Points</label>
+                    <input type="number" class="form-control quarter-points" id="homeTeamQ3Points" name="homeTeamQ3Points"
+                           value="0" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="homeTeamQ4Points">Q4 Points</label>
+                    <input type="number" class="form-control quarter-points" id="homeTeamQ4Points" name="homeTeamQ4Points"
+                           value="0" min="0" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>Away Team Quarter Points</h4>
+                <div class="form-group">
+                    <label for="awayTeamQ1Points">Q1 Points</label>
+                    <input type="number" class="form-control quarter-points" id="awayTeamQ1Points" name="awayTeamQ1Points"
+                           value="0" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="awayTeamQ2Points">Q2 Points</label>
+                    <input type="number" class="form-control quarter-points" id="awayTeamQ2Points" name="awayTeamQ2Points"
+                           value="0" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="awayTeamQ3Points">Q3 Points</label>
+                    <input type="number" class="form-control quarter-points" id="awayTeamQ3Points" name="awayTeamQ3Points"
+                           value="0" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="awayTeamQ4Points">Q4 Points</label>
+                    <input type="number" class="form-control quarter-points" id="awayTeamQ4Points" name="awayTeamQ4Points"
+                           value="0" min="0" required>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
             <label for="startTime">Start Time</label>
             <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
         </div>
-<!--        <div class="form-group">-->
-<!--            <label for="endTime">End Time</label>-->
-<!--            <input type="datetime-local" class="form-control" id="endTime" name="endTime" required>-->
-<!--        </div>-->
+
+        <script>
+            // Auto-calculate total points when quarter points change
+            document.addEventListener('DOMContentLoaded', function() {
+                const homeQuarterInputs = ['homeTeamQ1Points', 'homeTeamQ2Points', 'homeTeamQ3Points', 'homeTeamQ4Points'];
+                const awayQuarterInputs = ['awayTeamQ1Points', 'awayTeamQ2Points', 'awayTeamQ3Points', 'awayTeamQ4Points'];
+
+                function updateTotalPoints() {
+                    let homeTotal = 0;
+                    let awayTotal = 0;
+
+                    homeQuarterInputs.forEach(id => {
+                        homeTotal += parseInt(document.getElementById(id).value) || 0;
+                    });
+
+                    awayQuarterInputs.forEach(id => {
+                        awayTotal += parseInt(document.getElementById(id).value) || 0;
+                    });
+
+                    document.getElementById('homeTeamPoints').value = homeTotal;
+                    document.getElementById('awayTeamPoints').value = awayTotal;
+                }
+
+                // Add event listeners to all quarter point inputs
+                document.querySelectorAll('.quarter-points').forEach(input => {
+                    input.addEventListener('input', updateTotalPoints);
+                });
+
+                // Initialize totals
+                updateTotalPoints();
+            });
+        </script>
+
         <button type="submit" class="btn btn-primary">Add Match</button>
     </form>
 </div>

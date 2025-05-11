@@ -282,17 +282,38 @@ public class VolleyballMatchServiceImpl implements VolleyballMatchService {
     }
 
     @Override
-    public void updateLiveStats(Long volleyballMatchId, int pointsScored, Long playerId) {
+    public void updateLiveStats(Long volleyballMatchId, int pointsScored, Long playerId, int currentSet) {
         VolleyballPlayer player = playerRepository.getReferenceById(playerId);
-        VolleyballMatch match = matchRepository.findById(volleyballMatchId).get();
-        VolleyballTeam team = teamRepository.findAll().stream().filter(t -> t.getPlayers().contains(player)).findFirst().get();
+        VolleyballMatch match = matchRepository.findById(volleyballMatchId)
+                .orElseThrow(() -> new RuntimeException("Match not found"));
+        VolleyballTeam team = teamRepository.findAll().stream()
+                .filter(t -> t.getPlayers().contains(player))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Team not found"));
 
-        VolleyballTeam homeOrAway = match.getHomeTeam();
+        boolean isHomeTeam = match.getHomeTeam().equals(team);
+        match.setCurrentSet(currentSet);
 
-        if (team != homeOrAway) {
-            match.setAwayTeamPoints( match.getAwayTeamPoints() +pointsScored);
-        } else {
-            match.setHomeTeamPoints(match.getHomeTeamPoints() + pointsScored);
+        // Update current set points
+        int currentPoints = match.getCurrentSetPoints(isHomeTeam);
+        match.setCurrentSetPoints(isHomeTeam, currentPoints + pointsScored);
+
+        // Check if set is finished
+        if (match.isCurrentSetFinished()) {
+            // Determine set winner and update set count
+            int homePoints = match.getCurrentSetPoints(true);
+            int awayPoints = match.getCurrentSetPoints(false);
+            
+            if (homePoints > awayPoints) {
+                match.setHomeTeamPoints(match.getHomeTeamPoints() + 1);
+            } else {
+                match.setAwayTeamPoints(match.getAwayTeamPoints() + 1);
+            }
+
+            // If match isn't over, move to next set
+            if (!match.isMatchFinished()) {
+                match.setCurrentSet(match.getCurrentSet() + 1);
+            }
         }
 
         matchRepository.save(match);
