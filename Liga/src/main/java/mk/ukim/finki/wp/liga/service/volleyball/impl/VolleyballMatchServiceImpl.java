@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,15 +51,37 @@ public class VolleyballMatchServiceImpl implements VolleyballMatchService {
 
     @Override
     @Transactional
-    public VolleyballMatch update(Long id, VolleyballTeam homeTeam, VolleyballTeam awayTeam, int homeTeamPoints, int awayTeamPoints, LocalDateTime startTime) {
+    public VolleyballMatch update(Long id, VolleyballTeam homeTeam, VolleyballTeam awayTeam, 
+            int homeTeamPoints, int awayTeamPoints,
+            int homeTeamSet1Points, int homeTeamSet2Points, int homeTeamSet3Points, int homeTeamSet4Points, int homeTeamSet5Points,
+            int awayTeamSet1Points, int awayTeamSet2Points, int awayTeamSet3Points, int awayTeamSet4Points, int awayTeamSet5Points,
+            LocalDateTime startTime, LocalDateTime endTime) {
         VolleyballTeam home = teamRepository.findById(homeTeam.getVolleyball_team_id()).orElseThrow(InvalidVolleyballTeamException::new);
         VolleyballTeam away = teamRepository.findById(awayTeam.getVolleyball_team_id()).orElseThrow(InvalidVolleyballMatchException::new);
         VolleyballMatch vm = matchRepository.findById(id).orElseThrow(InvalidVolleyballMatchException::new);
+        
         vm.setHomeTeam(home);
         vm.setAwayTeam(away);
         vm.setHomeTeamPoints(homeTeamPoints);
         vm.setAwayTeamPoints(awayTeamPoints);
+        
+        // Update set points for home team
+        vm.setHomeTeamSet1Points(homeTeamSet1Points);
+        vm.setHomeTeamSet2Points(homeTeamSet2Points);
+        vm.setHomeTeamSet3Points(homeTeamSet3Points);
+        vm.setHomeTeamSet4Points(homeTeamSet4Points);
+        vm.setHomeTeamSet5Points(homeTeamSet5Points);
+        
+        // Update set points for away team
+        vm.setAwayTeamSet1Points(awayTeamSet1Points);
+        vm.setAwayTeamSet2Points(awayTeamSet2Points);
+        vm.setAwayTeamSet3Points(awayTeamSet3Points);
+        vm.setAwayTeamSet4Points(awayTeamSet4Points);
+        vm.setAwayTeamSet5Points(awayTeamSet5Points);
+        
         vm.setStartTime(startTime);
+        vm.setEndTime(endTime);
+        
         return matchRepository.save(vm);
     }
 
@@ -292,28 +315,97 @@ public class VolleyballMatchServiceImpl implements VolleyballMatchService {
                 .orElseThrow(() -> new RuntimeException("Team not found"));
 
         boolean isHomeTeam = match.getHomeTeam().equals(team);
-        match.setCurrentSet(currentSet);
 
-        // Update current set points
-        int currentPoints = match.getCurrentSetPoints(isHomeTeam);
-        match.setCurrentSetPoints(isHomeTeam, currentPoints + pointsScored);
+        // Update the points for the specific set by adding to existing points
+        switch (currentSet) {
+            case 1:
+                if (isHomeTeam) {
+                    match.setHomeTeamSet1Points(match.getHomeTeamSet1Points() + pointsScored);
+                } else {
+                    match.setAwayTeamSet1Points(match.getAwayTeamSet1Points() + pointsScored);
+                }
+                break;
+            case 2:
+                if (isHomeTeam) {
+                    match.setHomeTeamSet2Points(match.getHomeTeamSet2Points() + pointsScored);
+                } else {
+                    match.setAwayTeamSet2Points(match.getAwayTeamSet2Points() + pointsScored);
+                }
+                break;
+            case 3:
+                if (isHomeTeam) {
+                    match.setHomeTeamSet3Points(match.getHomeTeamSet3Points() + pointsScored);
+                } else {
+                    match.setAwayTeamSet3Points(match.getAwayTeamSet3Points() + pointsScored);
+                }
+                break;
+            case 4:
+                if (isHomeTeam) {
+                    match.setHomeTeamSet4Points(match.getHomeTeamSet4Points() + pointsScored);
+                } else {
+                    match.setAwayTeamSet4Points(match.getAwayTeamSet4Points() + pointsScored);
+                }
+                break;
+            case 5:
+                if (isHomeTeam) {
+                    match.setHomeTeamSet5Points(match.getHomeTeamSet5Points() + pointsScored);
+                } else {
+                    match.setAwayTeamSet5Points(match.getAwayTeamSet5Points() + pointsScored);
+                }
+                break;
+        }
 
-        // Check if set is finished
-        if (match.isCurrentSetFinished()) {
-            // Determine set winner and update set count
-            int homePoints = match.getCurrentSetPoints(true);
-            int awayPoints = match.getCurrentSetPoints(false);
+        // Calculate total sets won
+        int homeSetsWon = 0;
+        int awaySetsWon = 0;
+
+        // Helper function to check if a set is won
+        BiFunction<Integer, Integer, Integer> checkSetWinner = (homePoints, awayPoints) -> {
+            // For regular sets (1-4)
+            int minPointsToWin = (currentSet == 5) ? 15 : 25;
+            int pointDifference = Math.abs(homePoints - awayPoints);
             
-            if (homePoints > awayPoints) {
-                match.setHomeTeamPoints(match.getHomeTeamPoints() + 1);
-            } else {
-                match.setAwayTeamPoints(match.getAwayTeamPoints() + 1);
+            // Check if either team has won
+            if (homePoints >= minPointsToWin && pointDifference >= 2) {
+                return 1; // Home team wins
+            } else if (awayPoints >= minPointsToWin && pointDifference >= 2) {
+                return -1; // Away team wins
             }
+            return 0; // No winner yet
+        };
 
-            // If match isn't over, move to next set
-            if (!match.isMatchFinished()) {
-                match.setCurrentSet(match.getCurrentSet() + 1);
-            }
+        // Check Set 1
+        int set1Result = checkSetWinner.apply(match.getHomeTeamSet1Points(), match.getAwayTeamSet1Points());
+        if (set1Result == 1) homeSetsWon++;
+        else if (set1Result == -1) awaySetsWon++;
+
+        // Check Set 2
+        int set2Result = checkSetWinner.apply(match.getHomeTeamSet2Points(), match.getAwayTeamSet2Points());
+        if (set2Result == 1) homeSetsWon++;
+        else if (set2Result == -1) awaySetsWon++;
+
+        // Check Set 3
+        int set3Result = checkSetWinner.apply(match.getHomeTeamSet3Points(), match.getAwayTeamSet3Points());
+        if (set3Result == 1) homeSetsWon++;
+        else if (set3Result == -1) awaySetsWon++;
+
+        // Check Set 4
+        int set4Result = checkSetWinner.apply(match.getHomeTeamSet4Points(), match.getAwayTeamSet4Points());
+        if (set4Result == 1) homeSetsWon++;
+        else if (set4Result == -1) awaySetsWon++;
+
+        // Check Set 5
+        int set5Result = checkSetWinner.apply(match.getHomeTeamSet5Points(), match.getAwayTeamSet5Points());
+        if (set5Result == 1) homeSetsWon++;
+        else if (set5Result == -1) awaySetsWon++;
+
+        // Update total sets won
+        match.setHomeTeamPoints(homeSetsWon);
+        match.setAwayTeamPoints(awaySetsWon);
+
+        // Check if match is finished (one team has won 3 sets)
+        if (homeSetsWon >= 3 || awaySetsWon >= 3) {
+            match.setEndTime(LocalDateTime.now());
         }
 
         matchRepository.save(match);

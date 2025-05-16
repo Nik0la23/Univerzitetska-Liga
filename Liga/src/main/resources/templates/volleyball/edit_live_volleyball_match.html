@@ -71,9 +71,8 @@
         </table>
     </div>
 
-    <form action="/volleyball/matches/edit_live" method="post">
+    <form action="/volleyball/matches/edit_live" method="post" onsubmit="return validateForm()">
         <input type="hidden" name="volleyballMatchId" th:value="${match.volleyball_match_id}">
-        <input type="hidden" name="currentSet" th:value="${match.currentSet}">
 
         <div class="form-group">
             <label for="teamId">Select Team:</label>
@@ -93,9 +92,20 @@
         </div>
 
         <div class="form-group">
-            <label for="points">Points Scored:</label>
-            <input type="number" class="form-control" id="points" name="points" required min="0" max="5">
-            <small class="form-text text-muted">Enter points scored in the current set</small>
+            <label for="currentSet">Select Set:</label>
+            <select class="form-control" id="currentSet" name="currentSet" required>
+                <option value="1">Set 1</option>
+                <option value="2">Set 2</option>
+                <option value="3">Set 3</option>
+                <option value="4">Set 4</option>
+                <option value="5">Set 5</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="points">Points:</label>
+            <input type="number" class="form-control" id="points" name="points" required min="0" max="25">
+            <small class="form-text text-muted">Enter points for the selected set (0-25, max 15 for Set 5)</small>
         </div>
 
         <div class="form-group">
@@ -127,6 +137,8 @@
     document.addEventListener("DOMContentLoaded", function() {
         const teamSelect = document.getElementById("teamId");
         const playerSelect = document.getElementById("playerId");
+        const setSelect = document.getElementById("currentSet");
+        const pointsInput = document.getElementById("points");
         
         function updatePlayerOptions() {
             const selectedTeamId = teamSelect.value;
@@ -141,9 +153,39 @@
                 }
             });
         }
+
+        function updatePointsLimit() {
+            const selectedSet = parseInt(setSelect.value);
+            if (selectedSet === 5) {
+                pointsInput.max = "15";
+                pointsInput.nextElementSibling.textContent = "Enter points for Set 5 (0-15)";
+            } else {
+                pointsInput.max = "25";
+                pointsInput.nextElementSibling.textContent = "Enter points for the selected set (0-25)";
+            }
+        }
         
         teamSelect.addEventListener("change", updatePlayerOptions);
+        setSelect.addEventListener("change", updatePointsLimit);
+        updatePointsLimit(); // Initialize with default values
     });
+
+    function validateForm() {
+        const points = parseInt(document.getElementById("points").value);
+        const currentSet = parseInt(document.getElementById("currentSet").value);
+        
+        if (currentSet === 5 && points > 15) {
+            alert("Set 5 cannot have more than 15 points!");
+            return false;
+        }
+        
+        if (currentSet !== 5 && points > 25) {
+            alert("Sets 1-4 cannot have more than 25 points!");
+            return false;
+        }
+        
+        return true;
+    }
 </script>
 </body>
 </html>

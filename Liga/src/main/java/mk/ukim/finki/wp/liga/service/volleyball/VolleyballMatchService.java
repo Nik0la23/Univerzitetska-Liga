@@ -17,7 +17,11 @@ public interface VolleyballMatchService {
     VolleyballMatch create(VolleyballTeam homeTeam, VolleyballTeam awayTeam, int homeTeamPoints, int awayTeamPoints, LocalDateTime startTime);
 
 
-    VolleyballMatch update(Long id, VolleyballTeam homeTeam, VolleyballTeam awayTeam, int homeTeamPoints, int awayTeamPoints, LocalDateTime startTime);
+    VolleyballMatch update(Long id, VolleyballTeam homeTeam, VolleyballTeam awayTeam, 
+        int homeTeamPoints, int awayTeamPoints,
+        int homeTeamSet1Points, int homeTeamSet2Points, int homeTeamSet3Points, int homeTeamSet4Points, int homeTeamSet5Points,
+        int awayTeamSet1Points, int awayTeamSet2Points, int awayTeamSet3Points, int awayTeamSet4Points, int awayTeamSet5Points,
+        LocalDateTime startTime, LocalDateTime endTime);
 
 
     VolleyballMatch delete(Long id);

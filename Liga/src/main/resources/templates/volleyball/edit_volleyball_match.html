@@ -2,7 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Edit Match</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .set-score {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .match-details {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 <header class="bg-primary text-white p-3">
@@ -10,52 +22,128 @@
         <h1 class="mb-0">Edit Volleyball Match</h1>
     </div>
 </header>
-<div class="container">
+<div class="container mt-4">
     <form th:action="@{/volleyball/matches/edit}" method="post" onsubmit="return validateForm()">
         <input type="hidden" name="id" th:value="${match.getVolleyball_match_id()}">
+        <input type="hidden" name="homeTeamPoints" id="homeTeamPoints" th:value="${match.homeTeamPoints}">
+        <input type="hidden" name="awayTeamPoints" id="awayTeamPoints" th:value="${match.awayTeamPoints}">
 
-        <div class="form-group">
-            <label for="homeTeam">Home Team</label>
-            <select id="homeTeam" name="homeTeamId" class="form-control" required>
-                <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}"
-                        th:selected="${team.getVolleyball_team_id() == match.homeTeam.getVolleyball_team_id()}">Team Name</option>
-            </select>
-        </div>
+        <div class="match-details">
+            <div class="form-group">
+                <label for="homeTeam">Home Team</label>
+                <select id="homeTeam" name="homeTeamId" class="form-control" required>
+                    <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}"
+                            th:selected="${team.getVolleyball_team_id() == match.homeTeam.getVolleyball_team_id()}">Team Name</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="awayTeam">Away Team</label>
-            <select id="awayTeam" name="awayTeamId" class="form-control" required>
-                <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}"
-                        th:selected="${team.getVolleyball_team_id() == match.awayTeam.getVolleyball_team_id()}">Team Name</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="awayTeam">Away Team</label>
+                <select id="awayTeam" name="awayTeamId" class="form-control" required>
+                    <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}"
+                            th:selected="${team.getVolleyball_team_id() == match.awayTeam.getVolleyball_team_id()}">Team Name</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="homeTeamPoints">Home Team Points</label>
-            <input type="number" id="homeTeamPoints" name="homeTeamPoints" class="form-control" th:value="${match.homeTeamPoints}" value="0" required>
-        </div>
-
-        <div class="form-group">
-            <label for="awayTeamPoints">Away Team Points</label>
-            <input type="number" id="awayTeamPoints" name="awayTeamPoints" class="form-control" th:value="${match.awayTeamPoints}" value="0" required>
+            <h3 class="mt-4">Set Scores</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 th:text="${match.homeTeam.teamName}">Home Team Sets</h4>
+                    <div class="form-group">
+                        <label for="homeTeamSet1Points">Set 1</label>
+                        <input type="number" id="homeTeamSet1Points" name="homeTeamSet1Points" class="form-control set-points" 
+                               th:value="${match.homeTeamSet1Points}" min="0" max="25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeTeamSet2Points">Set 2</label>
+                        <input type="number" id="homeTeamSet2Points" name="homeTeamSet2Points" class="form-control set-points" 
+                               th:value="${match.homeTeamSet2Points}" min="0" max="25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeTeamSet3Points">Set 3</label>
+                        <input type="number" id="homeTeamSet3Points" name="homeTeamSet3Points" class="form-control set-points" 
+                               th:value="${match.homeTeamSet3Points}" min="0" max="25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeTeamSet4Points">Set 4</label>
+                        <input type="number" id="homeTeamSet4Points" name="homeTeamSet4Points" class="form-control set-points" 
+                               th:value="${match.homeTeamSet4Points}" min="0" max="25">
+                    </div>
+                    <div class="form-group">
+                        <label for="homeTeamSet5Points">Set 5</label>
+                        <input type="number" id="homeTeamSet5Points" name="homeTeamSet5Points" class="form-control set-points" 
+                               th:value="${match.homeTeamSet5Points}" min="0" max="15">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4 th:text="${match.awayTeam.teamName}">Away Team Sets</h4>
+                    <div class="form-group">
+                        <label for="awayTeamSet1Points">Set 1</label>
+                        <input type="number" id="awayTeamSet1Points" name="awayTeamSet1Points" class="form-control set-points" 
+                               th:value="${match.awayTeamSet1Points}" min="0" max="25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="awayTeamSet2Points">Set 2</label>
+                        <input type="number" id="awayTeamSet2Points" name="awayTeamSet2Points" class="form-control set-points" 
+                               th:value="${match.awayTeamSet2Points}" min="0" max="25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="awayTeamSet3Points">Set 3</label>
+                        <input type="number" id="awayTeamSet3Points" name="awayTeamSet3Points" class="form-control set-points" 
+                               th:value="${match.awayTeamSet3Points}" min="0" max="25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="awayTeamSet4Points">Set 4</label>
+                        <input type="number" id="awayTeamSet4Points" name="awayTeamSet4Points" class="form-control set-points" 
+                               th:value="${match.awayTeamSet4Points}" min="0" max="25">
+                    </div>
+                    <div class="form-group">
+                        <label for="awayTeamSet5Points">Set 5</label>
+                        <input type="number" id="awayTeamSet5Points" name="awayTeamSet5Points" class="form-control set-points" 
+                               th:value="${match.awayTeamSet5Points}" min="0" max="15">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="form-group">
             <label for="startTime">Start Time</label>
-            <input type="datetime-local" id="startTime" name="startTime" class="form-control" th:value="${#temporals.format(match.startTime, 'yyyy-MM-dd''T''HH:mm')}" required onchange="checkEndTime()">
+            <input type="datetime-local" id="startTime" name="startTime" class="form-control" 
+                   th:value="${#temporals.format(match.startTime, 'yyyy-MM-dd''T''HH:mm')}" required onchange="checkEndTime()">
         </div>
 
         <div class="form-group">
             <label for="endTime">End Time</label>
-            <input type="datetime-local" id="endTime" name="endTime" class="form-control"  th:value="${#temporals.format(match.endTime, 'yyyy-MM-dd''T''HH:mm')}" required>
+            <input type="datetime-local" id="endTime" name="endTime" class="form-control"  
+                   th:value="${#temporals.format(match.endTime, 'yyyy-MM-dd''T''HH:mm')}" required>
         </div>
 
         <button type="submit" class="btn btn-warning">Update Match</button>
+        <a th:href="@{/volleyball/matches/details/{id}(id=${match.getVolleyball_match_id()})}" class="btn btn-primary">Back to Match Details</a>
     </form>
-    <a th:href="@{/volleyball/matches/details/{id}(id=${match.getVolleyball_match_id()})}" class="btn btn-primary">Back to Match Details</a>
 </div>
 
 <script>
+    function calculateTotalPoints() {
+        let homePoints = 0;
+        let awayPoints = 0;
+
+        // Calculate total sets won for home team
+        for (let i = 1; i <= 5; i++) {
+            const homeSetPoints = parseInt(document.getElementById(`homeTeamSet${i}Points`).value) || 0;
+            const awaySetPoints = parseInt(document.getElementById(`awayTeamSet${i}Points`).value) || 0;
+            
+            if (homeSetPoints > awaySetPoints) {
+                homePoints++;
+            } else if (awaySetPoints > homeSetPoints) {
+                awayPoints++;
+            }
+        }
+
+        document.getElementById('homeTeamPoints').value = homePoints;
+        document.getElementById('awayTeamPoints').value = awayPoints;
+    }
+
     function validateForm() {
         const homeTeam = document.getElementById('homeTeam').value;
         const awayTeam = document.getElementById('awayTeam').value;
@@ -74,8 +162,39 @@
             return false;
         }
 
+        // Validate set scores
+        for (let i = 1; i <= 5; i++) {
+            const homePoints = parseInt(document.getElementById(`homeTeamSet${i}Points`).value) || 0;
+            const awayPoints = parseInt(document.getElementById(`awayTeamSet${i}Points`).value) || 0;
+            
+            if (i < 5) {
+                if (homePoints > 25 || awayPoints > 25) {
+                    alert(`Set ${i}: Points cannot exceed 25.`);
+                    return false;
+                }
+            } else {
+                if (homePoints > 15 || awayPoints > 15) {
+                    alert("Set 5: Points cannot exceed 15.");
+                    return false;
+                }
+            }
+        }
+
+        // Calculate total points before submitting
+        calculateTotalPoints();
         return true;
     }
+
+    // Add event listeners to update total points when set scores change
+    document.addEventListener('DOMContentLoaded', function() {
+        const setInputs = document.querySelectorAll('.set-points');
+        setInputs.forEach(input => {
+            input.addEventListener('change', calculateTotalPoints);
+        });
+        
+        // Calculate initial points
+        calculateTotalPoints();
+    });
 </script>
 
 </body>

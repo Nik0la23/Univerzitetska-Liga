@@ -262,6 +262,16 @@ public class VolleyballMatchController {
             @RequestParam Long awayTeamId,
             @RequestParam int homeTeamPoints,
             @RequestParam int awayTeamPoints,
+            @RequestParam int homeTeamSet1Points,
+            @RequestParam int homeTeamSet2Points,
+            @RequestParam int homeTeamSet3Points,
+            @RequestParam int homeTeamSet4Points,
+            @RequestParam int homeTeamSet5Points,
+            @RequestParam int awayTeamSet1Points,
+            @RequestParam int awayTeamSet2Points,
+            @RequestParam int awayTeamSet3Points,
+            @RequestParam int awayTeamSet4Points,
+            @RequestParam int awayTeamSet5Points,
             @RequestParam String startTime,
             @RequestParam String endTime) {
 
@@ -272,7 +282,12 @@ public class VolleyballMatchController {
         VolleyballTeam homeTeam = volleyballTeamService.findById(homeTeamId);
         VolleyballTeam awayTeam = volleyballTeamService.findById(awayTeamId);
 
-        volleyballMatchService.update(id, homeTeam, awayTeam, homeTeamPoints, awayTeamPoints, start);
+        volleyballMatchService.update(id, homeTeam, awayTeam, 
+            homeTeamPoints, awayTeamPoints,
+            homeTeamSet1Points, homeTeamSet2Points, homeTeamSet3Points, homeTeamSet4Points, homeTeamSet5Points,
+            awayTeamSet1Points, awayTeamSet2Points, awayTeamSet3Points, awayTeamSet4Points, awayTeamSet5Points,
+            start, end);
+            
         return "redirect:/volleyball/matches";
     }
 
