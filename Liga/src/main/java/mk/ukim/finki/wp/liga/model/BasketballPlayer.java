@@ -3,31 +3,31 @@ package mk.ukim.finki.wp.liga.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.awt.*;
 import java.util.Date;
+
 @Data
 @Entity
-@Setter
-@Getter
 public class BasketballPlayer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long basketball_player_id;
+
     @Lob
-    @Column(name="basketball_profile_image")
-    private byte [] image;
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "basketball_profile_image")
+    private byte[] image;
+
     private String name;
     private String surname;
     private Date birthdate;
     private int index;
     private String city;
     private String position;
+
     @ManyToOne
     @JsonIgnore
     private BasketballTeam team;
+
     private int appearances;
     private int points;
     private int assists;
@@ -50,18 +50,18 @@ public class BasketballPlayer {
     }
 
     public BasketballPlayer() {
-
     }
+
     @Override
     public String toString() {
-        return "Basketball Player{" +
+        return "BasketballPlayer{" +
                 "id=" + basketball_player_id +
-                ", playerName='" + name + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
                 '}';
     }
 
-    public int getTotalPoints(){
-        return points*2 + assists + rebounds;
+    public int getTotalPoints() {
+        return points * 2 + assists + rebounds;
     }
-
 }

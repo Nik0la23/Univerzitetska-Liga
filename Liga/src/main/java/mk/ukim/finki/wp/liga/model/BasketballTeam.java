@@ -2,23 +2,21 @@ package mk.ukim.finki.wp.liga.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
 @Data
 @Entity
-@Setter
-@Getter
 public class BasketballTeam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String teamName;
+
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BasketballPlayer> players;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "basketball_team_fixtures",
@@ -26,6 +24,7 @@ public class BasketballTeam {
             inverseJoinColumns = @JoinColumn(name = "basketball_match_id")
     )
     private List<BasketballMatch> basketballFixtures;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "basketball_team_results",
@@ -33,19 +32,21 @@ public class BasketballTeam {
             inverseJoinColumns = @JoinColumn(name = "basketball_match_id")
     )
     private List<BasketballMatch> basketballResults;
+
     private int teamMatchesPlayed;
     private int teamLeaguePoints;
     private int teamWins;
     private int teamLoses;
+
     @Lob
-    @Column(name="basketball_team_logo")
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "basketball_team_logo")
     private byte[] logo;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "basketball_team_last_five_matches", joinColumns = @JoinColumn(name = "basketball_team_id"))
     @Column(name = "basketball_match_result")
     private List<String> lastFiveMatches = new ArrayList<>();
-
 
     public BasketballTeam(String teamName, byte[] logo) {
         this.teamName = teamName;
@@ -59,14 +60,13 @@ public class BasketballTeam {
         this.logo = logo;
     }
 
+    public BasketballTeam() {
+    }
+
     public void addMatchResult(String result) {
         if (lastFiveMatches.size() == 5) {
             lastFiveMatches.remove(0);
         }
         lastFiveMatches.add(result);
-    }
-
-    public BasketballTeam() {
-
     }
 }

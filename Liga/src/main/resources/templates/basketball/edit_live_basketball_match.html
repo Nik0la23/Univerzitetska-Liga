@@ -9,7 +9,6 @@
         /*<![CDATA[*/
         const players = /*[[${dtoPlayers}]]*/ [];
         /*]]>*/
-        console.log(players); // Use console.log instead of alert for debugging
     </script>
 
     <script>
@@ -17,29 +16,47 @@
             const teamSelect = document.getElementById("teamId");
             const playerSelect = document.getElementById("playerId");
             const playerForm = document.getElementById("playerForm");
+
+            // Initial state
+            playerForm.style.display = "none";
+            playerSelect.disabled = true;
+
             function updatePlayerOptions() {
                 const selectedTeamId = teamSelect.value;
-                playerSelect.innerHTML = '<option value="">Select Player</option>'; // Reset options
+                
+                // Reset and disable player select if no team is selected
+                if (!selectedTeamId) {
+                    playerSelect.innerHTML = '<option value="">Select Player</option>';
+                    playerSelect.disabled = true;
+                    playerForm.style.display = "none";
+                    return;
+                }
+
+                // Enable player select
+                playerSelect.disabled = false;
+                playerSelect.innerHTML = '<option value="">Select Player</option>';
 
                 // Filter and add players to the select element
-                for (let i = 0; i < players.length; i++) {
-                    const player = players[i];
-                    console.log(player.teamId);
-                    console.log(selectedTeamId);
+                players.forEach(player => {
                     if (player.teamId == selectedTeamId) {
                         const option = document.createElement("option");
-                        console.log(player.basketball_player_id);
                         option.value = player.basketball_player_id;
                         option.text = player.name + ' ' + player.surname;
                         playerSelect.add(option);
                     }
-                }
+                });
 
-                // Show or hide the form based on team selection
-                playerForm.style.display = selectedTeamId ? "block" : "none";
+                // Show the form
+                playerForm.style.display = "block";
             }
 
+            // Event listeners
             teamSelect.addEventListener("change", updatePlayerOptions);
+            
+            // Show form only when both team and player are selected
+            playerSelect.addEventListener("change", function() {
+                playerForm.style.display = this.value ? "block" : "none";
+            });
         });
     </script>
 </head>
@@ -55,7 +72,7 @@
 
         <div class="form-group">
             <label for="teamId">Select Team:</label>
-            <select class="form-control" id="teamId" name="teamId">
+            <select class="form-control" id="teamId">
                 <option value="">Select Team</option>
                 <option th:each="team : ${teams}" th:value="${team.getId()}" th:text="${team.getTeamName()}"></option>
             </select>
@@ -65,34 +82,33 @@
             <label for="playerId">Select Player:</label>
             <select class="form-control" id="playerId" name="playerId">
                 <option value="">Select Player</option>
-                <option th:each="player : ${players}" th:value="${player.getBasketball_player_id()}" th:text="${player.getSurname()}"></option>
             </select>
         </div>
 
-        <div class="form-group">
-            <label for="quarter">Quarter:</label>
-            <select class="form-control" id="quarter" name="quarter" required>
-                <option value="1">Quarter 1</option>
-                <option value="2">Quarter 2</option>
-                <option value="3">Quarter 3</option>
-                <option value="4">Quarter 4</option>
-            </select>
-        </div>
+        <div id="playerForm" style="display: none;">
+            <div class="form-group">
+                <label for="quarter">Quarter:</label>
+                <select class="form-control" id="quarter" name="quarter" required>
+                    <option value="1">Quarter 1</option>
+                    <option value="2">Quarter 2</option>
+                    <option value="3">Quarter 3</option>
+                    <option value="4">Quarter 4</option>
+                </select>
+            </div>
 
-        <div id="playerForm">
             <div class="form-group">
                 <label for="pointsScored">Points Scored:</label>
-                <input type="number" class="form-control" id="pointsScored" name="pointsScored" required>
+                <input type="number" class="form-control" id="pointsScored" name="pointsScored" required min="0">
             </div>
 
             <div class="form-group">
                 <label for="assistsScored">Assists:</label>
-                <input type="number" class="form-control" id="assistsScored" name="assistsScored" required>
+                <input type="number" class="form-control" id="assistsScored" name="assistsScored" required min="0">
             </div>
 
             <div class="form-group">
                 <label for="reboundsScored">Rebounds:</label>
-                <input type="number" class="form-control" id="reboundsScored" name="reboundsScored" required>
+                <input type="number" class="form-control" id="reboundsScored" name="reboundsScored" required min="0">
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>

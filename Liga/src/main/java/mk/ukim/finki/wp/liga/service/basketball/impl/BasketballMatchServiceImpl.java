@@ -29,6 +29,11 @@ public class BasketballMatchServiceImpl implements BasketballMatchService {
     private final BasketballTeamService basketballTeamService;
     private final BasketballPlayerService basketballPlayerService;
 
+    public BasketballMatch findByIdWithTeamsAndPlayers(Long id) {
+        return basketballMatchRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Match not found: " + id));
+    }
+
 
     @Override
     @Transactional(readOnly = true)

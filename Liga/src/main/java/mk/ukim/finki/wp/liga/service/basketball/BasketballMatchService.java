@@ -28,5 +28,5 @@ public interface BasketballMatchService {
     Map<LocalDate, List<BasketballMatch>> groupMatchesByDate(List<BasketballMatch> matches);
     void finishMatch(Long matchId);
     public void processMatchStats(Long matchId);
-
+    BasketballMatch findByIdWithTeamsAndPlayers(Long id);
     }

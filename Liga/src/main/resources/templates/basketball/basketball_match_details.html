@@ -61,7 +61,8 @@
             </div>
             <ul class="players-list">
                 <li th:each="player : ${match.homeTeam.players}">
-                    <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" th:text="${player.name}">Player Name</a>
+                    <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" 
+                       th:text="${player.name + ' ' + player.surname}">Player Name</a>
                 </li>
             </ul>
         </div>
@@ -74,7 +75,8 @@
             </div>
             <ul class="players-list">
                 <li th:each="player : ${match.awayTeam.players}">
-                    <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" th:text="${player.name}">Player Name</a>
+                    <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" 
+                       th:text="${player.name + ' ' + player.surname}">Player Name</a>
                 </li>
             </ul>
         </div>

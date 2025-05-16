@@ -87,17 +87,13 @@ public class BasketballTeamController {
         model.addAttribute("teamLogoUrl", imageUrl);
         return "redirect:/basketball/teams";
     }
+    
     @GetMapping("/logo/{id}")
-    public ResponseEntity<byte[]> getTeamLogo(@PathVariable Long id) {
-        BasketballTeam team = basketballTeamService.findById(id);
-        if (team != null && team.getLogo() != null) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_JPEG);
-            return new ResponseEntity<>(team.getLogo(), headers, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+@ResponseBody
+public byte[] getTeamLogo(@PathVariable Long id) {
+    BasketballTeam team = basketballTeamService.findById(id);
+    return team.getLogo();
+}
 
     @GetMapping("/add")
     public String showAddTeamForm(Model model) {

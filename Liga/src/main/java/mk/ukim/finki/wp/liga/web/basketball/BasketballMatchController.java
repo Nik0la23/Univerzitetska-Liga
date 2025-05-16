@@ -9,6 +9,7 @@ import mk.ukim.finki.wp.liga.service.basketball.BasketballPlayerMatchStatsServic
 import mk.ukim.finki.wp.liga.service.basketball.BasketballPlayerService;
 import mk.ukim.finki.wp.liga.service.basketball.BasketballTeamService;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,13 +41,18 @@ public class BasketballMatchController {
     }
 
     @GetMapping("/details/{id}")
+    @Transactional(readOnly = true)
     public String showMatchDetails(@PathVariable Long id, Model model) {
-        BasketballMatch match = basketballMatchService.findById(id);
-        match.setHomeTeam(basketballTeamService.findById(match.getHomeTeam().getId()));
-        match.setAwayTeam(basketballTeamService.findById(match.getAwayTeam().getId()));
-        model.addAttribute("match", match);
-        model.addAttribute("bodyContent","basketball/basketball_match_details");
-        return "/basketball/master_template";
+        try {
+            BasketballMatch match = basketballMatchService.findById(id);
+            model.addAttribute("match", match);
+            model.addAttribute("bodyContent", "basketball/basketball_match_details");
+            return "/basketball/master_template";
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to load match details: " + e.getMessage());
+            model.addAttribute("bodyContent", "error");
+            return "/basketball/master_template";
+        }
     }
 
     @GetMapping("/results/details/{id}")
@@ -223,31 +229,43 @@ public class BasketballMatchController {
 
 
     @GetMapping("/edit_live/{id}")
+    @Transactional
     public String editLiveMatch(@PathVariable Long id, Model model) throws JsonProcessingException {
         BasketballMatch match = basketballMatchService.findById(id);
+        BasketballTeam homeTeam = match.getHomeTeam();
+        BasketballTeam awayTeam = match.getAwayTeam();
 
-        List<BasketballPlayer> players = match.getHomeTeam().getPlayers();
-        players.addAll(match.getAwayTeam().getPlayers());
-        List<BasketballPlayerDTO> dtoPlayers= new ArrayList<>();
-        for (BasketballPlayer player : players) {
-            BasketballPlayerDTO dtoPlayer=new BasketballPlayerDTO();
+        // Create DTOs without BLOB data
+        List<BasketballPlayerDTO> dtoPlayers = new ArrayList<>();
+        
+        // Add home team players
+        for (BasketballPlayer player : homeTeam.getPlayers()) {
+            BasketballPlayerDTO dtoPlayer = new BasketballPlayerDTO();
             dtoPlayer.setBasketball_player_id(player.getBasketball_player_id());
             dtoPlayer.setName(player.getName());
             dtoPlayer.setSurname(player.getSurname());
-            dtoPlayer.setTeamId(player.getTeam().getId());
+            dtoPlayer.setTeamId(homeTeam.getId());
             dtoPlayers.add(dtoPlayer);
         }
+        
+        // Add away team players
+        for (BasketballPlayer player : awayTeam.getPlayers()) {
+            BasketballPlayerDTO dtoPlayer = new BasketballPlayerDTO();
+            dtoPlayer.setBasketball_player_id(player.getBasketball_player_id());
+            dtoPlayer.setName(player.getName());
+            dtoPlayer.setSurname(player.getSurname());
+            dtoPlayer.setTeamId(awayTeam.getId());
+            dtoPlayers.add(dtoPlayer);
+        }
+
         model.addAttribute("match", match);
         List<BasketballTeam> teams = new ArrayList<>();
-        teams.add(match.getHomeTeam());
-        teams.add(match.getAwayTeam());
+        teams.add(homeTeam);
+        teams.add(awayTeam);
         model.addAttribute("teams", teams);
-        model.addAttribute("players", players);
-        model.addAttribute("dtoPlayers",dtoPlayers);
-        model.addAttribute("playersHome", match.getHomeTeam().getPlayers());
-        model.addAttribute("playersAway", match.getAwayTeam().getPlayers());
+        model.addAttribute("dtoPlayers", dtoPlayers);
 
-        model.addAttribute("bodyContent","basketball/edit_live_basketball_match");
+        model.addAttribute("bodyContent", "basketball/edit_live_basketball_match");
         return "/basketball/master_template";
     }
 

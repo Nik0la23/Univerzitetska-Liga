@@ -147,17 +147,11 @@ public class BasketballPlayerController {
     }
 
     @GetMapping("/image/{id}")
-    public ResponseEntity<byte[]> getPlayerImage(@PathVariable Long id) {
-        BasketballPlayer player = basketballPlayerService.findById(id);
-
-        if (player != null && player.getImage() != null) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_JPEG); // Set appropriate media type
-            return new ResponseEntity<>(player.getImage(), headers, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+@ResponseBody
+public byte[] getPlayerImage(@PathVariable Long id) {
+    BasketballPlayer player = basketballPlayerService.findById(id);
+    return player.getImage();
+}
 
     @PostMapping("/delete/{id}")
     public String deletePlayer(@PathVariable Long id){
