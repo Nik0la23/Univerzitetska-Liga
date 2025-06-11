@@ -2,34 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Live Volleyball Matches</title>
+    <title>Results</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <style>
-        .match-box {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .set-score-table {
-            width: 100%;
-            margin-top: 15px;
-        }
-        .set-score-table th {
-            background-color: #f8f9fa;
-            text-align: center;
-        }
-        .set-score-table td {
-            text-align: center;
-        }
-        .total-sets {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #007bff;
-        }
-    </style>
 </head>
 <body>
 <header class="bg-primary text-white p-3">
@@ -37,79 +11,26 @@
         <h1 class="mb-0">Live Volleyball Matches</h1>
     </div>
 </header>
-
 <div class="container mt-5">
-    <div th:each="match : ${live}" class="match-box">
-        <h3 class="mb-3">
-            <span th:text="${match.homeTeam.teamName}"></span>
-            <span class="text-muted">vs</span>
-            <span th:text="${match.awayTeam.teamName}"></span>
-        </h3>
-        
-        <div class="row align-items-center mb-3">
-            <div class="col text-center">
-                <span class="total-sets" th:text="${match.homeTeamPoints}">0</span>
-                <div class="text-muted">Sets Won</div>
-            </div>
-            <div class="col-auto">
-                <h4 class="text-muted">VS</h4>
-            </div>
-            <div class="col text-center">
-                <span class="total-sets" th:text="${match.awayTeamPoints}">0</span>
-                <div class="text-muted">Sets Won</div>
-            </div>
-        </div>
-        
-        <table class="table set-score-table">
-            <thead>
-                <tr>
-                    <th>Team</th>
-                    <th>Set 1</th>
-                    <th>Set 2</th>
-                    <th>Set 3</th>
-                    <th>Set 4</th>
-                    <th>Set 5</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td th:text="${match.homeTeam.teamName}">Home Team</td>
-                    <td th:text="${match.homeTeamSet1Points}">0</td>
-                    <td th:text="${match.homeTeamSet2Points}">0</td>
-                    <td th:text="${match.homeTeamSet3Points}">0</td>
-                    <td th:text="${match.homeTeamSet4Points}">0</td>
-                    <td th:text="${match.homeTeamSet5Points}">0</td>
-                </tr>
-                <tr>
-                    <td th:text="${match.awayTeam.teamName}">Away Team</td>
-                    <td th:text="${match.awayTeamSet1Points}">0</td>
-                    <td th:text="${match.awayTeamSet2Points}">0</td>
-                    <td th:text="${match.awayTeamSet3Points}">0</td>
-                    <td th:text="${match.awayTeamSet4Points}">0</td>
-                    <td th:text="${match.awayTeamSet5Points}">0</td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <div class="text-right mt-3">
-            <a th:href="@{/volleyball/matches/edit_live/{id}(id=${match.volleyball_match_id})}" class="btn btn-warning">
-                <i class="fas fa-edit"></i> Edit Live Match
-            </a>
-        </div>
-    </div>
-    
-    <div th:if="${live.empty}" class="alert alert-info text-center">
-        No live matches at the moment.
-    </div>
-    
-    <div class="text-center mt-4">
-        <a href="/volleyball/matches" class="btn btn-secondary">Back to Matches</a>
-    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Home Team</th>
+            <th scope="col">Away Team</th>
+            <th scope="col">Score</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="match : ${live}">
+            <td th:text="${match.homeTeam.teamName}"></td>
+            <td th:text="${match.awayTeam.teamName}"></td>
+            <td th:text="${match.homeTeamPoints} + ' - ' + ${match.awayTeamPoints}"></td>
+            <td>
+                <a th:href="@{/volleyball/matches/edit_live/{id}(id=${match.volleyball_match_id})}" class="btn btn-warning">Edit Live Match</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </body>
 </html>
