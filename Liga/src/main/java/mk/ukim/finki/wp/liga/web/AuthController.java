@@ -55,8 +55,8 @@ public class AuthController {
         }
 
         try {
-            Set<String> roles = new HashSet<>();
-            roles.add("ROLE_" + Role.USER.name());
+            Set<Role> roles = new HashSet<>();
+            roles.add(Role.USER);
             authService.register(username, password, roles);
             redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
             return "redirect:/login";
@@ -77,8 +77,8 @@ class AuthRestController {
     @PostMapping("/register")
     public ResponseEntity<String> registerApi(@RequestParam String username, @RequestParam String password) {
         try {
-            Set<String> roles = new HashSet<>();
-            roles.add("ROLE_" + Role.USER.name());
+            Set<Role> roles = new HashSet<>();
+            roles.add(Role.USER);
             String token = authService.register(username, password, roles);
             return ResponseEntity.ok(token);
         } catch (RuntimeException e) {

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Match Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .match-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .team-container {
+            width: 40%;
+        }
+        .team-name {
+            font-weight: bold;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .points {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .players-list {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<header class="bg-primary text-white p-3">
+    <div class="container">
+        <h1 class="mb-0">Football Match Details Stats</h1>
+    </div>
+</header>
+<div class="container mt-4">
+    <div class="match-container">
+        <div class="team-container">
+            <div class="team-name" th:text="${match.homeTeam.teamName}">Home Team Name</div>
+            <ul class="players-list">
+                <li th:each="player : ${match.homeTeam.players}" th:text="${player.name}">Player Name</li>
+            </ul>
+        </div>
+        <div class="points">
+            <span th:text="${match.homeTeamPoints}">0</span> - <span th:text="${match.awayTeamPoints}">0</span>
+        </div>
+        <div class="team-container">
+            <div class="team-name" th:text="${match.awayTeam.teamName}">Away Team Name</div>
+            <ul class="players-list">
+                <li th:each="player : ${match.awayTeam.players}" th:text="${player.name}">Player Name</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Home Team Stats</h3>
+            <ul class="list-group">
+                <li class="list-group-item">Goals: <span th:text="${homeGoals}">0</span></li>
+                <li class="list-group-item">Assists: <span th:text="${homeAssists}">0</span></li>
+                <li class="list-group-item">Saves: <span th:text="${homeSaves}">0</span></li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h3>Away Team Stats</h3>
+            <ul class="list-group">
+                <li class="list-group-item">Goals: <span th:text="${awayGoals}">0</span></li>
+                <li class="list-group-item">Assists: <span th:text="${awayAssists}">0</span></li>
+                <li class="list-group-item">Saves: <span th:text="${awaySaves}">0</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <a href="/matches" class="btn btn-secondary">Back to Matches</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

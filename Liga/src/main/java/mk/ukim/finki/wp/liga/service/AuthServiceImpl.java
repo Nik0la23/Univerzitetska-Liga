@@ -1,6 +1,5 @@
 package mk.ukim.finki.wp.liga.service;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import mk.ukim.finki.wp.liga.config.JwtUtil;
+import mk.ukim.finki.wp.liga.model.Role;
 import mk.ukim.finki.wp.liga.model.User;
 import mk.ukim.finki.wp.liga.repository.UserRepository;
 
@@ -24,7 +24,7 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public String register(String username, String password, Set<String> roles) {
+    public String register(String username, String password, Set<Role> roles) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username already exists");
         }
@@ -32,10 +32,10 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRoles(roles.stream().collect(Collectors.joining(",")));
+        user.setRoles(roles);
         userRepository.save(user);
 
-        return jwtUtil.generateToken(username, roles);
+        return jwtUtil.generateToken(username, roles.stream().map(Role::name).collect(Collectors.toSet()));
     }
 
     public String login(String username, String password) {
@@ -46,8 +46,6 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        Set<String> roles = Arrays.stream(user.getRoles().split(","))
-                .collect(Collectors.toSet());
-        return jwtUtil.generateToken(username, roles);
+        return jwtUtil.generateToken(username, user.getRoles().stream().map(Role::name).collect(Collectors.toSet()));
     }
 }
