@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Add Player</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -13,92 +12,63 @@
     </div>
 </header>
 <div class="container mt-5">
-    <form action="/players/add" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
-        <!-- Hidden returnUrl field -->
-
-        <!-- Player Image -->
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+    <form th:action="@{/players/add}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div class="mb-3">
             <label for="playerImage" class="form-label">Player Image</label>
-            <input type="file" class="form-control" id="playerImage" name="playerImage"
-                   th:value="${player != null} ? ${player.getImage()} : ''" placeholder="Upload player image">
+            <input type="file" class="form-control" id="playerImage" name="playerImage" accept="image/*" />
         </div>
-
-        <!-- Player Name -->
         <div class="mb-3">
             <label for="playerName" class="form-label">Player Name</label>
-            <input type="text" class="form-control" id="playerName" name="playerName"
-                   th:value="${player != null} ? ${player.getName()} : ''" required placeholder="Enter player name">
+            <input type="text" class="form-control" id="playerName" name="playerName" required placeholder="Enter player name" />
             <div class="invalid-feedback">Please enter the player's name.</div>
         </div>
-
-        <!-- Player Surname -->
         <div class="mb-3">
             <label for="playerSurname" class="form-label">Surname</label>
-            <input type="text" class="form-control" id="playerSurname" name="playerSurname"
-                   th:value="${player != null} ? ${player.getSurname()} : ''" required placeholder="Player Surname">
+            <input type="text" class="form-control" id="playerSurname" name="playerSurname" required placeholder="Enter player surname" />
             <div class="invalid-feedback">Please enter the player's surname.</div>
         </div>
-
-        <!-- Player Birth Date -->
         <div class="mb-3">
             <label for="playerBirthDate" class="form-label">Birth Date</label>
-            <input type="date" class="form-control" id="playerBirthDate" name="playerBirthDate"
-                   th:value="${player != null} ? ${player.getBirthdate()} : ''" required placeholder="Player Birth date">
+            <input type="date" class="form-control" id="playerBirthDate" name="playerBirthDate" required />
             <div class="invalid-feedback">Please enter a valid birth date.</div>
         </div>
-
-        <!-- Player Index -->
         <div class="mb-3">
             <label for="playerIndex" class="form-label">Index</label>
-            <input type="text" class="form-control" id="playerIndex" name="playerIndex"
-                   th:value="${player != null} ? ${player.getIndex()} : ''" required placeholder="Player Student index"
-                   pattern="\d{6}" maxlength="6">
+            <input type="text" class="form-control" id="playerIndex" name="playerIndex" required placeholder="Enter 6-digit index" pattern="\d{6}" maxlength="6" />
             <div class="invalid-feedback">Please enter a 6-digit player index.</div>
         </div>
-
-        <!-- Player City -->
         <div class="mb-3">
             <label for="playerCity" class="form-label">City</label>
-            <input type="text" class="form-control" id="playerCity" name="playerCity"
-                   th:value="${player != null} ? ${player.getCity()} : ''" required placeholder="Player City">
+            <input type="text" class="form-control" id="playerCity" name="playerCity" required placeholder="Enter player city" />
             <div class="invalid-feedback">Please enter the player's city.</div>
         </div>
-
-        <!-- Player Position -->
         <div class="mb-3">
             <label for="playerPosition" class="form-label">Position</label>
             <select class="form-select" id="playerPosition" name="playerPosition" required>
                 <option value="" disabled selected>Select Position</option>
-                <option th:value="'Goalkeeper'" th:selected="${player != null && player.getPosition() == 'Goalkeeper'}">Goalkeeper</option>
-                <option th:value="'Defense'" th:selected="${player != null && player.getPosition() == 'Defense'}">Defense</option>
-                <option th:value="'Center'" th:selected="${player != null && player.getPosition() == 'Center'}">Center</option>
-                <option th:value="'Offense'" th:selected="${player != null && player.getPosition() == 'Offense'}">Offense</option>
+                <option value="Goalkeeper">Goalkeeper</option>
+                <option value="Defense">Defense</option>
+                <option value="Center">Center</option>
+                <option value="Offense">Offense</option>
             </select>
             <div class="invalid-feedback">Please select the player's position.</div>
         </div>
-
-
-        <!-- Team Selection -->
         <div class="mb-3">
             <label for="teamSelect" class="form-label">Team</label>
-            <select id="teamSelect" name="team" class="form-select" required onchange="checkTeamPlayerCount()">
-                <option value="">Select a team</option>
-                <option th:each="team : ${teams}" th:value="${team.getId()}"
-                        th:data-player-count="${team.getPlayers().size()}" th:text="${team.getTeamName()}">
-                </option>
+            <select id="teamSelect" name="team" class="form-select" onchange="checkTeamPlayerCount()">
+                <option value="">No Team</option>
+                <option th:each="team : ${teams}" th:value="${team.id}" th:data-player-count="${team.players.size()}" th:text="${team.teamName}"></option>
             </select>
             <div class="invalid-feedback">Please select a team.</div>
         </div>
-
-        <!-- Submit and Back Buttons -->
         <button id="submitButton" type="submit" class="btn btn-primary">Submit</button>
+        <a href="/players" class="btn btn-secondary">Back</a>
     </form>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Custom Script for Validation and Team Player Count Check -->
 <script>
     (function () {
         'use strict';
@@ -110,8 +80,6 @@
                     var birthdateField = document.getElementById('playerBirthDate');
                     var currentDate = new Date();
                     var birthDate = new Date(birthdateField.value);
-
-                    // Validate Index Length
                     if (indexField.value.length !== 6) {
                         indexField.setCustomValidity('The index must be exactly 6 digits long.');
                         event.preventDefault();
@@ -119,8 +87,6 @@
                     } else {
                         indexField.setCustomValidity('');
                     }
-
-                    // Validate Birth Date
                     if (birthDate > currentDate) {
                         birthdateField.setCustomValidity('The birth date cannot be in the future.');
                         event.preventDefault();
@@ -128,7 +94,6 @@
                     } else {
                         birthdateField.setCustomValidity('');
                     }
-
                     if (form.checkValidity() === false) {
                         event.preventDefault();
                         event.stopPropagation();
@@ -144,8 +109,7 @@
         const selectedTeam = teamSelect.options[teamSelect.selectedIndex];
         const playerCount = selectedTeam.getAttribute('data-player-count');
         const submitButton = document.getElementById('submitButton');
-
-        if (parseInt(playerCount) >= 6) {
+        if (playerCount && parseInt(playerCount) >= 6) {
             alert('This team already has 6 players. You cannot add more.');
             submitButton.disabled = true;
         } else {

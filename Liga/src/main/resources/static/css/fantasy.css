@@ -1,0 +1,144 @@
+.football-field {
+    background-color: #4CAF50;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    min-height: 600px;
+    position: relative;
+}
+
+.field {
+    background: linear-gradient(to bottom, #4CAF50 0%, #45a049 100%);
+    border: 2px solid white;
+    border-radius: 5px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    position: relative;
+}
+
+.field::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.field::after {
+    content: '';
+    position: absolute;
+    top: 25%;
+    bottom: 25%;
+    left: 50%;
+    width: 2px;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.position-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    min-height: 80px;
+}
+
+.player-position {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px dashed white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.player-position.occupied {
+    background-color: white;
+    border-style: solid;
+}
+
+.player-position:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.available-players {
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.player-card {
+    margin-bottom: 15px;
+}
+
+.player-card .card {
+    transition: all 0.3s ease;
+}
+
+.player-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.owned-players-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.owned-players {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px 0;
+    gap: 15px;
+}
+
+.owned-players .player-card {
+    flex: 0 0 250px;
+    margin-bottom: 0;
+}
+
+.budget-info {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.filters {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* Formation selector styling */
+.formation-selector {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .football-field {
+        margin: 10px;
+        min-height: 400px;
+    }
+    
+    .player-position {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .owned-players .player-card {
+        flex: 0 0 200px;
+    }
+} 

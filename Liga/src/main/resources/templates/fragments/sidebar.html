@@ -1,46 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Sidebar</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <style>
-        .sidebar {
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            background-color: steelblue;
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar .sports-title {
-            font-weight: bold;
-            padding: 10px 15px;
-            border-bottom: 1px solid #ddd;
-        }
-        .sidebar .nav {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar .nav a {
-            padding: 10px 15px;
-            text-decoration: none;
-            color: #333;
-        }
-        .sidebar .nav a:hover {
-            background-color: #ddd;
-        }
-        .sidebar .nav .nav-item:last-child {
-            margin-top: auto; /* Pushes the last item (Shop) to the bottom */
-        }
-    </style>
-</head>
-<body>
-<aside class="sidebar">
+<aside th:fragment="sidebar" class="sidebar">
     <div class="sports-title">Sports</div>
     <ul class="nav flex-column">
         <li class="nav-item">
@@ -57,5 +15,3 @@
         </li>
     </ul>
 </aside>
-</body>
-</html>

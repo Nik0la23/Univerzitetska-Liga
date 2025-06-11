@@ -1,26 +1,88 @@
-<header xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+</head>
+<body>
+<header th:fragment="header">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="/">UNIVERSITY LEAGUE</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
-                    aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="/">University League</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
-                <ul class="navbar-nav m-auto">
-                    <li class="nav-item m-auto">
-                        <a class="nav-link active" href="/players">Players</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
                     </li>
-                    <li class="nav-item m-auto">
-                        <a class="nav-link active" href="/teams">Teams</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="footballDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Football
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="footballDropdown">
+                            <li><a class="dropdown-item" href="/football/matches">Matches</a></li>
+                            <li><a class="dropdown-item" href="/football/teams">Teams</a></li>
+                            <li><a class="dropdown-item" href="/football/players">Players</a></li>
+                            <li><a class="dropdown-item" href="/football/matches/fixtures">Fixtures</a></li>
+                            <li><a class="dropdown-item" href="/football/matches/results">Results</a></li>
+                            <li><a class="dropdown-item" href="/football/matches/standings">Standings</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item m-auto">
-                        <a class="nav-link active" href="/matches">Matches</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="basketballDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Basketball
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="basketballDropdown">
+                            <li><a class="dropdown-item" href="/basketball/matches">Matches</a></li>
+                            <li><a class="dropdown-item" href="/basketball/teams">Teams</a></li>
+                            <li><a class="dropdown-item" href="/basketball/players">Players</a></li>
+                            <li><a class="dropdown-item" href="/basketball/matches/fixtures">Fixtures</a></li>
+                            <li><a class="dropdown-item" href="/basketball/matches/results">Results</a></li>
+                            <li><a class="dropdown-item" href="/basketball/matches/standings">Standings</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="volleyballDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Volleyball
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="volleyballDropdown">
+                            <li><a class="dropdown-item" href="/volleyball/matches">Matches</a></li>
+                            <li><a class="dropdown-item" href="/volleyball/teams">Teams</a></li>
+                            <li><a class="dropdown-item" href="/volleyball/players">Players</a></li>
+                            <li><a class="dropdown-item" href="/volleyball/matches/fixtures">Fixtures</a></li>
+                            <li><a class="dropdown-item" href="/volleyball/matches/results">Results</a></li>
+                            <li><a class="dropdown-item" href="/volleyball/matches/standings">Standings</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/fantasy">Fantasy League</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/shop">Shop</a>
                     </li>
                 </ul>
-
+                <ul class="navbar-nav">
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" href="/register">Register</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link nav-link">Logout</button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 </header>
+</body>
+</html>
