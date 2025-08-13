@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Service
@@ -359,43 +358,28 @@ public class VolleyballMatchServiceImpl implements VolleyballMatchService {
         int homeSetsWon = 0;
         int awaySetsWon = 0;
 
-        // Helper function to check if a set is won
-        BiFunction<Integer, Integer, Integer> checkSetWinner = (homePoints, awayPoints) -> {
-            // For regular sets (1-4)
-            int minPointsToWin = (currentSet == 5) ? 15 : 25;
-            int pointDifference = Math.abs(homePoints - awayPoints);
-            
-            // Check if either team has won
-            if (homePoints >= minPointsToWin && pointDifference >= 2) {
-                return 1; // Home team wins
-            } else if (awayPoints >= minPointsToWin && pointDifference >= 2) {
-                return -1; // Away team wins
-            }
-            return 0; // No winner yet
-        };
-
-        // Check Set 1
-        int set1Result = checkSetWinner.apply(match.getHomeTeamSet1Points(), match.getAwayTeamSet1Points());
+        // Check Set 1 (to 25, win by 2)
+        int set1Result = determineSetWinner(1, match.getHomeTeamSet1Points(), match.getAwayTeamSet1Points());
         if (set1Result == 1) homeSetsWon++;
         else if (set1Result == -1) awaySetsWon++;
 
-        // Check Set 2
-        int set2Result = checkSetWinner.apply(match.getHomeTeamSet2Points(), match.getAwayTeamSet2Points());
+        // Check Set 2 (to 25, win by 2)
+        int set2Result = determineSetWinner(2, match.getHomeTeamSet2Points(), match.getAwayTeamSet2Points());
         if (set2Result == 1) homeSetsWon++;
         else if (set2Result == -1) awaySetsWon++;
 
-        // Check Set 3
-        int set3Result = checkSetWinner.apply(match.getHomeTeamSet3Points(), match.getAwayTeamSet3Points());
+        // Check Set 3 (to 25, win by 2)
+        int set3Result = determineSetWinner(3, match.getHomeTeamSet3Points(), match.getAwayTeamSet3Points());
         if (set3Result == 1) homeSetsWon++;
         else if (set3Result == -1) awaySetsWon++;
 
-        // Check Set 4
-        int set4Result = checkSetWinner.apply(match.getHomeTeamSet4Points(), match.getAwayTeamSet4Points());
+        // Check Set 4 (to 25, win by 2)
+        int set4Result = determineSetWinner(4, match.getHomeTeamSet4Points(), match.getAwayTeamSet4Points());
         if (set4Result == 1) homeSetsWon++;
         else if (set4Result == -1) awaySetsWon++;
 
-        // Check Set 5
-        int set5Result = checkSetWinner.apply(match.getHomeTeamSet5Points(), match.getAwayTeamSet5Points());
+        // Check Set 5 (tie-break to 15, win by 2)
+        int set5Result = determineSetWinner(5, match.getHomeTeamSet5Points(), match.getAwayTeamSet5Points());
         if (set5Result == 1) homeSetsWon++;
         else if (set5Result == -1) awaySetsWon++;
 
@@ -409,6 +393,17 @@ public class VolleyballMatchServiceImpl implements VolleyballMatchService {
         }
 
         matchRepository.save(match);
+    }
+
+    private int determineSetWinner(int setIndex, int homePoints, int awayPoints) {
+        int minPointsToWin = (setIndex == 5) ? 15 : 25;
+        if (homePoints >= minPointsToWin && (homePoints - awayPoints) >= 2) {
+            return 1;
+        }
+        if (awayPoints >= minPointsToWin && (awayPoints - homePoints) >= 2) {
+            return -1;
+        }
+        return 0;
     }
     @Override
     @Transactional

@@ -125,23 +125,25 @@
 
 <script>
     function calculateTotalPoints() {
-        let homePoints = 0;
-        let awayPoints = 0;
+        let homeSetsWon = 0;
+        let awaySetsWon = 0;
 
-        // Calculate total sets won for home team
         for (let i = 1; i <= 5; i++) {
             const homeSetPoints = parseInt(document.getElementById(`homeTeamSet${i}Points`).value) || 0;
             const awaySetPoints = parseInt(document.getElementById(`awayTeamSet${i}Points`).value) || 0;
-            
-            if (homeSetPoints > awaySetPoints) {
-                homePoints++;
-            } else if (awaySetPoints > homeSetPoints) {
-                awayPoints++;
+
+            const minToWin = (i === 5) ? 15 : 25;
+            if (homeSetPoints >= minToWin || awaySetPoints >= minToWin) {
+                if (homeSetPoints >= minToWin && (homeSetPoints - awaySetPoints) >= 2) {
+                    homeSetsWon++;
+                } else if (awaySetPoints >= minToWin && (awaySetPoints - homeSetPoints) >= 2) {
+                    awaySetsWon++;
+                }
             }
         }
 
-        document.getElementById('homeTeamPoints').value = homePoints;
-        document.getElementById('awayTeamPoints').value = awayPoints;
+        document.getElementById('homeTeamPoints').value = homeSetsWon;
+        document.getElementById('awayTeamPoints').value = awaySetsWon;
     }
 
     function validateForm() {
@@ -162,7 +164,7 @@
             return false;
         }
 
-        // Validate set scores
+        // Validate set scores (max thresholds per set)
         for (let i = 1; i <= 5; i++) {
             const homePoints = parseInt(document.getElementById(`homeTeamSet${i}Points`).value) || 0;
             const awayPoints = parseInt(document.getElementById(`awayTeamSet${i}Points`).value) || 0;

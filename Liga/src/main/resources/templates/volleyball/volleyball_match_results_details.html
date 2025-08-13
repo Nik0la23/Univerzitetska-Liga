@@ -13,8 +13,39 @@
 <div class="container">
     <p><strong>Home Team:</strong> <span th:text="${match.homeTeam.getTeamName()}">Home Team Name</span></p>
     <p><strong>Away Team:</strong> <span th:text="${match.awayTeam.getTeamName()}">Away Team Name</span></p>
-    <p><strong>Home Team Points:</strong> <span th:text="${match.homeTeamPoints}">0</span></p>
-    <p><strong>Away Team Points:</strong> <span th:text="${match.awayTeamPoints}">0</span></p>
+    <p><strong>Sets Won:</strong> <span th:text="${match.homeTeamPoints}">0</span> - <span th:text="${match.awayTeamPoints}">0</span></p>
+
+    <h4 class="mt-3">Set Scores</h4>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Team</th>
+            <th>Set 1</th>
+            <th>Set 2</th>
+            <th>Set 3</th>
+            <th>Set 4</th>
+            <th>Set 5</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${match.homeTeam.teamName}">Home Team</td>
+            <td th:text="${match.homeTeamSet1Points}">0</td>
+            <td th:text="${match.homeTeamSet2Points}">0</td>
+            <td th:text="${match.homeTeamSet3Points}">0</td>
+            <td th:text="${match.homeTeamSet4Points}">0</td>
+            <td th:text="${match.homeTeamSet5Points}">0</td>
+        </tr>
+        <tr>
+            <td th:text="${match.awayTeam.teamName}">Away Team</td>
+            <td th:text="${match.awayTeamSet1Points}">0</td>
+            <td th:text="${match.awayTeamSet2Points}">0</td>
+            <td th:text="${match.awayTeamSet3Points}">0</td>
+            <td th:text="${match.awayTeamSet4Points}">0</td>
+            <td th:text="${match.awayTeamSet5Points}">0</td>
+        </tr>
+        </tbody>
+    </table>
     <a th:href="@{/volleyball/matches/results/details/stats/{id}(id=${match.getVolleyball_match_id()})}" class="btn btn-info">View Stats</a>
     <a th:href="@{/volleyball/matches/results}" class="btn btn-primary">Back to Results</a>
 </div>

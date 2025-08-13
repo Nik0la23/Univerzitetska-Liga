@@ -103,9 +103,9 @@
         </div>
 
         <div class="form-group">
-            <label for="points">Points:</label>
+            <label for="points">Points to add:</label>
             <input type="number" class="form-control" id="points" name="points" required min="0" max="25">
-            <small class="form-text text-muted">Enter points for the selected set (0-25, max 15 for Set 5)</small>
+            <small class="form-text text-muted">For Set 5, the max is 15.</small>
         </div>
 
         <div class="form-group">
@@ -156,13 +156,7 @@
 
         function updatePointsLimit() {
             const selectedSet = parseInt(setSelect.value);
-            if (selectedSet === 5) {
-                pointsInput.max = "15";
-                pointsInput.nextElementSibling.textContent = "Enter points for Set 5 (0-15)";
-            } else {
-                pointsInput.max = "25";
-                pointsInput.nextElementSibling.textContent = "Enter points for the selected set (0-25)";
-            }
+                pointsInput.max = (selectedSet === 5) ? "15" : "25";
         }
         
         teamSelect.addEventListener("change", updatePlayerOptions);
