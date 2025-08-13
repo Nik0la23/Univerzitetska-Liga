@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping({"/","/matches", "/football"})
+@RequestMapping({"/matches", "/football"})
 public class FootballMatchController {
 
     private final FootballMatchService footballMatchService;
