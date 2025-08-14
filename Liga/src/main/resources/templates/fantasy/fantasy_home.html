@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="container mt-4">
+    <h2 th:text="'Fantasy League - ' + ${sport}"></h2>
+
+    <div th:if="${team} == null" class="my-3">
+        <form th:action="@{/fantasy/create}" method="post" class="form-inline">
+            <input type="hidden" name="sport" th:value="${sport}"/>
+            <div class="form-group mr-2">
+                <input class="form-control" type="text" name="teamName" placeholder="Team name" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create your Fantasy Team</button>
+        </form>
+    </div>
+
+    <div th:if="${team} != null" class="my-3">
+        <h4 th:text="${team.teamName} + ' (Budget: $' + (${team.budgetTotal} - ${team.budgetSpent}) + 'M)'"></h4>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <h5>Filters</h5>
+            <div class="form-group">
+                <input type="text" id="search" class="form-control" placeholder="Search by name">
+            </div>
+            <div class="form-group">
+                <select id="position" class="form-control">
+                    <option value="">All positions</option>
+                    <option>GK</option><option>DEF</option><option>MID</option><option>FWD</option>
+                    <option>PG</option><option>SG</option><option>SF</option><option>PF</option><option>C</option>
+                </select>
+            </div>
+            <div class="form-group" th:if="${teams}!=null">
+                <select id="team" class="form-control">
+                    <option value="">All teams</option>
+                    <option th:each="t : ${teams}" th:value="${t.id != null ? t.id : t.volleyball_team_id}"
+                            th:text="${t.teamName}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h5>Players</h5>
+            <table class="table table-sm">
+                <thead>
+                <tr><th>Name</th><th>Team</th><th>Position</th><th>Price (M)</th></tr>
+                </thead>
+                <tbody id="playersTable">
+                <tr th:each="p : ${players}">
+                    <td th:text="${p.name + ' ' + p.surname}"></td>
+                    <td th:text="${#fields.hasOwnProperty(p, 'team') ? (p.team != null ? p.team.teamName : '') : ''}"></td>
+                    <td th:text="${p.position}"></td>
+                    <td th:text="${#fields.hasOwnProperty(p, 'price') ? p.price : 5.0}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const search = document.getElementById('search');
+    const position = document.getElementById('position');
+    const team = document.getElementById('team');
+    const rows = () => Array.from(document.querySelectorAll('#playersTable tr'));
+
+    function normalize(s){ return (s||'').toString().toLowerCase(); }
+
+    function applyFilters(){
+        const s = normalize(search.value);
+        const pos = normalize(position.value);
+        const t = team ? normalize(team.value) : '';
+        rows().forEach(tr => {
+            const name = normalize(tr.children[0].innerText);
+            const teamId = normalize(tr.getAttribute('data-team-id'));
+            const playerPos = normalize(tr.children[2].innerText);
+            const okName = !s || name.includes(s);
+            const okPos = !pos || playerPos === pos;
+            const okTeam = !t || teamId === t;
+            tr.style.display = (okName && okPos && okTeam) ? '' : 'none';
+        });
+    }
+
+    [search, position, team].forEach(el => el && el.addEventListener('input', applyFilters));
+</script>
+</body>
+</html>
+
+
+

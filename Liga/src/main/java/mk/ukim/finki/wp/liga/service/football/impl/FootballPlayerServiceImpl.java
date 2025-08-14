@@ -5,8 +5,12 @@ import lombok.AllArgsConstructor;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidFootballPlayerException;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidFootballTeamException;
 import mk.ukim.finki.wp.liga.model.FootballPlayer;
+import mk.ukim.finki.wp.liga.model.FootballPlayerScored;
 import mk.ukim.finki.wp.liga.model.FootballTeam;
+import mk.ukim.finki.wp.liga.model.fantasy.FantasyPlayer;
+import mk.ukim.finki.wp.liga.repository.fantasy.FantasyPlayerRepository;
 import mk.ukim.finki.wp.liga.repository.football.FootballPlayerRepository;
+import mk.ukim.finki.wp.liga.repository.football.FootballPlayerScoredRepository;
 import mk.ukim.finki.wp.liga.repository.football.FootballTeamRepository;
 import mk.ukim.finki.wp.liga.service.football.FootballPlayerService;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,6 +27,8 @@ public class FootballPlayerServiceImpl implements FootballPlayerService {
 
     private final FootballPlayerRepository footballPlayerRepository;
     private final FootballTeamRepository footballTeamRepository;
+    private final FantasyPlayerRepository fantasyPlayerRepository;
+    private final FootballPlayerScoredRepository footballPlayerScoredRepository;
 
     @Override
     @Transactional
@@ -68,7 +74,25 @@ public class FootballPlayerServiceImpl implements FootballPlayerService {
     @Transactional
     public FootballPlayer delete(Long id) {
         FootballPlayer p = this.findById(id);
+        
+        // First, delete any fantasy players that reference this football player
+        List<FantasyPlayer> fantasyPlayers = fantasyPlayerRepository.findAll().stream()
+                .filter(fp -> fp.getFootballPlayer() != null && fp.getFootballPlayer().getFootball_player_id().equals(id))
+                .collect(Collectors.toList());
+        
+        if (!fantasyPlayers.isEmpty()) {
+            fantasyPlayerRepository.deleteAll(fantasyPlayers);
+        }
+        
+        // Second, delete any player scored records that reference this football player
+        List<FootballPlayerScored> playerScoredRecords = footballPlayerScoredRepository.findByPlayer(p);
+        if (!playerScoredRecords.isEmpty()) {
+            footballPlayerScoredRepository.deleteAll(playerScoredRecords);
+        }
+        
+        // Now delete the football player
         footballPlayerRepository.delete(p);
+        
         return p;
     }
 

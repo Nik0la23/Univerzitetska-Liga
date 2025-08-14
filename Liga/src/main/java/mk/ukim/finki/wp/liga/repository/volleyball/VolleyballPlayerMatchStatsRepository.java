@@ -11,5 +11,5 @@ public interface VolleyballPlayerMatchStatsRepository extends JpaRepository<Voll
     List<VolleyballPlayerMatchStats> findByVolleyballMatch(VolleyballMatch volleyballMatch);
     VolleyballPlayerMatchStats findByIdAndVolleyballMatch(Long id, VolleyballMatch volleyballMatch);
     VolleyballPlayerMatchStats findByPlayerAndVolleyballMatch(VolleyballPlayer volleyballPlayer, VolleyballMatch volleyballMatch);
-
+    List<VolleyballPlayerMatchStats> findByPlayer(VolleyballPlayer player);
 }

@@ -108,11 +108,11 @@
             <label for="playerPosition" class="form-label">Position</label>
             <select class="form-select" id="playerPosition" name="playerPosition" required>
                 <option value="" disabled selected>Select Position</option>
-                <option th:value="'Point Guard'" th:selected="${player != null && player.getPosition() == 'Point Guard'}">Point Guard</option>
-                <option th:value="'Shooting Guard'" th:selected="${player != null && player.getPosition() == 'Shooting Guard'}">Shooting Guard</option>
-                <option th:value="'Small Forward'" th:selected="${player != null && player.getPosition() == 'Small Forward'}">Small Forward</option>
-                <option th:value="'Power Forward'" th:selected="${player != null && player.getPosition() == 'Power Forward'}">Power Forward</option>
-                <option th:value="'Center'" th:selected="${player != null && player.getPosition() == 'Center'}">Center</option>
+                <option th:value="'PG'" th:selected="${player != null && player.getPosition() == 'PG'}">Point Guard (PG)</option>
+                <option th:value="'SG'" th:selected="${player != null && player.getPosition() == 'SG'}">Shooting Guard (SG)</option>
+                <option th:value="'SF'" th:selected="${player != null && player.getPosition() == 'SF'}">Small Forward (SF)</option>
+                <option th:value="'PF'" th:selected="${player != null && player.getPosition() == 'PF'}">Power Forward (PF)</option>
+                <option th:value="'C'" th:selected="${player != null && player.getPosition() == 'C'}">Center (C)</option>
 
             </select>
             <div class="invalid-feedback">Please select the player's position.</div>

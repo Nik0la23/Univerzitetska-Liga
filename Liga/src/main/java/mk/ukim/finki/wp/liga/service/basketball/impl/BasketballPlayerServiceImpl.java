@@ -2,13 +2,17 @@ package mk.ukim.finki.wp.liga.service.basketball.impl;
 
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.wp.liga.model.BasketballPlayer;
+import mk.ukim.finki.wp.liga.model.BasketballPlayerMatchStats;
 import mk.ukim.finki.wp.liga.model.BasketballTeam;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidBasketballPlayerException;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidBasketballTeamException;
 import mk.ukim.finki.wp.liga.model.FootballPlayer;
 import mk.ukim.finki.wp.liga.model.FootballTeam;
+import mk.ukim.finki.wp.liga.model.fantasy.FantasyPlayer;
+import mk.ukim.finki.wp.liga.repository.basketball.BasketballPlayerMatchStatsRepository;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballPlayerRepository;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballTeamRepository;
+import mk.ukim.finki.wp.liga.repository.fantasy.FantasyPlayerRepository;
 import mk.ukim.finki.wp.liga.service.basketball.BasketballPlayerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +27,8 @@ public class BasketballPlayerServiceImpl implements BasketballPlayerService {
 
     private final BasketballPlayerRepository basketballPlayerRepository;
     private final BasketballTeamRepository basketballTeamRepository;
+    private final FantasyPlayerRepository fantasyPlayerRepository;
+    private final BasketballPlayerMatchStatsRepository basketballPlayerMatchStatsRepository;
 
     @Override
     public List<BasketballPlayer> listAllPlayers() {
@@ -66,7 +72,25 @@ public class BasketballPlayerServiceImpl implements BasketballPlayerService {
     @Transactional
     public BasketballPlayer delete(Long id) {
         BasketballPlayer p = this.findById(id);
+        
+        // First, delete any fantasy players that reference this basketball player
+        List<FantasyPlayer> fantasyPlayers = fantasyPlayerRepository.findAll().stream()
+                .filter(fp -> fp.getBasketballPlayer() != null && fp.getBasketballPlayer().getBasketball_player_id().equals(id))
+                .collect(Collectors.toList());
+        
+        if (!fantasyPlayers.isEmpty()) {
+            fantasyPlayerRepository.deleteAll(fantasyPlayers);
+        }
+        
+        // Second, delete any match stats that reference this basketball player
+        List<BasketballPlayerMatchStats> matchStats = basketballPlayerMatchStatsRepository.findByPlayer(p);
+        if (!matchStats.isEmpty()) {
+            basketballPlayerMatchStatsRepository.deleteAll(matchStats);
+        }
+        
+        // Now delete the basketball player
         basketballPlayerRepository.delete(p);
+        
         return p;
     }
 

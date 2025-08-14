@@ -5,7 +5,11 @@ import lombok.AllArgsConstructor;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidVolleyballPlayerException;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidVolleyballTeamException;
 import mk.ukim.finki.wp.liga.model.VolleyballPlayer;
+import mk.ukim.finki.wp.liga.model.VolleyballPlayerMatchStats;
 import mk.ukim.finki.wp.liga.model.VolleyballTeam;
+import mk.ukim.finki.wp.liga.model.fantasy.FantasyPlayer;
+import mk.ukim.finki.wp.liga.repository.fantasy.FantasyPlayerRepository;
+import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballPlayerMatchStatsRepository;
 import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballPlayerRepository;
 import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballTeamRepository;
 import mk.ukim.finki.wp.liga.service.volleyball.VolleyballPlayerService;
@@ -21,6 +25,8 @@ public class VolleyballPlayerServiceImpl implements VolleyballPlayerService {
 
     private final VolleyballPlayerRepository volleyballPlayerRepository;
     private final VolleyballTeamRepository volleyballTeamRepository;
+    private final FantasyPlayerRepository fantasyPlayerRepository;
+    private final VolleyballPlayerMatchStatsRepository volleyballPlayerMatchStatsRepository;
 
     @Override
     public List<VolleyballPlayer> listAllPlayers() {
@@ -65,7 +71,25 @@ public class VolleyballPlayerServiceImpl implements VolleyballPlayerService {
     @Transactional
     public VolleyballPlayer delete(Long id) {
         VolleyballPlayer p = this.findById(id);
+        
+        // First, delete any fantasy players that reference this volleyball player
+        List<FantasyPlayer> fantasyPlayers = fantasyPlayerRepository.findAll().stream()
+                .filter(fp -> fp.getVolleyballPlayer() != null && fp.getVolleyballPlayer().getVolleyball_player_id().equals(id))
+                .collect(Collectors.toList());
+        
+        if (!fantasyPlayers.isEmpty()) {
+            fantasyPlayerRepository.deleteAll(fantasyPlayers);
+        }
+        
+        // Second, delete any match stats that reference this volleyball player
+        List<VolleyballPlayerMatchStats> matchStats = volleyballPlayerMatchStatsRepository.findByPlayer(p);
+        if (!matchStats.isEmpty()) {
+            volleyballPlayerMatchStatsRepository.deleteAll(matchStats);
+        }
+        
+        // Now delete the volleyball player
         volleyballPlayerRepository.delete(p);
+        
         return p;
     }
 

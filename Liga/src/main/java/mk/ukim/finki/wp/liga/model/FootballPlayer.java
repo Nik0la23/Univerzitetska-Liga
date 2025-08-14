@@ -1,16 +1,11 @@
 package mk.ukim.finki.wp.liga.model;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
 
-
-import java.awt.*;
 import java.util.Date;
 @Data
 @Setter
@@ -37,6 +32,7 @@ public class FootballPlayer {
     private int goals;
     private int assists;
     private int saves;
+    private Double price;
 
     public FootballPlayer(byte [] image, String name, String surname, Date birthdate, int index,
                           String city, String position, FootballTeam team) {
@@ -52,6 +48,7 @@ public class FootballPlayer {
         this.goals = 0;
         this.assists = 0;
         this.saves = 0;
+        this.price = 5.0;
     }
 
     public FootballPlayer() {

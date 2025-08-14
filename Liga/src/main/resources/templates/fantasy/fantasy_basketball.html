@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        #basketball-court-main, .basketball-court {
+            width: 400px !important;
+            height: 200px !important;
+            background: linear-gradient(45deg, #FF8C00 0%, #FFA500 100%) !important;
+            border: 3px solid white !important;
+            position: relative !important;
+            margin: 20px auto !important;
+            border-radius: 10px !important;
+            display: block !important;
+            box-sizing: border-box !important;
+        }
+        
+        .court-line {
+            position: absolute;
+            background: white;
+            z-index: 1;
+        }
+        
+        .center-line {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            top: 0;
+            margin-left: -1px;
+        }
+        
+        .center-circle {
+            width: 60px;
+            height: 60px;
+            border: 2px solid white;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: transparent;
+        }
+        
+        .free-throw-circle {
+            width: 100px;
+            height: 100px;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            background: transparent;
+        }
+        
+        .free-throw-circle.left {
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .free-throw-circle.right {
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .three-point-line {
+            width: 120px;
+            height: 80px;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+        }
+        
+        .three-point-line.left {
+            left: 5px;
+            border-right: none;
+        }
+        
+        .three-point-line.right {
+            right: 5px;
+            border-left: none;
+        }
+        
+        .basket {
+            width: 8px;
+            height: 8px;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            background: white;
+        }
+        
+        .basket.left {
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .basket.right {
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .free-throw-lane {
+            width: 60px;
+            height: 100px;
+            border: 2px solid white;
+            position: absolute;
+            background: transparent;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .free-throw-lane.left {
+            left: 10px;
+        }
+        
+        .free-throw-lane.right {
+            right: 10px;
+        }
+        
+        .position-slot {
+            width: 30px;
+            height: 30px;
+            border: 2px dashed #FFD700;
+            border-radius: 50%;
+            position: absolute;
+            background: rgba(255, 215, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            z-index: 2;
+            box-sizing: border-box;
+        }
+        
+        /* Position slots for basketball - realistic positioning */
+        .pg { left: 180px; top: 30px; } /* Point Guard - top of key */
+        .sg { left: 260px; top: 70px; } /* Shooting Guard - wing */
+        .sf { left: 260px; top: 130px; } /* Small Forward - wing */
+        .pf { left: 140px; top: 160px; } /* Power Forward - low post */
+        .c { left: 140px; top: 90px; } /* Center - paint area */
+        
+        .player-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .player-card {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .player-card:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        
+        .position-badge {
+            background: #6f42c1;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .price-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Basketball Fantasy League</h2>
+
+    <div th:if="${team} == null" class="my-3">
+        <div class="alert alert-warning">
+            <h5>Create Your Fantasy Team</h5>
+            <p>Dribble your way to victory with the best basketball players!</p>
+        </div>
+        <form th:action="@{/fantasy/create}" method="post" class="form-inline">
+            <input type="hidden" name="sport" value="BASKETBALL"/>
+            <div class="form-group mr-2">
+                <input class="form-control" type="text" name="teamName" placeholder="Enter your team name" required>
+            </div>
+            <button type="submit" class="btn btn-warning">Create Fantasy Team</button>
+        </form>
+    </div>
+
+    <div th:if="${team} != null" class="my-3">
+        <div class="alert alert-warning">
+            <h4 th:text="${team.teamName}"></h4>
+            <p class="mb-0">
+                <strong>Remaining Budget: $<span th:text="${#numbers.formatDecimal(team.budgetTotal - team.budgetSpent, 1, 1)}"></span>M</strong>
+                <span class="text-muted">/ $<span th:text="${team.budgetTotal}"></span>M</span>
+            </p>
+            <small class="text-muted">Spent: $<span th:text="${#numbers.formatDecimal(team.budgetSpent, 1, 1)}"></span>M</small>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Basketball Court -->
+        <div class="col-md-6">
+            <h5 class="text-center">Your Starting Five</h5>
+            <div id="basketball-court-main" class="basketball-court" style="width: 400px; height: 200px; background: linear-gradient(45deg, #FF8C00 0%, #FFA500 100%); border: 3px solid white; position: relative; margin: 20px auto; border-radius: 10px; display: block;">
+                <!-- Court lines -->
+                <div class="court-line center-line"></div>
+                <div class="court-line center-circle"></div>
+                
+                <!-- Free throw lanes (paint/key areas) -->
+                <div class="court-line free-throw-lane left"></div>
+                <div class="court-line free-throw-lane right"></div>
+                
+                <!-- Free throw circles -->
+                <div class="court-line free-throw-circle left"></div>
+                <div class="court-line free-throw-circle right"></div>
+                
+                <!-- Three-point lines -->
+                <div class="court-line three-point-line left"></div>
+                <div class="court-line three-point-line right"></div>
+                
+                <!-- Baskets -->
+                <div class="court-line basket left"></div>
+                <div class="court-line basket right"></div>
+                
+                <!-- Position slots -->
+                <div class="position-slot pg" title="Point Guard">PG</div>
+                <div class="position-slot sg" title="Shooting Guard">SG</div>
+                <div class="position-slot sf" title="Small Forward">SF</div>
+                <div class="position-slot pf" title="Power Forward">PF</div>
+                <div class="position-slot c" title="Center">C</div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <small class="text-muted">Click on a position to assign a player</small>
+            </div>
+        </div>
+
+        <!-- Player List -->
+        <div class="col-md-6">
+            <h5>Available Players</h5>
+            
+            <!-- Filters -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search players...">
+                </div>
+                <div class="col-md-4">
+                    <select id="positionFilter" class="form-control form-control-sm">
+                        <option value="">All Positions</option>
+                        <option value="PG">Point Guard</option>
+                        <option value="SG">Shooting Guard</option>
+                        <option value="SF">Small Forward</option>
+                        <option value="PF">Power Forward</option>
+                        <option value="C">Center</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select id="teamFilter" class="form-control form-control-sm">
+                        <option value="">All Teams</option>
+                        <option th:each="team : ${teams}" 
+                                th:value="${team.id}" 
+                                th:text="${team.teamName}"></option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="player-list">
+                <div th:each="player : ${players}" 
+                     class="player-card border rounded p-2 mb-2"
+                     th:data-team-id="${player.team?.id}"
+                     th:data-position="${player.position}"
+                     th:data-name="${player.name + ' ' + player.surname}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong th:text="${player.name + ' ' + player.surname}"></strong>
+                            <br>
+                            <small class="text-muted" th:text="${player.team?.teamName}"></small>
+                        </div>
+                        <div class="text-right">
+                            <span class="position-badge" th:text="${player.position}"></span>
+                            <br>
+                            <span class="price-badge">$<span th:text="${player.price ?: 5.0}"></span>M</span>
+                            <br>
+                            <!-- Show Buy button when team exists and player not owned -->
+                            <button th:if="${team != null and (boughtPlayerIds == null or !#lists.contains(boughtPlayerIds, player.basketball_player_id))}" 
+                                    th:onclick="'buyPlayer(\'basketball\', ' + ${player.basketball_player_id} + ')'" 
+                                    class="btn btn-warning btn-sm mt-1">Buy</button>
+                            <!-- Show Owned badge if player is already bought -->
+                            <span th:if="${team != null and boughtPlayerIds != null and #lists.contains(boughtPlayerIds, player.basketball_player_id)}" 
+                                  class="badge badge-secondary">Owned</span>
+                        </div>
+                    </div>
+                    <div class="mt-1">
+                        <small class="text-muted">
+                            Points: <span th:text="${player.points}"></span> | 
+                            Assists: <span th:text="${player.assists}"></span> | 
+                            Rebounds: <span th:text="${player.rebounds}"></span> | 
+                            Apps: <span th:text="${player.appearances}"></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bought Players Section -->
+    <div th:if="${team != null && boughtPlayers != null && !boughtPlayers.empty}" class="row mt-4">
+        <div class="col-12">
+            <h5>Your Squad</h5>
+            <div class="row">
+                <div th:each="fantasyPlayer : ${boughtPlayers}" class="col-md-3 mb-3">
+                    <div class="card h-100" 
+                         th:classappend="${fantasyPlayer.assignedPosition != null ? 'border-success' : 'border-secondary'}"
+                         th:data-fantasy-player-id="${fantasyPlayer.id}"
+                         th:data-player-position="${fantasyPlayer.playerPosition}"
+                         style="cursor: pointer;">
+                        <!-- Player image removed for security reasons -->
+                        <div class="card-body text-center">
+                            <h6 class="card-title" th:text="${fantasyPlayer.playerName}"></h6>
+                            <p class="card-text">
+                                <span class="position-badge" th:text="${fantasyPlayer.playerPosition}"></span><br>
+                                <small class="text-muted" th:text="${fantasyPlayer.teamName}"></small><br>
+                                <span class="price-badge">$<span th:text="${fantasyPlayer.pricePaid}"></span>M</span>
+                            </p>
+                            <div th:if="${fantasyPlayer.assignedPosition != null}" class="alert alert-success py-1">
+                                <small>Playing: <strong th:text="${fantasyPlayer.assignedPosition}"></strong></small>
+                            </div>
+                            <div th:if="${fantasyPlayer.assignedPosition == null}" class="alert alert-warning py-1">
+                                <small>Not assigned</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const positionFilter = document.getElementById('positionFilter');
+    const teamFilter = document.getElementById('teamFilter');
+    const playerCards = document.querySelectorAll('.player-card');
+
+    function filterPlayers() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedPosition = positionFilter.value;
+        const selectedTeam = teamFilter.value;
+
+        playerCards.forEach(card => {
+            const playerName = card.dataset.name.toLowerCase();
+            const playerPosition = card.dataset.position;
+            const playerTeam = card.dataset.teamId;
+
+            const matchesSearch = !searchTerm || playerName.includes(searchTerm);
+            const matchesPosition = !selectedPosition || playerPosition === selectedPosition;
+            const matchesTeam = !selectedTeam || playerTeam === selectedTeam;
+
+            if (matchesSearch && matchesPosition && matchesTeam) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    searchInput.addEventListener('input', filterPlayers);
+    positionFilter.addEventListener('change', filterPlayers);
+    teamFilter.addEventListener('change', filterPlayers);
+
+    let selectedPosition = null;
+
+    // Position slot click handlers
+    document.querySelectorAll('.position-slot').forEach(slot => {
+        slot.addEventListener('click', function() {
+            // Remove previous selection
+            document.querySelectorAll('.position-slot').forEach(s => s.style.background = 'rgba(255, 215, 0, 0.3)');
+            
+            // Highlight selected position
+            this.style.background = 'rgba(255, 0, 0, 0.5)';
+            selectedPosition = this.textContent;
+            
+            // Show message
+            alert('Position ' + selectedPosition + ' selected. Now click on a bought player to assign them.');
+        });
+    });
+
+    // Bought player card click handlers for assignment
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', function() {
+            if (selectedPosition) {
+                const fantasyPlayerId = this.dataset.fantasyPlayerId;
+                const playerPosition = this.dataset.playerPosition;
+                
+                if (fantasyPlayerId) {
+                    // Check if player position matches selected position
+                    if (isPositionCompatible(playerPosition, selectedPosition)) {
+                        // Submit assignment form
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/fantasy/assign/' + fantasyPlayerId;
+                        
+                        const positionInput = document.createElement('input');
+                        positionInput.type = 'hidden';
+                        positionInput.name = 'position';
+                        positionInput.value = selectedPosition;
+                        
+                        const sportInput = document.createElement('input');
+                        sportInput.type = 'hidden';
+                        sportInput.name = 'sport';
+                        sportInput.value = 'BASKETBALL';
+                        
+                        form.appendChild(positionInput);
+                        form.appendChild(sportInput);
+                        document.body.appendChild(form);
+                        form.submit();
+                    } else {
+                        alert('Player position ' + playerPosition + ' is not compatible with ' + selectedPosition);
+                    }
+                }
+            }
+        });
+    });
+
+    function isPositionCompatible(playerPos, slotPos) {
+        const compatibility = {
+            'PG': ['PG'],
+            'SG': ['SG'], 
+            'SF': ['SF'],
+            'PF': ['PF'],
+            'C': ['C']
+        };
+        
+        return compatibility[slotPos] && compatibility[slotPos].includes(playerPos);
+    }
+
+    // Function to handle player purchases
+    window.buyPlayer = function(sport, playerId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/fantasy/buy/' + sport + '/' + playerId;
+        document.body.appendChild(form);
+        form.submit();
+    };
+});
+</script>
+</body>
+</html>

@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.awt.*;
 import java.util.Date;
 @Data
 @Entity
@@ -33,6 +32,7 @@ public class VolleyballPlayer {
     private int assists;
     private int scoredPoints;
     private int blocks;
+    private Double price;
 
     public VolleyballPlayer(byte[] image, String name, String surname, Date birthdate, int index,
                             String city, String position, VolleyballTeam team) {
@@ -49,6 +49,7 @@ public class VolleyballPlayer {
         this.assists = 0;
         this.scoredPoints = 0;
         this.blocks = 0;
+        this.price = 5.0;
     }
 
     public VolleyballPlayer() {

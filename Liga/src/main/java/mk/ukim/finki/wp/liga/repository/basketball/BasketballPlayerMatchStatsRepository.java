@@ -10,4 +10,5 @@ import java.util.List;
 public interface BasketballPlayerMatchStatsRepository extends JpaRepository<BasketballPlayerMatchStats, Long> {
     List<BasketballPlayerMatchStats> findByBasketballMatch(BasketballMatch basketballMatch);
     BasketballPlayerMatchStats findByPlayerAndBasketballMatch(BasketballPlayer basketballPlayer, BasketballMatch basketballMatch);
+    List<BasketballPlayerMatchStats> findByPlayer(BasketballPlayer player);
 }

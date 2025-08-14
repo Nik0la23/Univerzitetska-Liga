@@ -32,6 +32,7 @@ public class BasketballPlayer {
     private int points;
     private int assists;
     private int rebounds;
+    private Double price;
 
     public BasketballPlayer(byte[] image, String name, String surname, Date birthdate, int index,
                             String city, String position, BasketballTeam team) {
@@ -47,6 +48,7 @@ public class BasketballPlayer {
         this.points = 0;
         this.assists = 0;
         this.rebounds = 0;
+        this.price = 5.0;
     }
 
     public BasketballPlayer() {

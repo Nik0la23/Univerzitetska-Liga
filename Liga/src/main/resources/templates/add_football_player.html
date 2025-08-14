@@ -69,10 +69,10 @@
             <label for="playerPosition" class="form-label">Position</label>
             <select class="form-select" id="playerPosition" name="playerPosition" required>
                 <option value="" disabled selected>Select Position</option>
-                <option th:value="'Goalkeeper'" th:selected="${player != null && player.getPosition() == 'Goalkeeper'}">Goalkeeper</option>
-                <option th:value="'Defense'" th:selected="${player != null && player.getPosition() == 'Defense'}">Defense</option>
-                <option th:value="'Center'" th:selected="${player != null && player.getPosition() == 'Center'}">Center</option>
-                <option th:value="'Offense'" th:selected="${player != null && player.getPosition() == 'Offense'}">Offense</option>
+                <option th:value="'GK'" th:selected="${player != null && player.getPosition() == 'GK'}">Goalkeeper (GK)</option>
+                <option th:value="'DEF'" th:selected="${player != null && player.getPosition() == 'DEF'}">Defender (DEF)</option>
+                <option th:value="'MID'" th:selected="${player != null && player.getPosition() == 'MID'}">Midfielder (MID)</option>
+                <option th:value="'FWD'" th:selected="${player != null && player.getPosition() == 'FWD'}">Forward (FWD)</option>
             </select>
             <div class="invalid-feedback">Please select the player's position.</div>
         </div>

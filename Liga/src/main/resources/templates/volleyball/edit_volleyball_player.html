@@ -95,10 +95,12 @@
             <label for="playerPosition" class="form-label">Position</label>
             <select class="form-select" id="playerPosition" name="playerPosition" required>
                 <option value="" disabled selected>Select Position</option>
-                <option th:value="'Libero'" th:selected="${player != null && player.getPosition() == 'Libero'}">Libero</option>
-                <option th:value="'Setter'" th:selected="${player != null && player.getPosition() == 'Setter'}">Setter</option>
-                <option th:value="'Blocker'" th:selected="${player != null && player.getPosition() == 'Blocker'}">Blocker</option>
-                <option th:value="'Hitter'" th:selected="${player != null && player.getPosition() == 'Hitter'}">Hitter</option>
+                <option th:value="'S'" th:selected="${player != null && player.getPosition() == 'S'}">Setter (S)</option>
+                <option th:value="'OH'" th:selected="${player != null && player.getPosition() == 'OH'}">Outside Hitter (OH)</option>
+                <option th:value="'MB'" th:selected="${player != null && player.getPosition() == 'MB'}">Middle Blocker (MB)</option>
+                <option th:value="'OPP'" th:selected="${player != null && player.getPosition() == 'OPP'}">Opposite (OPP)</option>
+                <option th:value="'L'" th:selected="${player != null && player.getPosition() == 'L'}">Libero (L)</option>
+                <option th:value="'DS'" th:selected="${player != null && player.getPosition() == 'DS'}">Defensive Specialist (DS)</option>
             </select>
             <div class="invalid-feedback">Please select the player's position.</div>
         </div>

@@ -62,7 +62,7 @@
                 <td>
                     <a th:href="@{/volleyball/players/edit/{id}(id=${player.volleyball_player_id})}" class="btn btn-warning btn-sm">Edit</a>
                     <a th:href="@{/volleyball/players/details/{id}(id=${player.volleyball_player_id})}" class="btn btn-info btn-sm">Details</a>
-                    <form th:method="POST" th:action="@{/volleyball/players/delete/{id}(id=${player.volleyball_player_id})}" style="display:inline;">
+                    <form th:method="POST" th:action="@{/volleyball/players/delete/{id} (id=${player.volleyball_player_id})}" style="display:inline;">
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td>
