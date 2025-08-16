@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # This is the name of our service
+  postgres-db:
+    # Use an official PostgreSQL image from Docker Hub
+    image: postgres:15
+    container_name: my_project_db
+    
+    # These variables create the database user and password on first launch
+    # They MUST match your application.properties
+    environment:
+      POSTGRES_USER: liga_user
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: Liga
+      
+    # Maps the port on your machine (left) to the port in the container (right)
+    ports:
+      - "5432:5432"
+      
+    # This is the magic part that connects your files
+    volumes:
+      # This runs your initial_data.sql script on the first run
+      - ./db-init:/docker-entrypoint-initdb.d
+      # This makes sure your data is saved even if you restart the container
+      - postgres_data:/var/lib/postgresql/data
+
+# This defines the named volume for persisting data
+volumes:
+  postgres_data:

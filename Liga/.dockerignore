@@ -1,0 +1,25 @@
+# Ignore build artifacts
+target/
+*.jar
+*.war
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore logs
+*.log
+
+# Ignore git
+.git/
+.gitignore
+
+# Ignore Maven wrapper
+!.mvn/wrapper/maven-wrapper.jar

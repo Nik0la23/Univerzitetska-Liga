@@ -1,8 +1,19 @@
 HELP.md
+
+### Maven/Gradle ###
 target/
+build/
+.gradle/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+### IDE files ###
+.idea/
+.vscode/
+*.iws
+*.iml
+*.ipr
 
 ### STS ###
 .apt_generated
@@ -13,21 +24,65 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+### Log files ###
+*.log
+logs/
+log/
+
+### OS files ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+### Local application properties ###
+# Uncomment if you have secrets in local properties
+# application-local.properties
+# application-dev.properties
+# application-prod.properties
+
+### Database ###
+# Local database files (if using embedded databases)
+*.db
+*.sqlite
+*.sqlite3
+
+### Temporary files ###
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+### Node.js (if using frontend build tools) ###
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+### Environment variables ###
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+### Docker ###
+# Don't ignore docker-compose.yaml as it's part of the project
+# But ignore any local overrides
+docker-compose.override.yml
+docker-compose.local.yml
+
+### Backup files ###
+*.bak
+*.backup
