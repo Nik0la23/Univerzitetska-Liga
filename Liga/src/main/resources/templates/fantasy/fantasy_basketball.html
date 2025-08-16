@@ -198,14 +198,35 @@
         </form>
     </div>
 
+    <!-- Success/Error Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div th:if="${team} != null" class="my-3">
         <div class="alert alert-warning">
             <h4 th:text="${team.teamName}"></h4>
-            <p class="mb-0">
-                <strong>Remaining Budget: $<span th:text="${#numbers.formatDecimal(team.budgetTotal - team.budgetSpent, 1, 1)}"></span>M</strong>
-                <span class="text-muted">/ $<span th:text="${team.budgetTotal}"></span>M</span>
-            </p>
-            <small class="text-muted">Spent: $<span th:text="${#numbers.formatDecimal(team.budgetSpent, 1, 1)}"></span>M</small>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">
+                        <strong>Remaining Budget: $<span id="remainingBudget" th:text="${#numbers.formatDecimal(team.budgetTotal - team.budgetSpent, 1, 1)}"></span>M</strong>
+                        <span class="text-muted">/ $<span th:text="${team.budgetTotal}"></span>M</span>
+                    </p>
+                    <small class="text-muted">Spent: $<span th:text="${#numbers.formatDecimal(team.budgetSpent, 1, 1)}"></span>M</small>
+                </div>
+                <div class="col-md-6 text-right">
+                    <p class="mb-0">
+                        <strong>⭐ Fantasy Points: <span th:text="${#numbers.formatDecimal(team.totalPoints, 1, 1)}"></span></strong>
+                    </p>
+                    <small class="text-success">💰 Points earned budget bonus!</small>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -249,7 +270,19 @@
 
         <!-- Player List -->
         <div class="col-md-6">
-            <h5>Available Players</h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Available Players</h5>
+                <div th:if="${team != null}" class="position-summary">
+                    <small class="text-muted">
+                        Squad: 
+                        <span class="badge badge-warning">PG: <span id="pg-count">0</span>/1</span>
+                        <span class="badge badge-warning">SG: <span id="sg-count">0</span>/1</span>
+                        <span class="badge badge-warning">SF: <span id="sf-count">0</span>/1</span>
+                        <span class="badge badge-warning">PF: <span id="pf-count">0</span>/1</span>
+                        <span class="badge badge-warning">C: <span id="c-count">0</span>/1</span>
+                    </small>
+                </div>
+            </div>
             
             <!-- Filters -->
             <div class="row mb-3">
@@ -259,11 +292,11 @@
                 <div class="col-md-4">
                     <select id="positionFilter" class="form-control form-control-sm">
                         <option value="">All Positions</option>
-                        <option value="PG">Point Guard</option>
-                        <option value="SG">Shooting Guard</option>
-                        <option value="SF">Small Forward</option>
-                        <option value="PF">Power Forward</option>
-                        <option value="C">Center</option>
+                        <option value="PG">PG</option>
+                        <option value="SG">SG</option>
+                        <option value="SF">SF</option>
+                        <option value="PF">PF</option>
+                        <option value="C">C</option>
                     </select>
                 </div>
                 <div class="col-md-4">
@@ -295,8 +328,14 @@
                             <br>
                             <!-- Show Buy button when team exists and player not owned -->
                             <button th:if="${team != null and (boughtPlayerIds == null or !#lists.contains(boughtPlayerIds, player.basketball_player_id))}" 
-                                    th:onclick="'buyPlayer(\'basketball\', ' + ${player.basketball_player_id} + ')'" 
-                                    class="btn btn-warning btn-sm mt-1">Buy</button>
+                                    class="btn btn-warning btn-sm mt-1 buy-btn"
+                                    th:data-player-position="${player.position}"
+                                    th:data-player-id="${player.basketball_player_id}"
+                                    th:data-player-name="${player.name + ' ' + player.surname}"
+                                    th:data-player-price="${player.price ?: 5.0}"
+                                    th:title="'Basketball position: ' + ${player.position}">
+                                💰 Buy
+                            </button>
                             <!-- Show Owned badge if player is already bought -->
                             <span th:if="${team != null and boughtPlayerIds != null and #lists.contains(boughtPlayerIds, player.basketball_player_id)}" 
                                   class="badge badge-secondary">Owned</span>
@@ -380,6 +419,21 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', filterPlayers);
     positionFilter.addEventListener('change', filterPlayers);
     teamFilter.addEventListener('change', filterPlayers);
+    
+    // Initialize position counters
+    updatePositionCounters();
+    
+    // Add click event listeners for buy buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('buy-btn')) {
+            const playerPosition = e.target.dataset.playerPosition;
+            const playerId = e.target.dataset.playerId;
+            const playerName = e.target.dataset.playerName;
+            const playerPrice = parseFloat(e.target.dataset.playerPrice);
+            
+            buyPlayerWithCheck(playerPosition, playerId, playerName, playerPrice);
+        }
+    });
 
     let selectedPosition = null;
 
@@ -434,6 +488,58 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Function to update position counters
+    function updatePositionCounters() {
+        const currentPlayers = document.querySelectorAll('.card[data-fantasy-player-id]');
+        const positionCounts = { 'PG': 0, 'SG': 0, 'SF': 0, 'PF': 0, 'C': 0 };
+        
+        currentPlayers.forEach(card => {
+            const position = card.dataset.playerPosition;
+            if (position && positionCounts.hasOwnProperty(position)) {
+                positionCounts[position]++;
+            }
+        });
+
+        // Update counter displays
+        document.getElementById('pg-count').textContent = positionCounts['PG'];
+        document.getElementById('sg-count').textContent = positionCounts['SG'];
+        document.getElementById('sf-count').textContent = positionCounts['SF'];
+        document.getElementById('pf-count').textContent = positionCounts['PF'];
+        document.getElementById('c-count').textContent = positionCounts['C'];
+        
+        return positionCounts;
+    }
+
+    // Function to check formation constraints
+    function checkFormationConstraints(playerPosition) {
+        const positionCounts = updatePositionCounters();
+        const maxPositions = { 'PG': 1, 'SG': 1, 'SF': 1, 'PF': 1, 'C': 1 };
+        
+        return positionCounts[playerPosition] < maxPositions[playerPosition];
+    }
+
+    // Enhanced function to handle player purchases with formation checks
+    window.buyPlayerWithCheck = function(playerPosition, playerId, playerName, playerPrice) {
+        // Check budget
+        const budgetElement = document.getElementById('remainingBudget');
+        const remainingBudget = budgetElement ? parseFloat(budgetElement.textContent) : 100;
+        
+        if (playerPrice > remainingBudget) {
+            alert('Insufficient budget! You need $' + playerPrice + 'M but only have $' + remainingBudget.toFixed(1) + 'M remaining.');
+            return;
+        }
+
+        // Check formation constraints
+        if (!checkFormationConstraints(playerPosition)) {
+            alert('Formation constraint violated! You can only have 1 ' + playerPosition + ' player in your squad.');
+            return;
+        }
+
+        if (confirm('Buy ' + playerName + ' (' + playerPosition + ') for $' + playerPrice + 'M?')) {
+            buyPlayer('basketball', playerId);
+        }
+    };
 
     function isPositionCompatible(playerPos, slotPos) {
         const compatibility = {

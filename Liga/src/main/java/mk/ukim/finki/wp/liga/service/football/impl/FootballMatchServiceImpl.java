@@ -5,12 +5,11 @@ import mk.ukim.finki.wp.liga.model.Exceptions.InvalidFootballMatchException;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidFootballTeamException;
 import mk.ukim.finki.wp.liga.model.FootballMatch;
 import mk.ukim.finki.wp.liga.model.FootballPlayer;
-import mk.ukim.finki.wp.liga.model.FootballPlayerScored;
 import mk.ukim.finki.wp.liga.model.FootballTeam;
 import mk.ukim.finki.wp.liga.repository.football.FootballMatchRepository;
 import mk.ukim.finki.wp.liga.repository.football.FootballPlayerRepository;
-import mk.ukim.finki.wp.liga.repository.football.FootballPlayerScoredRepository;
 import mk.ukim.finki.wp.liga.repository.football.FootballTeamRepository;
+import mk.ukim.finki.wp.liga.service.fantasy.FantasyService;
 import mk.ukim.finki.wp.liga.service.football.FootballMatchService;
 import mk.ukim.finki.wp.liga.service.football.FootballPlayerService;
 import mk.ukim.finki.wp.liga.service.football.FootballTeamService;
@@ -31,6 +30,7 @@ public class FootballMatchServiceImpl implements FootballMatchService {
     private final FootballPlayerRepository playerRepository;
     private final FootballTeamService teamService;
     private final FootballPlayerService playerService;
+    private final FantasyService fantasyService;
 
 
     @Override
@@ -395,5 +395,13 @@ public class FootballMatchServiceImpl implements FootballMatchService {
         }
         teamRepository.save(homeTeam);
         teamRepository.save(awayTeam);
+        
+        // Calculate and award fantasy points after match completion
+        try {
+            fantasyService.calculateAndAwardFantasyPoints(matchId);
+        } catch (Exception e) {
+            // Log error but don't fail the match processing
+            System.err.println("Error calculating fantasy points for match " + matchId + ": " + e.getMessage());
+        }
     }
 }

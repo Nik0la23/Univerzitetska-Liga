@@ -25,6 +25,7 @@ public interface FootballPlayerScoredService {
     FootballPlayerScored findByPlayerAndMatch(FootballPlayer player, FootballMatch match);
     FootballPlayerScored delete(Long id);
     FootballPlayerScored save(FootballPlayerScored player);
+    List<FootballPlayerScored> findByMatch(FootballMatch match);
 
 
 }

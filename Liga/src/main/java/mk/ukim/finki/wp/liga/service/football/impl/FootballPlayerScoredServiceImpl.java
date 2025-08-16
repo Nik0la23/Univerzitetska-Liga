@@ -60,6 +60,11 @@ public class FootballPlayerScoredServiceImpl implements FootballPlayerScoredServ
     public FootballPlayerScored findByPlayerAndMatch(FootballPlayer player, FootballMatch match){
         return footballPlayerScoredRepository.findFootballPlayerScoredByPlayerAndFootballMatch(player,match);
     }
+    
+    @Override
+    public List<FootballPlayerScored> findByMatch(FootballMatch match) {
+        return footballPlayerScoredRepository.findByFootballMatch(match);
+    }
 
 //    public FootballPlayerScored addPlayerScore(Long matchId, FootballPlayerScored playerScored) {
 //        Optional<FootballMatch> matchOptional = footballMatchRepository.findById(matchId);

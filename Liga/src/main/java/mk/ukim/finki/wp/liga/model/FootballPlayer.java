@@ -11,11 +11,16 @@ import java.util.Date;
 @Setter
 @Getter
 @Entity
+@Table(name = "football_player")
+@DiscriminatorColumn(name = "dtype")
+@DiscriminatorValue("FootballPlayer")
 public class FootballPlayer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long football_player_id;
+    
+
     @Lob
     @Column(name="profile_image")
     private  byte [] image;
@@ -33,6 +38,9 @@ public class FootballPlayer {
     private int assists;
     private int saves;
     private Double price;
+    
+    @Column(name = "fantasy_points")
+    private Integer fantasyPoints;
 
     public FootballPlayer(byte [] image, String name, String surname, Date birthdate, int index,
                           String city, String position, FootballTeam team) {
@@ -49,6 +57,7 @@ public class FootballPlayer {
         this.assists = 0;
         this.saves = 0;
         this.price = 5.0;
+        this.fantasyPoints = 0;
     }
 
     public FootballPlayer() {
@@ -56,6 +65,17 @@ public class FootballPlayer {
     }
     public int getPoints(){
         return goals*2 + assists;
+    }
+    
+    public int getFantasyPoints() {
+        if (fantasyPoints == null) {
+            fantasyPoints = 0;
+        }
+        return fantasyPoints;
+    }
+    
+    public void setFantasyPoints(Integer fantasyPoints) {
+        this.fantasyPoints = fantasyPoints;
     }
     @Override
     public String toString() {

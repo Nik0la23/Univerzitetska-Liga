@@ -10,6 +10,7 @@ import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballTeamRepository;
 import mk.ukim.finki.wp.liga.service.volleyball.VolleyballMatchService;
 import mk.ukim.finki.wp.liga.service.volleyball.VolleyballPlayerService;
 import mk.ukim.finki.wp.liga.service.volleyball.VolleyballTeamService;
+import mk.ukim.finki.wp.liga.service.fantasy.FantasyService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class VolleyballMatchServiceImpl implements VolleyballMatchService {
     private final VolleyballPlayerRepository playerRepository;
     private final VolleyballTeamService teamService;
     private final VolleyballPlayerService playerService;
+    private final FantasyService fantasyService;
 
     @Override
     @Transactional(readOnly = true)
@@ -468,6 +470,14 @@ public class VolleyballMatchServiceImpl implements VolleyballMatchService {
         }
         teamRepository.save(homeTeam);
         teamRepository.save(awayTeam);
+        
+        // Calculate and award fantasy points after match completion
+        try {
+            fantasyService.calculateAndAwardVolleyballFantasyPoints(matchId);
+        } catch (Exception e) {
+            // Log error but don't fail the match processing
+            System.err.println("Error calculating volleyball fantasy points for match " + matchId + ": " + e.getMessage());
+        }
     }
 
     private void updateTeamStats(VolleyballTeam team, boolean isWin) {

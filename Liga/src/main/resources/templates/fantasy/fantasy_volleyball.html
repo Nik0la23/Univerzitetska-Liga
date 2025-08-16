@@ -74,6 +74,16 @@
         .mb2 { left: 100px; top: 120px; } /* Middle Blocker 2 */
         .opp { left: 60px; top: 160px; } /* Opposite */
         
+        /* Bench positions */
+        .bench-positions .position-slot {
+            background: rgba(173, 216, 230, 0.3);
+            border: 2px solid #add8e6;
+        }
+        
+        .bench-positions .position-slot:hover {
+            background: rgba(173, 216, 230, 0.6);
+        }
+        
         .player-list {
             max-height: 400px;
             overflow-y: auto;
@@ -124,14 +134,35 @@
         </form>
     </div>
 
+    <!-- Success/Error Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div th:if="${team} != null" class="my-3">
         <div class="alert alert-info">
             <h4 th:text="${team.teamName}"></h4>
-            <p class="mb-0">
-                <strong>Remaining Budget: $<span th:text="${#numbers.formatDecimal(team.budgetTotal - team.budgetSpent, 1, 1)}"></span>M</strong>
-                <span class="text-muted">/ $<span th:text="${team.budgetTotal}"></span>M</span>
-            </p>
-            <small class="text-muted">Spent: $<span th:text="${#numbers.formatDecimal(team.budgetSpent, 1, 1)}"></span>M</small>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">
+                        <strong>Remaining Budget: $<span id="remainingBudget" th:text="${#numbers.formatDecimal(team.budgetTotal - team.budgetSpent, 1, 1)}"></span>M</strong>
+                        <span class="text-muted">/ $<span th:text="${team.budgetTotal}"></span>M</span>
+                    </p>
+                    <small class="text-muted">Spent: $<span th:text="${#numbers.formatDecimal(team.budgetSpent, 1, 1)}"></span>M</small>
+                </div>
+                <div class="col-md-6 text-right">
+                    <p class="mb-0">
+                        <strong>⭐ Fantasy Points: <span th:text="${#numbers.formatDecimal(team.totalPoints, 1, 1)}"></span></strong>
+                    </p>
+                    <small class="text-success">💰 Points earned budget bonus!</small>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -154,6 +185,15 @@
                 <div class="position-slot opp" title="Opposite">OPP</div>
             </div>
             
+            <!-- Bench/Substitute positions -->
+            <div class="bench-positions mt-3">
+                <h6 class="text-center">Bench</h6>
+                <div class="d-flex justify-content-center gap-2">
+                    <div class="position-slot l" title="Libero">L</div>
+                    <div class="position-slot ds" title="Defensive Specialist">DS</div>
+                </div>
+            </div>
+            
             <div class="text-center mt-3">
                 <small class="text-muted">Click on a position to assign a player</small>
             </div>
@@ -161,7 +201,20 @@
 
         <!-- Player List -->
         <div class="col-md-6">
-            <h5>Available Players</h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Available Players</h5>
+                <div th:if="${team != null}" class="position-summary">
+                    <small class="text-muted">
+                        Squad: 
+                        <span class="badge badge-info">S: <span id="s-count">0</span>/1</span>
+                        <span class="badge badge-info">OH: <span id="oh-count">0</span>/2</span>
+                        <span class="badge badge-info">MB: <span id="mb-count">0</span>/2</span>
+                        <span class="badge badge-info">OPP: <span id="opp-count">0</span>/1</span>
+                        <span class="badge badge-info">L: <span id="l-count">0</span>/1</span>
+                        <span class="badge badge-info">DS: <span id="ds-count">0</span>/1</span>
+                    </small>
+                </div>
+            </div>
             
             <!-- Filters -->
             <div class="row mb-3">
@@ -208,8 +261,14 @@
                             <br>
                             <!-- Show Buy button when team exists and player not owned -->
                             <button th:if="${team != null and (boughtPlayerIds == null or !#lists.contains(boughtPlayerIds, player.volleyball_player_id))}" 
-                                    th:onclick="'buyPlayer(\'volleyball\', ' + ${player.volleyball_player_id} + ')'" 
-                                    class="btn btn-info btn-sm mt-1">Buy</button>
+                                    class="btn btn-info btn-sm mt-1 buy-btn"
+                                    th:data-player-position="${player.position}"
+                                    th:data-player-id="${player.volleyball_player_id}"
+                                    th:data-player-name="${player.name + ' ' + player.surname}"
+                                    th:data-player-price="${player.price ?: 5.0}"
+                                    th:title="'Volleyball position: ' + ${player.position}">
+                                💰 Buy
+                            </button>
                             <!-- Show Owned badge if player is already bought -->
                             <span th:if="${team != null and boughtPlayerIds != null and #lists.contains(boughtPlayerIds, player.volleyball_player_id)}" 
                                   class="badge badge-secondary">Owned</span>
@@ -293,6 +352,21 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', filterPlayers);
     positionFilter.addEventListener('change', filterPlayers);
     teamFilter.addEventListener('change', filterPlayers);
+    
+    // Initialize position counters
+    updatePositionCounters();
+    
+    // Add click event listeners for buy buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('buy-btn')) {
+            const playerPosition = e.target.dataset.playerPosition;
+            const playerId = e.target.dataset.playerId;
+            const playerName = e.target.dataset.playerName;
+            const playerPrice = parseFloat(e.target.dataset.playerPrice);
+            
+            buyPlayerWithCheck(playerPosition, playerId, playerName, playerPrice);
+        }
+    });
 
     let selectedPosition = null;
 
@@ -347,6 +421,60 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Function to update position counters
+    function updatePositionCounters() {
+        const currentPlayers = document.querySelectorAll('.card[data-fantasy-player-id]');
+        const positionCounts = { 'S': 0, 'OH': 0, 'MB': 0, 'OPP': 0, 'L': 0, 'DS': 0 };
+        
+        currentPlayers.forEach(card => {
+            const position = card.dataset.playerPosition;
+            if (position && positionCounts.hasOwnProperty(position)) {
+                positionCounts[position]++;
+            }
+        });
+
+        // Update counter displays
+        document.getElementById('s-count').textContent = positionCounts['S'];
+        document.getElementById('oh-count').textContent = positionCounts['OH'];
+        document.getElementById('mb-count').textContent = positionCounts['MB'];
+        document.getElementById('opp-count').textContent = positionCounts['OPP'];
+        document.getElementById('l-count').textContent = positionCounts['L'];
+        document.getElementById('ds-count').textContent = positionCounts['DS'];
+        
+        return positionCounts;
+    }
+
+    // Function to check formation constraints
+    function checkFormationConstraints(playerPosition) {
+        const positionCounts = updatePositionCounters();
+        const maxPositions = { 'S': 1, 'OH': 2, 'MB': 2, 'OPP': 1, 'L': 1, 'DS': 1 };
+        
+        return positionCounts[playerPosition] < maxPositions[playerPosition];
+    }
+
+    // Enhanced function to handle player purchases with formation checks
+    window.buyPlayerWithCheck = function(playerPosition, playerId, playerName, playerPrice) {
+        // Check budget
+        const budgetElement = document.getElementById('remainingBudget');
+        const remainingBudget = budgetElement ? parseFloat(budgetElement.textContent) : 100;
+        
+        if (playerPrice > remainingBudget) {
+            alert('Insufficient budget! You need $' + playerPrice + 'M but only have $' + remainingBudget.toFixed(1) + 'M remaining.');
+            return;
+        }
+
+        // Check formation constraints
+        if (!checkFormationConstraints(playerPosition)) {
+            const maxCounts = { 'S': 1, 'OH': 2, 'MB': 2, 'OPP': 1, 'L': 1, 'DS': 1 };
+            alert('Formation constraint violated! You can only have ' + maxCounts[playerPosition] + ' ' + playerPosition + ' player(s) in your squad.');
+            return;
+        }
+
+        if (confirm('Buy ' + playerName + ' (' + playerPosition + ') for $' + playerPrice + 'M?')) {
+            buyPlayer('volleyball', playerId);
+        }
+    };
 
     function isPositionCompatible(playerPos, slotPos) {
         const compatibility = {

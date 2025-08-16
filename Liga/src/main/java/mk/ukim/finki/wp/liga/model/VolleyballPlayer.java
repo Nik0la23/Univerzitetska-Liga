@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.util.Date;
 @Data
 @Entity
+@Table(name = "volleyball_player")
 @Setter
 @Getter
 public class VolleyballPlayer {

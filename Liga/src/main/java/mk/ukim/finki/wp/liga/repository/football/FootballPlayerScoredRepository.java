@@ -10,4 +10,5 @@ import java.util.List;
 public interface FootballPlayerScoredRepository extends JpaRepository<FootballPlayerScored, Long> {
     FootballPlayerScored findFootballPlayerScoredByPlayerAndFootballMatch(FootballPlayer player, FootballMatch match);
     List<FootballPlayerScored> findByPlayer(FootballPlayer player);
+    List<FootballPlayerScored> findByFootballMatch(FootballMatch match);
 }

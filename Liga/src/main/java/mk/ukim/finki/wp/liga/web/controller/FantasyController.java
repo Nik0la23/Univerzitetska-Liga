@@ -151,43 +151,49 @@ public class FantasyController {
     }
 
     @PostMapping("/buy/football/{playerId}")
-    public String buyFootballPlayer(@PathVariable Long playerId, HttpSession session) {
+    public String buyFootballPlayer(@PathVariable Long playerId, HttpSession session, 
+                                   org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/auth/login";
         
         try {
             fantasyService.getTeamFor(user, FantasySport.FOOTBALL).ifPresent(team -> 
                 fantasyService.buyFootballPlayer(team, playerId));
+            redirectAttributes.addFlashAttribute("successMessage", "Player bought successfully!");
         } catch (RuntimeException e) {
-            // Handle error - could add flash attribute for error message
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/fantasy/football";
     }
 
     @PostMapping("/buy/basketball/{playerId}")
-    public String buyBasketballPlayer(@PathVariable Long playerId, HttpSession session) {
+    public String buyBasketballPlayer(@PathVariable Long playerId, HttpSession session,
+                                     org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/auth/login";
         
         try {
             fantasyService.getTeamFor(user, FantasySport.BASKETBALL).ifPresent(team -> 
                 fantasyService.buyBasketballPlayer(team, playerId));
+            redirectAttributes.addFlashAttribute("successMessage", "Player bought successfully!");
         } catch (RuntimeException e) {
-            // Handle error - could add flash attribute for error message
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/fantasy/basketball";
     }
 
     @PostMapping("/buy/volleyball/{playerId}")
-    public String buyVolleyballPlayer(@PathVariable Long playerId, HttpSession session) {
+    public String buyVolleyballPlayer(@PathVariable Long playerId, HttpSession session,
+                                     org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/auth/login";
         
         try {
             fantasyService.getTeamFor(user, FantasySport.VOLLEYBALL).ifPresent(team -> 
                 fantasyService.buyVolleyballPlayer(team, playerId));
+            redirectAttributes.addFlashAttribute("successMessage", "Player bought successfully!");
         } catch (RuntimeException e) {
-            // Handle error - could add flash attribute for error message
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/fantasy/volleyball";
     }
@@ -205,6 +211,51 @@ public class FantasyController {
             // Handle error
         }
         return "redirect:/fantasy/" + sport.toString().toLowerCase();
+    }
+    
+    // Admin endpoint to manually calculate fantasy points for a specific match
+    @PostMapping("/admin/calculate-points/{matchId}")
+    public String calculateFantasyPoints(@PathVariable Long matchId, 
+                                       org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            fantasyService.calculateAndAwardFantasyPoints(matchId);
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Fantasy points calculated successfully for match " + matchId);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "Error calculating fantasy points: " + e.getMessage());
+        }
+        return "redirect:/fantasy/football";
+    }
+    
+    // Admin endpoint to manually calculate basketball fantasy points
+    @PostMapping("/admin/calculate-basketball-points/{matchId}")
+    public String calculateBasketballFantasyPoints(@PathVariable Long matchId, 
+                                                  org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            fantasyService.calculateAndAwardBasketballFantasyPoints(matchId);
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Basketball fantasy points calculated successfully for match " + matchId);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "Error calculating basketball fantasy points: " + e.getMessage());
+        }
+        return "redirect:/fantasy/basketball";
+    }
+    
+    // Admin endpoint to manually calculate volleyball fantasy points
+    @PostMapping("/admin/calculate-volleyball-points/{matchId}")
+    public String calculateVolleyballFantasyPoints(@PathVariable Long matchId, 
+                                                   org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            fantasyService.calculateAndAwardVolleyballFantasyPoints(matchId);
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Volleyball fantasy points calculated successfully for match " + matchId);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "Error calculating volleyball fantasy points: " + e.getMessage());
+        }
+        return "redirect:/fantasy/volleyball";
     }
 }
 

@@ -78,6 +78,7 @@ public class FantasyTeam {
     public String getTeamName() { return teamName; }
     public void setTeamName(String teamName) { this.teamName = teamName; }
     public Double getBudgetTotal() { return budgetTotal; }
+    public void setBudgetTotal(Double budgetTotal) { this.budgetTotal = budgetTotal; }
     public Double getBudgetSpent() { return budgetSpent; }
     public void setBudgetSpent(Double budgetSpent) { this.budgetSpent = budgetSpent; }
     public String getFormation() { return formation; }

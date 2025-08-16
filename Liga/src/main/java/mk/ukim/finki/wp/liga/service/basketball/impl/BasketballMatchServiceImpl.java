@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import mk.ukim.finki.wp.liga.model.*;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidBasketballMatchException;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidBasketballTeamException;
-import mk.ukim.finki.wp.liga.model.Exceptions.InvalidFootballMatchException;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballMatchRepository;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballPlayerRepository;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballTeamRepository;
 import mk.ukim.finki.wp.liga.service.basketball.BasketballMatchService;
 import mk.ukim.finki.wp.liga.service.basketball.BasketballPlayerService;
 import mk.ukim.finki.wp.liga.service.basketball.BasketballTeamService;
+import mk.ukim.finki.wp.liga.service.fantasy.FantasyService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +28,7 @@ public class BasketballMatchServiceImpl implements BasketballMatchService {
     private final BasketballPlayerRepository basketballPlayerRepository;
     private final BasketballTeamService basketballTeamService;
     private final BasketballPlayerService basketballPlayerService;
+    private final FantasyService fantasyService;
 
     public BasketballMatch findByIdWithTeamsAndPlayers(Long id) {
         return basketballMatchRepository.findById(id)
@@ -418,6 +419,14 @@ public class BasketballMatchServiceImpl implements BasketballMatchService {
         }
         basketballTeamRepository.save(homeTeam);
         basketballTeamRepository.save(awayTeam);
+        
+        // Calculate and award fantasy points after match completion
+        try {
+            fantasyService.calculateAndAwardBasketballFantasyPoints(matchId);
+        } catch (Exception e) {
+            // Log error but don't fail the match processing
+            System.err.println("Error calculating basketball fantasy points for match " + matchId + ": " + e.getMessage());
+        }
     }
     private void updateBasketballTeamStats(BasketballTeam team, boolean isWin) {
         // Increment the number of matches played

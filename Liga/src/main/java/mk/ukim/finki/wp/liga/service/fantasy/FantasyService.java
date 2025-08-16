@@ -28,6 +28,23 @@ public interface FantasyService {
     
     // Check if player is already bought
     boolean isPlayerAlreadyBought(FantasyTeam team, FantasySport sport, Long playerId);
+    
+    // Formation validation
+    boolean canAddPlayerToFormation(FantasyTeam team, String playerPosition);
+    int getPositionCount(FantasyTeam team, String position);
+    
+    // Fantasy points calculation
+    void calculateAndAwardFantasyPoints(Long footballMatchId);
+    double calculatePlayerFantasyPoints(Long footballPlayerId);
+    void awardBudgetBonus(FantasyTeam team, double points);
+    
+    // Basketball fantasy points
+    void calculateAndAwardBasketballFantasyPoints(Long basketballMatchId);
+    double calculateBasketballPlayerFantasyPoints(Long basketballPlayerId);
+    
+    // Volleyball fantasy points
+    void calculateAndAwardVolleyballFantasyPoints(Long volleyballMatchId);
+    double calculateVolleyballPlayerFantasyPoints(Long volleyballPlayerId);
 }
 
 
