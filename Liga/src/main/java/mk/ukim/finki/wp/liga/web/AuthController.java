@@ -28,12 +28,16 @@ public class AuthController {
                         @RequestParam String password,
                         HttpSession session,
                         Model model) {
+        System.out.println("🌐 Login attempt from web interface - Username: " + name);
+        
         return userService.login(name, password)
                 .map(user -> {
+                    System.out.println("✅ Web login successful for: " + user.getName());
                     session.setAttribute("user", user);
                     return "redirect:/";
                 })
                 .orElseGet(() -> {
+                    System.out.println("❌ Web login failed for: " + name);
                     model.addAttribute("error", "Invalid credentials");
                     model.addAttribute("bodyContent", "login");
                     return "master_template";
@@ -71,6 +75,25 @@ public class AuthController {
     public String logoutGet(HttpSession session) {
         session.invalidate();
         return "redirect:/";
+    }
+
+    // Debug endpoint to check if users exist
+    @GetMapping("/debug/users")
+    public String debugUsers(Model model) {
+        try {
+            var admin = userService.findByName("admin");
+            var user1 = userService.findByName("user1");
+            
+            model.addAttribute("adminExists", admin.isPresent());
+            model.addAttribute("user1Exists", user1.isPresent());
+            model.addAttribute("adminUser", admin.orElse(null));
+            model.addAttribute("user1User", user1.orElse(null));
+            
+            return "debug_users";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "debug_users";
+        }
     }
 }
 

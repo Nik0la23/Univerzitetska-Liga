@@ -33,8 +33,25 @@ public class SimpleUserService implements UserService {
 
     @Override
     public Optional<User> login(String name, String rawPassword) {
-        return userRepository.findByName(name)
-                .filter(u -> encoder.matches(rawPassword, u.getPasswordHash()));
+        System.out.println("🔐 Attempting login for user: " + name);
+        Optional<User> userOpt = userRepository.findByName(name);
+        
+        if (userOpt.isEmpty()) {
+            System.out.println("❌ User not found: " + name);
+            return Optional.empty();
+        }
+        
+        User user = userOpt.get();
+        boolean passwordMatches = encoder.matches(rawPassword, user.getPasswordHash());
+        System.out.println("🔑 Password match for " + name + ": " + passwordMatches);
+        
+        if (passwordMatches) {
+            System.out.println("✅ Login successful for user: " + name);
+            return Optional.of(user);
+        } else {
+            System.out.println("❌ Invalid password for user: " + name);
+            return Optional.empty();
+        }
     }
 
     @Override
