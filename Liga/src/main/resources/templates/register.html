@@ -1,26 +1,56 @@
-<div class="container mt-5" xmlns:th="http://www.thymeleaf.org">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2>Register</h2>
-            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-            <form th:action="@{/auth/register}" method="post">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-success">Create account</button>
-                <a th:href="@{/auth/login}" class="btn btn-link">Login</a>
-            </form>
+<header class="premium-header text-white">
+  <div class="container">
+    <h1 class="mb-0">📝 Join University League</h1>
+  </div>
+</header>
+
+<section class="premium-container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="premium-card">
+        <div class="text-center mb-5">
+          <h2 class="text-premium" style="color: var(--primary-light); font-size: var(--text-3xl);">
+            Create Account
+          </h2>
+          <p class="text-premium-light" style="color: var(--gray-600);">
+            Join the ultimate university sports experience
+          </p>
         </div>
+        
+        <div th:if="${error}" class="alert-premium alert-danger" th:text="${error}"></div>
+        
+        <form th:action="@{/auth/register}" method="post">
+          <div class="form-group-premium">
+            <label for="name" class="form-label-premium">Full Name</label>
+            <input type="text" id="name" name="name" class="form-control-premium" required>
+          </div>
+          
+          <div class="form-group-premium">
+            <label for="email" class="form-label-premium">Email Address</label>
+            <input type="email" id="email" name="email" class="form-control-premium" required>
+          </div>
+          
+          <div class="form-group-premium">
+            <label for="password" class="form-label-premium">Password</label>
+            <input type="password" id="password" name="password" class="form-control-premium" required>
+          </div>
+          
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-premium btn-success">Create Account</button>
+          </div>
+          
+          <div class="text-center mt-4">
+            <p class="text-premium-light" style="color: var(--gray-600);">
+              Already have an account? 
+              <a th:href="@{/auth/login}" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">
+                Login here
+              </a>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
-</div>
+  </div>
+</section>
 
 

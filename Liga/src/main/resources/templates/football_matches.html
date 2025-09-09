@@ -6,133 +6,364 @@
     <title>Football Matches</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <style>
-        .match-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            text-decoration: none;
-            color: inherit;
-            transition: background-color 0.3s;
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e3c2f 0%, #2d5f3f 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
-        .match-row:hover {
-            background-color: #f8f9fa;
+        
+        .premium-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d4a3a 100%);
+            border-bottom: 3px solid #4CAF50;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
         }
+        
+        .premium-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="60" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: floatPattern 20s infinite linear;
+        }
+        
+        @keyframes floatPattern {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(100px); }
+        }
+        
+        .premium-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 2.8rem;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .premium-nav {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(76,175,80,0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .premium-nav .nav-link {
+            color: #2d5f3f !important;
+            font-weight: 500;
+            padding: 15px 20px !important;
+            margin: 0 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(76,175,80,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .premium-nav .nav-link:hover::before {
+            left: 100%;
+        }
+        
+        .premium-nav .nav-link:hover {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76,175,80,0.3);
+        }
+        
+        .premium-container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px auto;
+            max-width: 1200px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .match-date {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d5f3f;
+            margin: 30px 0 20px 0;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .match-date::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #4CAF50, #66BB6A);
+            border-radius: 2px;
+        }
+        
+        .match-card {
+            background: linear-gradient(135deg, #fff, #f8f9fa);
+            border: none;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 15px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .match-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #4CAF50, #66BB6A);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .match-card:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .match-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(76,175,80,0.15);
+        }
+        
         .match-link {
             display: block;
             width: 100%;
             color: inherit;
+            text-decoration: none;
         }
-        .team-info {
+        
+        .match-row {
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
-        .team-info img {
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
+        
+        .match-details {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
         }
-        .match-time {
-            font-size: 1.2rem;
-            padding: 5px 10px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            color: #333;
-        }
-        .match-date {
-            font-size: 0.9rem;
-            color: #555;
-        }
+        
         .team-name {
-            font-size: 1.2rem;
-            color: #000;
-            font-weight: bold;
+            font-size: 1.3rem;
+            color: #2d5f3f;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        
+        .match-time {
+            font-size: 1.1rem;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(76,175,80,0.3);
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .vs-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #888;
+            font-style: italic;
+        }
+        
         .actions {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: center;
         }
-        .actions .btn {
-            font-size: 0.8rem;
+        
+        .btn-premium {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .playoff-badge {
-            background-color: #ff6f61;
+        
+        .btn-premium.btn-warning {
+            background: linear-gradient(135deg, #FF9800, #FFB74D);
             color: white;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-size: 0.8rem;
-            margin-left: 10px;
+            box-shadow: 0 4px 15px rgba(255,152,0,0.3);
         }
-        .nav-link.disabled {
-            pointer-events: none;
-            color: #6c757d;
+        
+        .btn-premium.btn-success {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76,175,80,0.3);
+        }
+        
+        .btn-premium.btn-danger {
+            background: linear-gradient(135deg, #F44336, #EF5350);
+            color: white;
+            box-shadow: 0 4px 15px rgba(244,67,54,0.3);
+        }
+        
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .playoff-badge {
+            background: linear-gradient(135deg, #FF5722, #FF7043);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 3px 10px rgba(255,87,34,0.3);
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 3px 10px rgba(255,87,34,0.3); }
+            50% { box-shadow: 0 6px 20px rgba(255,87,34,0.5); }
+            100% { box-shadow: 0 3px 10px rgba(255,87,34,0.3); }
+        }
+        
+        .football-icon {
+            position: absolute;
+            top: 50%;
+            right: 30px;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: rgba(76,175,80,0.1);
+            z-index: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .match-details {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .premium-container {
+                margin: 15px;
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white p-4">
     <div class="container">
-        <h1 class="mb-0">Football Matches</h1>
+        <h1 class="mb-0">⚽ Football Matches</h1>
     </div>
 </header>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg premium-nav">
     <div class="container">
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a href="/news" class="nav-link">News</a>
+                    <a href="/news" class="nav-link">📰 News</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/matches/add-form" class="nav-link">Add Match</a>
+                    <a href="/matches/add-form" class="nav-link">➕ Add Match</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/matches/live" class="nav-link">Live Matches</a>
+                    <a href="/matches/live" class="nav-link">🔴 Live Matches</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/matches/fixtures" class="nav-link">Fixtures</a>
+                    <a href="/matches/fixtures" class="nav-link">📅 Fixtures</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/matches/results" class="nav-link">Results</a>
+                    <a href="/matches/results" class="nav-link">📊 Results</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/players" class="nav-link">View Players</a>
+                    <a href="/players" class="nav-link">👥 Players</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/teams/standings" class="nav-link">Standings</a>
+                    <a href="/teams/standings" class="nav-link">🏆 Standings</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/matches/playoffs/init" class="nav-link">Playoffs</a>
+                    <a href="/matches/playoffs/init" class="nav-link">⚡ Playoffs</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<section class="container mt-4">
+<section class="premium-container">
     <div th:each="entry : ${groupedMatches}">
         <h3 class="match-date" th:text="${#temporals.format(entry.key, 'EEEE dd MMMM yyyy')}"></h3>
-        <div th:each="match : ${entry.value}">
-            <a th:href="@{/matches/details/{id}(id=${match.football_match_id})}" class="d-block match-link">
+        <div th:each="match : ${entry.value}" class="match-card">
+            <span th:if="${match.isPlayoffMatch}" class="playoff-badge">🏆 Playoff</span>
+            <div class="football-icon">⚽</div>
+            <a th:href="@{/matches/details/{id}(id=${match.football_match_id})}" class="match-link">
                 <div class="match-row">
-                    <div>
+                    <div class="match-details">
                         <span class="team-name" th:text="${match.homeTeam.teamName}"></span>
-                        <span class="match-time" th:text="${#temporals.format(match.startTime, 'HH:mm')}"></span>
+                        <span class="vs-text">vs</span>
                         <span class="team-name" th:text="${match.awayTeam.teamName}"></span>
-                        <span th:if="${match.isPlayoffMatch}" class="playoff-badge">Playoff</span>
-                    </div>
-                    <div class="ml-auto actions">
-                        <a th:href="@{/matches/edit-form/{id}(id=${match.football_match_id})}" class="btn btn-warning btn-sm">Edit</a>
-                        <form th:if="${!match.isPlayoffMatch}" th:method="POST" th:action="@{'/matches/finish/{id}'(id=${match.football_match_id})}" style="display:inline;" onsubmit="return confirmFinish(this)">
-                            <button type="submit" class="btn btn-success btn-sm">Finish</button>
-                        </form>
-                        <form th:method="POST" th:action="@{'/matches/delete/{id}'(id=${match.football_match_id})}" style="display:inline;">
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
+                        <span class="match-time" th:text="${#temporals.format(match.startTime, 'HH:mm')}"></span>
                     </div>
                 </div>
             </a>
+            <div class="actions mt-3">
+                <a th:href="@{/matches/edit-form/{id}(id=${match.football_match_id})}" class="btn btn-warning btn-premium">✏️ Edit</a>
+                <form th:if="${!match.isPlayoffMatch}" th:method="POST" th:action="@{'/matches/finish/{id}'(id=${match.football_match_id})}" style="display:inline;" onsubmit="return confirmFinish(this)">
+                    <button type="submit" class="btn btn-success btn-premium">✅ Finish</button>
+                </form>
+                <form th:method="POST" th:action="@{'/matches/delete/{id}'(id=${match.football_match_id})}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-premium">🗑️ Delete</button>
+                </form>
+            </div>
         </div>
     </div>
 </section>

@@ -1,101 +1,128 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Volleyball Players</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"> <!-- Bootstrap CSS -->
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Volleyball Players</h1>
+        <h1 class="mb-0">🏐 Volleyball Players</h1>
     </div>
 </header>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg premium-nav">
     <div class="container">
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a href="/volleyball/players/add-form" class="nav-link">Add Player</a>
+                    <a href="/volleyball/players/add-form" class="nav-link">➕ Add Player</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/volleyball/matches/live" class="nav-link">Live Matches</a>
+                    <a href="/volleyball/matches/live" class="nav-link">🔴 Live Matches</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/volleyball/matches/fixtures" class="nav-link">Fixtures</a>
+                    <a href="/volleyball/matches/fixtures" class="nav-link">📅 Fixtures</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/volleyball/matches/results" class="nav-link">Results</a>
+                    <a href="/volleyball/matches/results" class="nav-link">📊 Results</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/volleyball/players" class="nav-link">View Players</a>
+                    <a href="/volleyball/players" class="nav-link">👥 View Players</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<section class="container mt-4">
-
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">
+                👥 Volleyball Players
+            </h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">
+                Manage and view all volleyball players in the league
+            </p>
+        </div>
+    </div>
+    
     <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="thead-dark">
+        <table class="table-premium">
+            <thead>
             <tr>
-                <th>Image</th>
-                <th>Player Name</th>
-                <th>City</th>
-                <th>Position</th>
-                <th>Team</th>
-                <th>Actions</th>
+                <th>🖼️ Image</th>
+                <th>👤 Player Name</th>
+                <th>🏙️ City</th>
+                <th>🏐 Position</th>
+                <th>🏆 Team</th>
+                <th>⚙️ Actions</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="player : ${players}">
                 <td>
-                    <img th:src="@{/volleyball/players/image/{id}(id=${player.volleyball_player_id})}" alt="Player Image" style="width:50px;height:50px;"/>
+                    <img th:src="@{/volleyball/players/image/{id}(id=${player.volleyball_player_id})}" 
+                         alt="Player Image" 
+                         style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--accent-blue);"/>
                 </td>
-                <td th:text="${player.name} + ' ' + ${player.surname}"></td>
-                <td th:text="${player.city}"></td>
-                <td th:text="${player.position}"></td>
-                <td th:text="${player.team?.getTeamName()}"></td>
+                <td class="text-readable" th:text="${player.name} + ' ' + ${player.surname}"></td>
+                <td class="text-readable" th:text="${player.city}"></td>
                 <td>
-                    <a th:href="@{/volleyball/players/edit/{id}(id=${player.volleyball_player_id})}" class="btn btn-warning btn-sm">Edit</a>
-                    <a th:href="@{/volleyball/players/details/{id}(id=${player.volleyball_player_id})}" class="btn btn-info btn-sm">Details</a>
-                    <form th:method="POST" th:action="@{/volleyball/players/delete/{id} (id=${player.volleyball_player_id})}" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
+                    <span class="badge-premium badge-primary" th:text="${player.position}"></span>
+                </td>
+                <td class="text-readable" th:text="${player.team?.getTeamName()}"></td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a th:href="@{/volleyball/players/edit/{id}(id=${player.volleyball_player_id})}" 
+                           class="btn btn-premium btn-warning" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">✏️ Edit</a>
+                        <a th:href="@{/volleyball/players/details/{id}(id=${player.volleyball_player_id})}" 
+                           class="btn btn-premium btn-primary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">👁️ Details</a>
+                        <form th:method="POST" th:action="@{/volleyball/players/delete/{id} (id=${player.volleyball_player_id})}" style="display:inline;">
+                            <button type="submit" class="btn btn-premium btn-danger" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">🗑️ Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
-    <a type="button" class="btn btn-secondary" href="/volleyball/players/add-form">Add Player</a>
+    
+    <div class="text-center mt-4">
+        <a type="button" class="btn btn-premium btn-success" href="/volleyball/players/add-form">➕ Add New Player</a>
+    </div>
 </section>
 
-<section class="container mt-4">
-    <h2 class="mb-0">Top 5 Players</h2>
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="section-title">
+                🏆 Top 5 Volleyball Players
+            </h3>
+        </div>
+    </div>
+    
     <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="thead-dark">
+        <table class="table-premium">
+            <thead>
             <tr>
-                <th>Image</th>
-                <th>Player Name</th>
-                <th>Points</th>
-                <th>Assists</th>
-                <th>Blocks</th>
+                <th>🖼️ Image</th>
+                <th>👤 Player Name</th>
+                <th>🎯 Points</th>
+                <th>🎯 Assists</th>
+                <th>🛡️ Blocks</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="player : ${topPlayers}">
                 <td>
-                    <img th:src="@{/volleyball/players/image/{id}(id=${player.volleyball_player_id})}" alt="Player Image" style="width:50px;height:50px;"/>
-
+                    <img th:src="@{/volleyball/players/image/{id}(id=${player.volleyball_player_id})}" 
+                         alt="Player Image" 
+                         style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--accent-blue);"/>
                 </td>
-                <td th:text="${player.name} + ' ' + ${player.surname}"></td>
-                <td th:text="${player.getScoredPoints()}"></td>
-                <td th:text="${player.getAssists()}"></td>
-                <td th:text="${player.getBlocks()}"></td>
+                <td class="text-readable" th:text="${player.name} + ' ' + ${player.surname}"></td>
+                <td>
+                    <span class="badge-premium badge-success" th:text="${player.getScoredPoints()}"></span>
+                </td>
+                <td>
+                    <span class="badge-premium badge-primary" th:text="${player.getAssists()}"></span>
+                </td>
+                <td>
+                    <span class="badge-premium badge-warning" th:text="${player.getBlocks()}"></span>
+                </td>
             </tr>
             </tbody>
         </table>

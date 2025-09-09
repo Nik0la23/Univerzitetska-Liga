@@ -1,87 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add Player</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Add Football Player</h1>
+        <h1 class="mb-0">⚽ Add Football Player</h1>
     </div>
 </header>
-<div class="container mt-5">
+
+<section class="premium-container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-premium" style="color: var(--accent-green); font-size: var(--text-2xl); margin-bottom: var(--space-6);">
+                👤 Player Information
+            </h2>
+        </div>
+    </div>
+    
     <form action="/players/add" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
         <!-- Hidden returnUrl field -->
 
         <!-- Player Image -->
-        <div class="mb-3">
-            <label for="playerImage" class="form-label">Player Image</label>
-            <input type="file" class="form-control" id="playerImage" name="playerImage"
+        <div class="form-group-premium">
+            <label for="playerImage" class="form-label-premium">🖼️ Player Image</label>
+            <input type="file" class="form-control-premium" id="playerImage" name="playerImage"
                    th:value="${player != null} ? ${player.getImage()} : ''" placeholder="Upload player image">
         </div>
 
         <!-- Player Name -->
-        <div class="mb-3">
-            <label for="playerName" class="form-label">Player Name</label>
-            <input type="text" class="form-control" id="playerName" name="playerName"
+        <div class="form-group-premium">
+            <label for="playerName" class="form-label-premium">👤 Player Name</label>
+            <input type="text" class="form-control-premium" id="playerName" name="playerName"
                    th:value="${player != null} ? ${player.getName()} : ''" required placeholder="Enter player name">
             <div class="invalid-feedback">Please enter the player's name.</div>
         </div>
 
         <!-- Player Surname -->
-        <div class="mb-3">
-            <label for="playerSurname" class="form-label">Surname</label>
-            <input type="text" class="form-control" id="playerSurname" name="playerSurname"
+        <div class="form-group-premium">
+            <label for="playerSurname" class="form-label-premium">👤 Surname</label>
+            <input type="text" class="form-control-premium" id="playerSurname" name="playerSurname"
                    th:value="${player != null} ? ${player.getSurname()} : ''" required placeholder="Player Surname">
             <div class="invalid-feedback">Please enter the player's surname.</div>
         </div>
 
         <!-- Player Birth Date -->
-        <div class="mb-3">
-            <label for="playerBirthDate" class="form-label">Birth Date</label>
-            <input type="date" class="form-control" id="playerBirthDate" name="playerBirthDate"
+        <div class="form-group-premium">
+            <label for="playerBirthDate" class="form-label-premium">🎂 Birth Date</label>
+            <input type="date" class="form-control-premium" id="playerBirthDate" name="playerBirthDate"
                    th:value="${player != null} ? ${player.getBirthdate()} : ''" required placeholder="Player Birth date">
             <div class="invalid-feedback">Please enter a valid birth date.</div>
         </div>
 
         <!-- Player Index -->
-        <div class="mb-3">
-            <label for="playerIndex" class="form-label">Index</label>
-            <input type="text" class="form-control" id="playerIndex" name="playerIndex"
+        <div class="form-group-premium">
+            <label for="playerIndex" class="form-label-premium">🔢 Student Index</label>
+            <input type="text" class="form-control-premium" id="playerIndex" name="playerIndex"
                    th:value="${player != null} ? ${player.getIndex()} : ''" required placeholder="Player Student index"
                    pattern="\d{6}" maxlength="6">
             <div class="invalid-feedback">Please enter a 6-digit player index.</div>
         </div>
 
         <!-- Player City -->
-        <div class="mb-3">
-            <label for="playerCity" class="form-label">City</label>
-            <input type="text" class="form-control" id="playerCity" name="playerCity"
+        <div class="form-group-premium">
+            <label for="playerCity" class="form-label-premium">🏙️ City</label>
+            <input type="text" class="form-control-premium" id="playerCity" name="playerCity"
                    th:value="${player != null} ? ${player.getCity()} : ''" required placeholder="Player City">
             <div class="invalid-feedback">Please enter the player's city.</div>
         </div>
 
         <!-- Player Position -->
-        <div class="mb-3">
-            <label for="playerPosition" class="form-label">Position</label>
-            <select class="form-select" id="playerPosition" name="playerPosition" required>
+        <div class="form-group-premium">
+            <label for="playerPosition" class="form-label-premium">⚽ Position</label>
+            <select class="form-control-premium" id="playerPosition" name="playerPosition" required>
                 <option value="" disabled selected>Select Position</option>
-                <option th:value="'GK'" th:selected="${player != null && player.getPosition() == 'GK'}">Goalkeeper (GK)</option>
-                <option th:value="'DEF'" th:selected="${player != null && player.getPosition() == 'DEF'}">Defender (DEF)</option>
-                <option th:value="'MID'" th:selected="${player != null && player.getPosition() == 'MID'}">Midfielder (MID)</option>
-                <option th:value="'FWD'" th:selected="${player != null && player.getPosition() == 'FWD'}">Forward (FWD)</option>
+                <option th:value="'GK'" th:selected="${player != null && player.getPosition() == 'GK'}">🥅 Goalkeeper (GK)</option>
+                <option th:value="'DEF'" th:selected="${player != null && player.getPosition() == 'DEF'}">🛡️ Defender (DEF)</option>
+                <option th:value="'MID'" th:selected="${player != null && player.getPosition() == 'MID'}">⚽ Midfielder (MID)</option>
+                <option th:value="'FWD'" th:selected="${player != null && player.getPosition() == 'FWD'}">🎯 Forward (FWD)</option>
             </select>
             <div class="invalid-feedback">Please select the player's position.</div>
         </div>
 
-
         <!-- Team Selection -->
-        <div class="mb-3">
-            <label for="teamSelect" class="form-label">Team</label>
-            <select id="teamSelect" name="team" class="form-select" required onchange="checkTeamPlayerCount()">
+        <div class="form-group-premium">
+            <label for="teamSelect" class="form-label-premium">🏆 Team</label>
+            <select id="teamSelect" name="team" class="form-control-premium" required onchange="checkTeamPlayerCount()">
                 <option value="">Select a team</option>
                 <option th:each="team : ${teams}" th:value="${team.getId()}"
                         th:data-player-count="${team.getPlayers().size()}" th:text="${team.getTeamName()}">
@@ -91,12 +90,11 @@
         </div>
 
         <!-- Submit and Back Buttons -->
-        <button id="submitButton" type="submit" class="btn btn-primary">Submit</button>
+        <div class="text-center mt-4">
+            <button id="submitButton" type="submit" class="btn btn-premium btn-success">✅ Submit Player</button>
+        </div>
     </form>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</section>
 
 <!-- Custom Script for Validation and Team Player Count Check -->
 <script>
@@ -153,5 +151,3 @@
         }
     }
 </script>
-</body>
-</html>
