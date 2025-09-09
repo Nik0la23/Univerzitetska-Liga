@@ -28,6 +28,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Component
@@ -113,6 +117,55 @@ public class DatabaseSeeder {
         }
     }
 
+    // Image utility methods
+    private byte[] readImageFile(String imagePath) {
+        try {
+            Path path = Paths.get(imagePath);
+            if (Files.exists(path)) {
+                return Files.readAllBytes(path);
+            } else {
+                System.out.println("⚠️ Image file not found: " + imagePath);
+                return new byte[0];
+            }
+        } catch (IOException e) {
+            System.out.println("⚠️ Error reading image file " + imagePath + ": " + e.getMessage());
+            return new byte[0];
+        }
+    }
+
+    private String getTeamLogoPath(int teamIndex) {
+        String[] teamLogos = {
+            "images/team_logos/team1.webp",
+            "images/team_logos/team2.png", 
+            "images/team_logos/team3.webp",
+            "images/team_logos/team4.png"
+        };
+        return teamLogos[teamIndex % teamLogos.length];
+    }
+
+    private String getPlayerImagePath(int playerIndex) {
+        String[] playerImages = {
+            "images/players/player1.png",
+            "images/players/player2.jpg",
+            "images/players/player3.jpg", 
+            "images/players/player4.jpg",
+            "images/players/player5.png"
+        };
+        return playerImages[playerIndex % playerImages.length];
+    }
+
+    private String getJerseyImagePath(int jerseyIndex) {
+        String[] jerseyImages = {
+            "/images/jerseys/jersey1.jpg",
+            "/images/jerseys/jersey2.jpeg"
+        };
+        return jerseyImages[jerseyIndex % jerseyImages.length];
+    }
+
+    private String getHatImagePath(int hatIndex) {
+        return "/images/hats/hat1.jpeg"; // Only one hat image available
+    }
+
     private void createUsers() {
         System.out.println("👥 Creating users...");
         
@@ -142,15 +195,15 @@ public class DatabaseSeeder {
     private void createFootballData() {
         System.out.println("⚽ Creating football data...");
         
-        // Create football teams
-        FootballTeam team1 = footballTeamService.create("Пумбарски факултет", null);
-        FootballTeam team2 = footballTeamService.create("Медицински факултет", null);
-        FootballTeam team3 = footballTeamService.create("Технички факултет", null);
-        FootballTeam team4 = footballTeamService.create("Економски факултет", null);
-        FootballTeam team5 = footballTeamService.create("Филолошки факултет", null);
-        FootballTeam team6 = footballTeamService.create("Правен факултет", null);
-        FootballTeam team7 = footballTeamService.create("Педагошки факултет", null);
-        FootballTeam team8 = footballTeamService.create("Факултет за информатички науки", null);
+        // Create football teams with real logos
+        FootballTeam team1 = footballTeamService.create("Пумбарски факултет", readImageFile(getTeamLogoPath(0)));
+        FootballTeam team2 = footballTeamService.create("Медицински факултет", readImageFile(getTeamLogoPath(1)));
+        FootballTeam team3 = footballTeamService.create("Технички факултет", readImageFile(getTeamLogoPath(2)));
+        FootballTeam team4 = footballTeamService.create("Економски факултет", readImageFile(getTeamLogoPath(3)));
+        FootballTeam team5 = footballTeamService.create("Филолошки факултет", readImageFile(getTeamLogoPath(0)));
+        FootballTeam team6 = footballTeamService.create("Правен факултет", readImageFile(getTeamLogoPath(1)));
+        FootballTeam team7 = footballTeamService.create("Педагошки факултет", readImageFile(getTeamLogoPath(2)));
+        FootballTeam team8 = footballTeamService.create("Факултет за информатички науки", readImageFile(getTeamLogoPath(3)));
 
         // Create football players
         createFootballPlayers(team1, "Пумбарски");
@@ -180,7 +233,7 @@ public class DatabaseSeeder {
                 Date birthDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
                 
                 footballPlayerService.create(
-                    null, // image
+                    readImageFile(getPlayerImagePath(i)), // real player image
                     firstNames[i % firstNames.length],
                     lastNames[i % lastNames.length],
                     birthDate,
@@ -286,15 +339,15 @@ public class DatabaseSeeder {
     private void createBasketballData() {
         System.out.println("🏀 Creating basketball data...");
         
-        // Create basketball teams
-        BasketballTeam team1 = basketballTeamService.create("Пумбарски факултет", null);
-        BasketballTeam team2 = basketballTeamService.create("Медицински факултет", null);
-        BasketballTeam team3 = basketballTeamService.create("Технички факултет", null);
-        BasketballTeam team4 = basketballTeamService.create("Економски факултет", null);
-        BasketballTeam team5 = basketballTeamService.create("Филолошки факултет", null);
-        BasketballTeam team6 = basketballTeamService.create("Правен факултет", null);
-        BasketballTeam team7 = basketballTeamService.create("Педагошки факултет", null);
-        BasketballTeam team8 = basketballTeamService.create("Факултет за информатички науки", null);
+        // Create basketball teams with real logos
+        BasketballTeam team1 = basketballTeamService.create("Пумбарски факултет", readImageFile(getTeamLogoPath(0)));
+        BasketballTeam team2 = basketballTeamService.create("Медицински факултет", readImageFile(getTeamLogoPath(1)));
+        BasketballTeam team3 = basketballTeamService.create("Технички факултет", readImageFile(getTeamLogoPath(2)));
+        BasketballTeam team4 = basketballTeamService.create("Економски факултет", readImageFile(getTeamLogoPath(3)));
+        BasketballTeam team5 = basketballTeamService.create("Филолошки факултет", readImageFile(getTeamLogoPath(0)));
+        BasketballTeam team6 = basketballTeamService.create("Правен факултет", readImageFile(getTeamLogoPath(1)));
+        BasketballTeam team7 = basketballTeamService.create("Педагошки факултет", readImageFile(getTeamLogoPath(2)));
+        BasketballTeam team8 = basketballTeamService.create("Факултет за информатички науки", readImageFile(getTeamLogoPath(3)));
 
         // Create basketball players
         createBasketballPlayers(team1, "Пумбарски");
@@ -324,7 +377,7 @@ public class DatabaseSeeder {
                 Date birthDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
                 
                 basketballPlayerService.create(
-                    null, // image
+                    readImageFile(getPlayerImagePath(i)), // real player image
                     firstNames[i % firstNames.length],
                     lastNames[i % lastNames.length],
                     birthDate,
@@ -404,15 +457,15 @@ public class DatabaseSeeder {
     private void createVolleyballData() {
         System.out.println("🏐 Creating volleyball data...");
         
-        // Create volleyball teams
-        VolleyballTeam team1 = volleyballTeamService.create("Пумбарски факултет", null);
-        VolleyballTeam team2 = volleyballTeamService.create("Медицински факултет", null);
-        VolleyballTeam team3 = volleyballTeamService.create("Технички факултет", null);
-        VolleyballTeam team4 = volleyballTeamService.create("Економски факултет", null);
-        VolleyballTeam team5 = volleyballTeamService.create("Филолошки факултет", null);
-        VolleyballTeam team6 = volleyballTeamService.create("Правен факултет", null);
-        VolleyballTeam team7 = volleyballTeamService.create("Педагошки факултет", null);
-        VolleyballTeam team8 = volleyballTeamService.create("Факултет за информатички науки", null);
+        // Create volleyball teams with real logos
+        VolleyballTeam team1 = volleyballTeamService.create("Пумбарски факултет", readImageFile(getTeamLogoPath(0)));
+        VolleyballTeam team2 = volleyballTeamService.create("Медицински факултет", readImageFile(getTeamLogoPath(1)));
+        VolleyballTeam team3 = volleyballTeamService.create("Технички факултет", readImageFile(getTeamLogoPath(2)));
+        VolleyballTeam team4 = volleyballTeamService.create("Економски факултет", readImageFile(getTeamLogoPath(3)));
+        VolleyballTeam team5 = volleyballTeamService.create("Филолошки факултет", readImageFile(getTeamLogoPath(0)));
+        VolleyballTeam team6 = volleyballTeamService.create("Правен факултет", readImageFile(getTeamLogoPath(1)));
+        VolleyballTeam team7 = volleyballTeamService.create("Педагошки факултет", readImageFile(getTeamLogoPath(2)));
+        VolleyballTeam team8 = volleyballTeamService.create("Факултет за информатички науки", readImageFile(getTeamLogoPath(3)));
 
         // Create volleyball players
         createVolleyballPlayers(team1, "Пумбарски");
@@ -442,7 +495,7 @@ public class DatabaseSeeder {
                 Date birthDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
                 
                 volleyballPlayerService.create(
-                    null, // image
+                    readImageFile(getPlayerImagePath(i)), // real player image
                     firstNames[i % firstNames.length],
                     lastNames[i % lastNames.length],
                     birthDate,
@@ -605,7 +658,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Дрес",
                     "Официјален дрес на " + team.getTeamName() + " за сезона 2024/25",
                     25.99,
-                    "/images/football/jersey.jpg",
+                    getJerseyImagePath(0),
                     team
                 );
                 footballProductRepository.save(jersey);
@@ -614,7 +667,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Шал",
                     "Официјален шал на " + team.getTeamName() + " со лого",
                     12.50,
-                    "/images/football/scarf.jpg",
+                    getJerseyImagePath(1),
                     team
                 );
                 footballProductRepository.save(scarf);
@@ -623,7 +676,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Капа",
                     "Спортска капа на " + team.getTeamName(),
                     8.99,
-                    "/images/football/cap.jpg",
+                    getHatImagePath(0),
                     team
                 );
                 footballProductRepository.save(cap);
@@ -632,7 +685,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Шолја",
                     "Керамичка шолја со лого на " + team.getTeamName(),
                     6.99,
-                    "/images/football/mug.jpg",
+                    getJerseyImagePath(0),
                     team
                 );
                 footballProductRepository.save(mug);
@@ -657,7 +710,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Дрес",
                     "Официјален кошаркарски дрес на " + team.getTeamName() + " за сезона 2024/25",
                     28.99,
-                    "/images/basketball/jersey.jpg",
+                    getJerseyImagePath(0),
                     team
                 );
                 basketballProductRepository.save(jersey);
@@ -666,7 +719,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Шорцеви",
                     "Официјални кошаркарски шорцеви на " + team.getTeamName(),
                     22.50,
-                    "/images/basketball/shorts.jpg",
+                    getJerseyImagePath(1),
                     team
                 );
                 basketballProductRepository.save(shorts);
@@ -675,7 +728,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Топка",
                     "Официјална кошаркарска топка на " + team.getTeamName(),
                     35.99,
-                    "/images/basketball/ball.jpg",
+                    getJerseyImagePath(0),
                     team
                 );
                 basketballProductRepository.save(ball);
@@ -684,7 +737,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Нараквица",
                     "Спортска нараквица на " + team.getTeamName(),
                     4.99,
-                    "/images/basketball/wristband.jpg",
+                    getHatImagePath(0),
                     team
                 );
                 basketballProductRepository.save(wristband);
@@ -709,7 +762,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Дрес",
                     "Официјален одбојкарски дрес на " + team.getTeamName() + " за сезона 2024/25",
                     26.99,
-                    "/images/volleyball/jersey.jpg",
+                    getJerseyImagePath(0),
                     team
                 );
                 volleyballProductRepository.save(jersey);
@@ -718,7 +771,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Шорцеви",
                     "Официјални одбојкарски шорцеви на " + team.getTeamName(),
                     18.50,
-                    "/images/volleyball/shorts.jpg",
+                    getJerseyImagePath(1),
                     team
                 );
                 volleyballProductRepository.save(shorts);
@@ -727,7 +780,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Топка",
                     "Официјална одбојкарска топка на " + team.getTeamName(),
                     32.99,
-                    "/images/volleyball/ball.jpg",
+                    getJerseyImagePath(0),
                     team
                 );
                 volleyballProductRepository.save(ball);
@@ -736,7 +789,7 @@ public class DatabaseSeeder {
                     team.getTeamName() + " - Коленки",
                     "Заштитни коленки за одбојка на " + team.getTeamName(),
                     15.99,
-                    "/images/volleyball/kneepads.jpg",
+                    getHatImagePath(0),
                     team
                 );
                 volleyballProductRepository.save(kneePads);
