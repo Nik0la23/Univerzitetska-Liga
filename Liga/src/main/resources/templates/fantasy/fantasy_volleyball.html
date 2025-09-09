@@ -177,20 +177,20 @@
                 <div class="court-line attack-line right"></div>
                 
                 <!-- Position slots (showing only one side) -->
-                <div class="position-slot s" title="Setter">S</div>
-                <div class="position-slot oh1" title="Outside Hitter">OH</div>
-                <div class="position-slot oh2" title="Outside Hitter">OH</div>
-                <div class="position-slot mb1" title="Middle Blocker">MB</div>
-                <div class="position-slot mb2" title="Middle Blocker">MB</div>
-                <div class="position-slot opp" title="Opposite">OPP</div>
+                <div class="position-slot s" title="Setter" data-position="S">S</div>
+                <div class="position-slot oh1" title="Outside Hitter" data-position="OH1">OH</div>
+                <div class="position-slot oh2" title="Outside Hitter" data-position="OH2">OH</div>
+                <div class="position-slot mb1" title="Middle Blocker" data-position="MB1">MB</div>
+                <div class="position-slot mb2" title="Middle Blocker" data-position="MB2">MB</div>
+                <div class="position-slot opp" title="Opposite" data-position="OPP">OPP</div>
             </div>
             
             <!-- Bench/Substitute positions -->
             <div class="bench-positions mt-3">
                 <h6 class="text-center">Bench</h6>
                 <div class="d-flex justify-content-center gap-2">
-                    <div class="position-slot l" title="Libero">L</div>
-                    <div class="position-slot ds" title="Defensive Specialist">DS</div>
+                    <div class="position-slot l" title="Libero" data-position="L">L</div>
+                    <div class="position-slot ds" title="Defensive Specialist" data-position="DS">DS</div>
                 </div>
             </div>
             
@@ -210,8 +210,6 @@
                         <span class="badge badge-info">OH: <span id="oh-count">0</span>/2</span>
                         <span class="badge badge-info">MB: <span id="mb-count">0</span>/2</span>
                         <span class="badge badge-info">OPP: <span id="opp-count">0</span>/1</span>
-                        <span class="badge badge-info">L: <span id="l-count">0</span>/1</span>
-                        <span class="badge badge-info">DS: <span id="ds-count">0</span>/1</span>
                     </small>
                 </div>
             </div>
@@ -228,8 +226,6 @@
                         <option value="OH">Outside Hitter</option>
                         <option value="MB">Middle Blocker</option>
                         <option value="OPP">Opposite</option>
-                        <option value="L">Libero</option>
-                        <option value="DS">Defensive Specialist</option>
                     </select>
                 </div>
                 <div class="col-md-4">
@@ -304,13 +300,25 @@
                             <p class="card-text">
                                 <span class="position-badge" th:text="${fantasyPlayer.playerPosition}"></span><br>
                                 <small class="text-muted" th:text="${fantasyPlayer.teamName}"></small><br>
-                                <span class="price-badge">$<span th:text="${fantasyPlayer.pricePaid}"></span>M</span>
+                                <span class="price-badge">Paid: $<span th:text="${fantasyPlayer.pricePaid}"></span>M</span><br>
+                                <span class="price-badge" 
+                                      th:classappend="${fantasyPlayer.volleyballPlayer.price > fantasyPlayer.pricePaid ? 'bg-success' : (fantasyPlayer.volleyballPlayer.price < fantasyPlayer.pricePaid ? 'bg-danger' : 'bg-info')}"
+                                      th:text="'Current: $' + ${fantasyPlayer.volleyballPlayer.price} + 'M'"></span>
                             </p>
                             <div th:if="${fantasyPlayer.assignedPosition != null}" class="alert alert-success py-1">
                                 <small>Playing: <strong th:text="${fantasyPlayer.assignedPosition}"></strong></small>
                             </div>
                             <div th:if="${fantasyPlayer.assignedPosition == null}" class="alert alert-warning py-1">
                                 <small>Not assigned</small>
+                            </div>
+                            <div class="mt-2">
+                                <button class="btn btn-danger btn-sm sell-btn" 
+                                        th:data-fantasy-player-id="${fantasyPlayer.id}"
+                                        th:data-player-name="${fantasyPlayer.playerName}"
+                                        th:data-current-price="${fantasyPlayer.volleyballPlayer.price}"
+                                        title="Sell for current market value">
+                                    💰 Sell
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -366,6 +374,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             buyPlayerWithCheck(playerPosition, playerId, playerName, playerPrice);
         }
+        
+        // Add click event listeners for sell buttons
+        if (e.target.classList.contains('sell-btn')) {
+            const fantasyPlayerId = e.target.dataset.fantasyPlayerId;
+            const playerName = e.target.dataset.playerName;
+            const currentPrice = parseFloat(e.target.dataset.currentPrice);
+            
+            sellPlayerWithConfirmation(fantasyPlayerId, playerName, currentPrice);
+        }
     });
 
     let selectedPosition = null;
@@ -378,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Highlight selected position
             this.style.background = 'rgba(255, 0, 0, 0.5)';
-            selectedPosition = this.textContent;
+            selectedPosition = this.dataset.position;
             
             // Show message
             alert('Position ' + selectedPosition + ' selected. Now click on a bought player to assign them.');
@@ -425,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to update position counters
     function updatePositionCounters() {
         const currentPlayers = document.querySelectorAll('.card[data-fantasy-player-id]');
-        const positionCounts = { 'S': 0, 'OH': 0, 'MB': 0, 'OPP': 0, 'L': 0, 'DS': 0 };
+        const positionCounts = { 'S': 0, 'OH': 0, 'MB': 0, 'OPP': 0 };
         
         currentPlayers.forEach(card => {
             const position = card.dataset.playerPosition;
@@ -434,13 +451,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Update counter displays
+        // Update counter displays (only field positions)
         document.getElementById('s-count').textContent = positionCounts['S'];
         document.getElementById('oh-count').textContent = positionCounts['OH'];
         document.getElementById('mb-count').textContent = positionCounts['MB'];
         document.getElementById('opp-count').textContent = positionCounts['OPP'];
-        document.getElementById('l-count').textContent = positionCounts['L'];
-        document.getElementById('ds-count').textContent = positionCounts['DS'];
         
         return positionCounts;
     }
@@ -448,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to check formation constraints
     function checkFormationConstraints(playerPosition) {
         const positionCounts = updatePositionCounters();
-        const maxPositions = { 'S': 1, 'OH': 2, 'MB': 2, 'OPP': 1, 'L': 1, 'DS': 1 };
+        const maxPositions = { 'S': 1, 'OH': 2, 'MB': 2, 'OPP': 1 };
         
         return positionCounts[playerPosition] < maxPositions[playerPosition];
     }
@@ -466,7 +481,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Check formation constraints
         if (!checkFormationConstraints(playerPosition)) {
-            const maxCounts = { 'S': 1, 'OH': 2, 'MB': 2, 'OPP': 1, 'L': 1, 'DS': 1 };
+            const maxCounts = { 'S': 1, 'OH': 2, 'MB': 2, 'OPP': 1 };
             alert('Formation constraint violated! You can only have ' + maxCounts[playerPosition] + ' ' + playerPosition + ' player(s) in your squad.');
             return;
         }
@@ -479,8 +494,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function isPositionCompatible(playerPos, slotPos) {
         const compatibility = {
             'S': ['S'],
-            'OH': ['OH'], 
-            'MB': ['MB'],
+            'OH1': ['OH'], 'OH2': ['OH'],
+            'MB1': ['MB'], 'MB2': ['MB'],
             'OPP': ['OPP'],
             'L': ['L'],
             'DS': ['DS']
@@ -489,11 +504,40 @@ document.addEventListener('DOMContentLoaded', function() {
         return compatibility[slotPos] && compatibility[slotPos].includes(playerPos);
     }
 
+    // Function to get available positions for a player
+    function getAvailablePositions(playerPosition) {
+        const positionMapping = {
+            'S': ['S'],
+            'OH': ['OH1', 'OH2'],
+            'MB': ['MB1', 'MB2'],
+            'OPP': ['OPP'],
+            'L': ['L'],
+            'DS': ['DS']
+        };
+        return positionMapping[playerPosition] || [];
+    }
+
     // Function to handle player purchases
     window.buyPlayer = function(sport, playerId) {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/fantasy/buy/' + sport + '/' + playerId;
+        document.body.appendChild(form);
+        form.submit();
+    };
+
+    // Function to handle player sales with confirmation
+    window.sellPlayerWithConfirmation = function(fantasyPlayerId, playerName, currentPrice) {
+        if (confirm('Sell ' + playerName + ' for $' + currentPrice.toFixed(1) + 'M?\n\nThis will add the current market value to your budget.')) {
+            sellPlayer('volleyball', fantasyPlayerId);
+        }
+    };
+
+    // Function to handle player sales
+    window.sellPlayer = function(sport, fantasyPlayerId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/fantasy/sell/' + sport + '/' + fantasyPlayerId;
         document.body.appendChild(form);
         form.submit();
     };

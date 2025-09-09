@@ -371,13 +371,25 @@
                             <p class="card-text">
                                 <span class="position-badge" th:text="${fantasyPlayer.playerPosition}"></span><br>
                                 <small class="text-muted" th:text="${fantasyPlayer.teamName}"></small><br>
-                                <span class="price-badge">$<span th:text="${fantasyPlayer.pricePaid}"></span>M</span>
+                                <span class="price-badge">Paid: $<span th:text="${fantasyPlayer.pricePaid}"></span>M</span><br>
+                                <span class="price-badge" 
+                                      th:classappend="${fantasyPlayer.basketballPlayer.price > fantasyPlayer.pricePaid ? 'bg-success' : (fantasyPlayer.basketballPlayer.price < fantasyPlayer.pricePaid ? 'bg-danger' : 'bg-info')}"
+                                      th:text="'Current: $' + ${fantasyPlayer.basketballPlayer.price} + 'M'"></span>
                             </p>
                             <div th:if="${fantasyPlayer.assignedPosition != null}" class="alert alert-success py-1">
                                 <small>Playing: <strong th:text="${fantasyPlayer.assignedPosition}"></strong></small>
                             </div>
                             <div th:if="${fantasyPlayer.assignedPosition == null}" class="alert alert-warning py-1">
                                 <small>Not assigned</small>
+                            </div>
+                            <div class="mt-2">
+                                <button class="btn btn-danger btn-sm sell-btn" 
+                                        th:data-fantasy-player-id="${fantasyPlayer.id}"
+                                        th:data-player-name="${fantasyPlayer.playerName}"
+                                        th:data-current-price="${fantasyPlayer.basketballPlayer.price}"
+                                        title="Sell for current market value">
+                                    💰 Sell
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -432,6 +444,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const playerPrice = parseFloat(e.target.dataset.playerPrice);
             
             buyPlayerWithCheck(playerPosition, playerId, playerName, playerPrice);
+        }
+        
+        // Add click event listeners for sell buttons
+        if (e.target.classList.contains('sell-btn')) {
+            const fantasyPlayerId = e.target.dataset.fantasyPlayerId;
+            const playerName = e.target.dataset.playerName;
+            const currentPrice = parseFloat(e.target.dataset.currentPrice);
+            
+            sellPlayerWithConfirmation(fantasyPlayerId, playerName, currentPrice);
         }
     });
 
@@ -558,6 +579,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/fantasy/buy/' + sport + '/' + playerId;
+        document.body.appendChild(form);
+        form.submit();
+    };
+
+    // Function to handle player sales with confirmation
+    window.sellPlayerWithConfirmation = function(fantasyPlayerId, playerName, currentPrice) {
+        if (confirm('Sell ' + playerName + ' for $' + currentPrice.toFixed(1) + 'M?\n\nThis will add the current market value to your budget.')) {
+            sellPlayer('basketball', fantasyPlayerId);
+        }
+    };
+
+    // Function to handle player sales
+    window.sellPlayer = function(sport, fantasyPlayerId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/fantasy/sell/' + sport + '/' + fantasyPlayerId;
         document.body.appendChild(form);
         form.submit();
     };
