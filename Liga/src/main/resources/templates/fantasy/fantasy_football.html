@@ -196,17 +196,17 @@
                 <div class="goal-area right"></div>
                 
                 <!-- Position slots -->
-                <div class="position-slot gk" title="Goalkeeper">GK</div>
-                <div class="position-slot def1" title="Left Back">LB</div>
-                <div class="position-slot def2" title="Center Back">CB</div>
-                <div class="position-slot def3" title="Center Back">CB</div>
-                <div class="position-slot def4" title="Right Back">RB</div>
-                <div class="position-slot mid1" title="Left Midfielder">LM</div>
-                <div class="position-slot mid2" title="Center Midfielder">CM</div>
-                <div class="position-slot mid3" title="Center Midfielder">CM</div>
-                <div class="position-slot mid4" title="Right Midfielder">RM</div>
-                <div class="position-slot fwd1" title="Striker">ST</div>
-                <div class="position-slot fwd2" title="Striker">ST</div>
+                <div class="position-slot gk" title="Goalkeeper" data-position="GK">GK</div>
+                <div class="position-slot def1" title="Left Back" data-position="LB">LB</div>
+                <div class="position-slot def2" title="Center Back" data-position="CB1">CB</div>
+                <div class="position-slot def3" title="Center Back" data-position="CB2">CB</div>
+                <div class="position-slot def4" title="Right Back" data-position="RB">RB</div>
+                <div class="position-slot mid1" title="Left Midfielder" data-position="LM">LM</div>
+                <div class="position-slot mid2" title="Center Midfielder" data-position="CM1">CM</div>
+                <div class="position-slot mid3" title="Center Midfielder" data-position="CM2">CM</div>
+                <div class="position-slot mid4" title="Right Midfielder" data-position="RM">RM</div>
+                <div class="position-slot fwd1" title="Striker" data-position="ST1">ST</div>
+                <div class="position-slot fwd2" title="Striker" data-position="ST2">ST</div>
             </div>
             
             <div class="text-center mt-3">
@@ -314,13 +314,25 @@
                             <p class="card-text">
                                 <span class="position-badge" th:text="${fantasyPlayer.playerPosition}"></span><br>
                                 <small class="text-muted" th:text="${fantasyPlayer.teamName}"></small><br>
-                                <span class="price-badge">$<span th:text="${fantasyPlayer.pricePaid}"></span>M</span>
+                                <span class="price-badge">Paid: $<span th:text="${fantasyPlayer.pricePaid}"></span>M</span><br>
+                                <span class="price-badge" 
+                                      th:classappend="${fantasyPlayer.footballPlayer.price > fantasyPlayer.pricePaid ? 'bg-success' : (fantasyPlayer.footballPlayer.price < fantasyPlayer.pricePaid ? 'bg-danger' : 'bg-info')}"
+                                      th:text="'Current: $' + ${fantasyPlayer.footballPlayer.price} + 'M'"></span>
                             </p>
                             <div th:if="${fantasyPlayer.assignedPosition != null}" class="alert alert-success py-1">
                                 <small>Playing: <strong th:text="${fantasyPlayer.assignedPosition}"></strong></small>
                             </div>
                             <div th:if="${fantasyPlayer.assignedPosition == null}" class="alert alert-warning py-1">
                                 <small>Not assigned</small>
+                            </div>
+                            <div class="mt-2">
+                                <button class="btn btn-danger btn-sm sell-btn" 
+                                        th:data-fantasy-player-id="${fantasyPlayer.id}"
+                                        th:data-player-name="${fantasyPlayer.playerName}"
+                                        th:data-current-price="${fantasyPlayer.footballPlayer.price}"
+                                        title="Sell for current market value">
+                                    💰 Sell
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -376,6 +388,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             buyPlayerWithCheck(playerPosition, playerId, playerName, playerPrice);
         }
+        
+        // Add click event listeners for sell buttons
+        if (e.target.classList.contains('sell-btn')) {
+            const fantasyPlayerId = e.target.dataset.fantasyPlayerId;
+            const playerName = e.target.dataset.playerName;
+            const currentPrice = parseFloat(e.target.dataset.currentPrice);
+            
+            sellPlayerWithConfirmation(fantasyPlayerId, playerName, currentPrice);
+        }
     });
 
     let selectedPosition = null;
@@ -388,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Highlight selected position
             this.style.background = 'rgba(255, 0, 0, 0.5)';
-            selectedPosition = this.textContent;
+            selectedPosition = this.dataset.position;
             
             // Show message
             alert('Position ' + selectedPosition + ' selected. Now click on a bought player to assign them.');
@@ -435,9 +456,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function isPositionCompatible(playerPos, slotPos) {
         const compatibility = {
             'GK': ['GK'],
-            'LB': ['DEF'], 'CB': ['DEF'], 'RB': ['DEF'],
-            'LM': ['MID'], 'CM': ['MID'], 'RM': ['MID'],
-            'ST': ['FWD']
+            'LB': ['DEF'], 'CB1': ['DEF'], 'CB2': ['DEF'], 'RB': ['DEF'],
+            'LM': ['MID'], 'CM1': ['MID'], 'CM2': ['MID'], 'RM': ['MID'],
+            'ST1': ['FWD'], 'ST2': ['FWD']
         };
         
         return compatibility[slotPos] && compatibility[slotPos].includes(playerPos);
@@ -447,9 +468,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function getAvailablePositions(playerPosition) {
         const positionMapping = {
             'GK': ['GK'],
-            'DEF': ['LB', 'CB', 'RB'],
-            'MID': ['LM', 'CM', 'RM'],
-            'FWD': ['ST']
+            'DEF': ['LB', 'CB1', 'CB2', 'RB'],
+            'MID': ['LM', 'CM1', 'CM2', 'RM'],
+            'FWD': ['ST1', 'ST2']
         };
         return positionMapping[playerPosition] || [];
     }
@@ -517,6 +538,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/fantasy/buy/' + sport + '/' + playerId;
+        document.body.appendChild(form);
+        form.submit();
+    };
+
+    // Function to handle player sales with confirmation
+    window.sellPlayerWithConfirmation = function(fantasyPlayerId, playerName, currentPrice) {
+        if (confirm('Sell ' + playerName + ' for $' + currentPrice.toFixed(1) + 'M?\n\nThis will add the current market value to your budget.')) {
+            sellPlayer('football', fantasyPlayerId);
+        }
+    };
+
+    // Function to handle player sales
+    window.sellPlayer = function(sport, fantasyPlayerId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/fantasy/sell/' + sport + '/' + fantasyPlayerId;
         document.body.appendChild(form);
         form.submit();
     };

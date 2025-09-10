@@ -133,9 +133,10 @@ public class BasketballMatchController {
 
     @GetMapping("/live")
     public String showLive(Model model) {
+        LocalDateTime now = LocalDateTime.now();
         List<BasketballMatch> live = basketballMatchService.listAllBasketballMatches().stream()
-                .filter(match -> (match.getStartTime().isBefore(LocalDateTime.now()) && match.getEndTime().isAfter(LocalDateTime
-                        .now())))
+                .filter(match -> match.getStartTime().isBefore(now)
+                        && match.getStartTime().plusMinutes(60).isAfter(now))
                 .collect(Collectors.toList());
         model.addAttribute("live", live);
         model.addAttribute("bodyContent","basketball/basketball_live");

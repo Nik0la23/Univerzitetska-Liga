@@ -5,17 +5,12 @@
     <title>Edit Live Match</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
-    <script type="text/javascript" th:inline="javascript">
-        /*<![CDATA[*/
-        const players = /*[[${dtoPlayers}]]*/ [];
-        /*]]>*/
-    </script>
-
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const teamSelect = document.getElementById("teamId");
             const playerSelect = document.getElementById("playerId");
             const playerForm = document.getElementById("playerForm");
+            const allPlayersSelect = document.getElementById("allPlayers");
 
             // Initial state
             playerForm.style.display = "none";
@@ -36,12 +31,13 @@
                 playerSelect.disabled = false;
                 playerSelect.innerHTML = '<option value="">Select Player</option>';
 
-                // Filter and add players to the select element
-                players.forEach(player => {
-                    if (player.teamId == selectedTeamId) {
+                // Filter and add players to the select element from hidden options
+                const options = allPlayersSelect.querySelectorAll('option[data-team-id]');
+                options.forEach(opt => {
+                    if (opt.getAttribute('data-team-id') === selectedTeamId) {
                         const option = document.createElement("option");
-                        option.value = player.basketball_player_id;
-                        option.text = player.name + ' ' + player.surname;
+                        option.value = opt.value;
+                        option.text = opt.textContent;
                         playerSelect.add(option);
                     }
                 });
@@ -114,6 +110,15 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </form>
+
+    <!-- Hidden select holding all players rendered server-side to avoid JS serialization issues -->
+    <select id="allPlayers" style="display:none;">
+        <option th:each="p : ${dtoPlayers}"
+                th:value="${p.basketball_player_id}"
+                th:text="${p.name + ' ' + p.surname}"
+                th:attr="data-team-id=${p.teamId}">
+        </option>
+    </select>
 
     <div class="mt-4">
         <h3>Current Score</h3>

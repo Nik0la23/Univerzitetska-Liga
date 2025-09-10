@@ -164,6 +164,85 @@ public class SimpleFantasyService implements FantasyService {
     }
 
     @Override
+    @Transactional
+    public void sellFootballPlayer(FantasyTeam team, Long fantasyPlayerId) {
+        FantasyPlayer fantasyPlayer = fantasyPlayerRepository.findById(fantasyPlayerId)
+                .orElseThrow(() -> new RuntimeException("Fantasy player not found"));
+        
+        if (!fantasyPlayer.getFantasyTeam().getId().equals(team.getId())) {
+            throw new RuntimeException("Player does not belong to this team");
+        }
+        
+        if (fantasyPlayer.getFootballPlayer() == null) {
+            throw new RuntimeException("This is not a football player");
+        }
+        
+        // Get current market value of the player
+        double currentValue = fantasyPlayer.getFootballPlayer().getPrice() != null ? 
+                fantasyPlayer.getFootballPlayer().getPrice() : 5.0;
+        
+        // Add the current value back to the team's available budget
+        // We do this by reducing budgetSpent (which increases available budget)
+        team.setBudgetSpent(team.getBudgetSpent() - currentValue);
+        fantasyTeamRepository.save(team);
+        
+        // Remove the fantasy player
+        fantasyPlayerRepository.delete(fantasyPlayer);
+    }
+
+    @Override
+    @Transactional
+    public void sellBasketballPlayer(FantasyTeam team, Long fantasyPlayerId) {
+        FantasyPlayer fantasyPlayer = fantasyPlayerRepository.findById(fantasyPlayerId)
+                .orElseThrow(() -> new RuntimeException("Fantasy player not found"));
+        
+        if (!fantasyPlayer.getFantasyTeam().getId().equals(team.getId())) {
+            throw new RuntimeException("Player does not belong to this team");
+        }
+        
+        if (fantasyPlayer.getBasketballPlayer() == null) {
+            throw new RuntimeException("This is not a basketball player");
+        }
+        
+        // Get current market value of the player
+        double currentValue = fantasyPlayer.getBasketballPlayer().getPrice() != null ? 
+                fantasyPlayer.getBasketballPlayer().getPrice() : 5.0;
+        
+        // Add the current value to the team's budget
+        team.setBudgetSpent(team.getBudgetSpent() - currentValue);
+        fantasyTeamRepository.save(team);
+        
+        // Remove the fantasy player
+        fantasyPlayerRepository.delete(fantasyPlayer);
+    }
+
+    @Override
+    @Transactional
+    public void sellVolleyballPlayer(FantasyTeam team, Long fantasyPlayerId) {
+        FantasyPlayer fantasyPlayer = fantasyPlayerRepository.findById(fantasyPlayerId)
+                .orElseThrow(() -> new RuntimeException("Fantasy player not found"));
+        
+        if (!fantasyPlayer.getFantasyTeam().getId().equals(team.getId())) {
+            throw new RuntimeException("Player does not belong to this team");
+        }
+        
+        if (fantasyPlayer.getVolleyballPlayer() == null) {
+            throw new RuntimeException("This is not a volleyball player");
+        }
+        
+        // Get current market value of the player
+        double currentValue = fantasyPlayer.getVolleyballPlayer().getPrice() != null ? 
+                fantasyPlayer.getVolleyballPlayer().getPrice() : 5.0;
+        
+        // Add the current value to the team's budget
+        team.setBudgetSpent(team.getBudgetSpent() - currentValue);
+        fantasyTeamRepository.save(team);
+        
+        // Remove the fantasy player
+        fantasyPlayerRepository.delete(fantasyPlayer);
+    }
+
+    @Override
     public List<FantasyPlayer> getBoughtPlayers(FantasyTeam team) {
         return fantasyPlayerRepository.findByFantasyTeam(team);
     }
@@ -183,7 +262,7 @@ public class SimpleFantasyService implements FantasyService {
             throw new RuntimeException("Player does not belong to this team");
         }
         
-        // Check if position is already occupied
+        // Check if this specific position slot is already occupied
         Optional<FantasyPlayer> existingPlayer = fantasyPlayerRepository.findByFantasyTeamAndAssignedPosition(team, position);
         if (existingPlayer.isPresent()) {
             existingPlayer.get().setAssignedPosition(null);
@@ -282,7 +361,7 @@ public class SimpleFantasyService implements FantasyService {
         // For each player performance, calculate fantasy points and award to teams that own them
         for (FootballPlayerScored performance : playerPerformances) {
             FootballPlayer player = performance.getPlayer();
-            double fantasyPoints = calculatePlayerFantasyPoints(player.getFootball_player_id());
+            double fantasyPoints = calculateFootballPlayerMatchFantasyPoints(performance);
             
             // Find all fantasy teams that own this player
             List<FantasyPlayer> fantasyPlayersOwningThisPlayer = fantasyPlayerRepository.findAll().stream()
@@ -304,6 +383,10 @@ public class SimpleFantasyService implements FantasyService {
                 team.setLastUpdated(java.time.LocalDateTime.now());
                 fantasyTeamRepository.save(team);
             }
+
+            // Adjust player's price based on per-match performance and persist
+            adjustFootballPlayerPrice(player, fantasyPoints);
+            footballPlayerRepository.save(player);
         }
     }
 
@@ -348,6 +431,119 @@ public class SimpleFantasyService implements FantasyService {
         return totalScore;
     }
 
+    private double calculateFootballPlayerMatchFantasyPoints(FootballPlayerScored performance) {
+        FootballPlayer player = performance.getPlayer();
+        String playerPosition = player.getPosition();
+        double totalScore = 0.0;
+        
+        // Goal points (position-dependent)
+        if ("GK".equals(playerPosition) || "DEF".equals(playerPosition)) {
+            totalScore += performance.getGoalsScored() * 6;
+        } else if ("MID".equals(playerPosition)) {
+            totalScore += performance.getGoalsScored() * 5;
+        } else if ("FWD".equals(playerPosition)) {
+            totalScore += performance.getGoalsScored() * 4;
+        }
+        
+        // Assist points
+        totalScore += performance.getAssistsScored() * 3;
+        
+        // Goalkeeper specific points
+        if ("GK".equals(playerPosition)) {
+            // Regular saves: 1 point per 3 saves
+            totalScore += Math.floor(performance.getSaves() / 3.0);
+        }
+        
+        return totalScore;
+    }
+
+    private void adjustFootballPlayerPrice(FootballPlayer player, double matchPoints) {
+        // Price adjustment tiers based on per-match fantasy points
+        double delta;
+        if (matchPoints >= 10) {
+            delta = 0.6;
+        } else if (matchPoints >= 8) {
+            delta = 0.5;
+        } else if (matchPoints >= 5) {
+            delta = 0.3;
+        } else if (matchPoints >= 3) {
+            delta = 0.2;
+        } else if (matchPoints > 0) {
+            delta = 0.1;
+        } else if (matchPoints == 0) {
+            delta = -0.1;
+        } else { // negative points (if introduced later)
+            delta = -0.2;
+        }
+
+        double current = player.getPrice() != null ? player.getPrice() : 5.0;
+        double updated = current + delta;
+        // Enforce reasonable bounds
+        if (updated < 0.5) updated = 0.5;
+        if (updated > 50.0) updated = 50.0;
+        // Round to 0.1 precision
+        updated = Math.round(updated * 10.0) / 10.0;
+        player.setPrice(updated);
+    }
+
+    private void adjustBasketballPlayerPrice(BasketballPlayer player, double matchPoints) {
+        // Price adjustment tiers based on per-match fantasy points (identical to football)
+        double delta;
+        if (matchPoints >= 10) {
+            delta = 0.6;
+        } else if (matchPoints >= 8) {
+            delta = 0.5;
+        } else if (matchPoints >= 5) {
+            delta = 0.3;
+        } else if (matchPoints >= 3) {
+            delta = 0.2;
+        } else if (matchPoints > 0) {
+            delta = 0.1;
+        } else if (matchPoints == 0) {
+            delta = -0.1;
+        } else { // negative points (if introduced later)
+            delta = -0.2;
+        }
+
+        double current = player.getPrice() != null ? player.getPrice() : 5.0;
+        double updated = current + delta;
+        // Enforce reasonable bounds
+        if (updated < 0.5) updated = 0.5;
+        if (updated > 50.0) updated = 50.0;
+        // Round to 0.1 precision
+        updated = Math.round(updated * 10.0) / 10.0;
+        player.setPrice(updated);
+    }
+
+    private void adjustVolleyballPlayerPrice(VolleyballPlayer player, double matchPoints) {
+        // Price adjustment tiers based on per-match fantasy points (identical to football)
+        double delta;
+        if (matchPoints >= 10) {
+            delta = 0.6;
+        } else if (matchPoints >= 8) {
+            delta = 0.5;
+        } else if (matchPoints >= 5) {
+            delta = 0.3;
+        } else if (matchPoints >= 3) {
+            delta = 0.2;
+        } else if (matchPoints > 0) {
+            delta = 0.1;
+        } else if (matchPoints == 0) {
+            delta = -0.1;
+        } else { // negative points (if introduced later)
+            delta = -0.2;
+        }
+
+        double current = player.getPrice() != null ? player.getPrice() : 5.0;
+        double updated = current + delta;
+        // Enforce reasonable bounds
+        if (updated < 0.5) updated = 0.5;
+        if (updated > 50.0) updated = 50.0;
+        // Round to 0.1 precision
+        updated = Math.round(updated * 10.0) / 10.0;
+        player.setPrice(updated);
+    }
+
     @Override
     @Transactional
     public void awardBudgetBonus(FantasyTeam team, double points) {
@@ -360,7 +556,7 @@ public class SimpleFantasyService implements FantasyService {
         
         double budgetBonus = points * multiplier;
         
-        // Add to team's total budget
+        // Add to team's total budget (this is correct - fantasy points should increase total budget)
         team.setBudgetTotal(team.getBudgetTotal() + budgetBonus);
         
         fantasyTeamRepository.save(team);
@@ -400,6 +596,10 @@ public class SimpleFantasyService implements FantasyService {
                 team.setLastUpdated(java.time.LocalDateTime.now());
                 fantasyTeamRepository.save(team);
             }
+
+            // Adjust player's price based on per-match performance and persist
+            adjustBasketballPlayerPrice(player, fantasyPoints);
+            basketballPlayerRepository.save(player);
         }
     }
 
@@ -466,6 +666,10 @@ public class SimpleFantasyService implements FantasyService {
                 team.setLastUpdated(java.time.LocalDateTime.now());
                 fantasyTeamRepository.save(team);
             }
+
+            // Adjust player's price based on per-match performance and persist
+            adjustVolleyballPlayerPrice(player, fantasyPoints);
+            volleyballPlayerRepository.save(player);
         }
     }
 

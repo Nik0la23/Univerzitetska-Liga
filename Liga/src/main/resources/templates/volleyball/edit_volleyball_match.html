@@ -123,6 +123,7 @@
         <div class="d-flex gap-3 mt-4">
             <button type="submit" class="btn-premium">💾 Update Match</button>
             <a th:href="@{/volleyball/matches/details/{id}(id=${match.getVolleyball_match_id()})}" class="btn-premium" style="background: var(--gray-600);">⬅️ Back to Match Details</a>
+
         </div>
     </form>
 </section>
@@ -154,7 +155,6 @@
         const homeTeam = document.getElementById('homeTeam').value;
         const awayTeam = document.getElementById('awayTeam').value;
         const startTime = document.getElementById('startTime').value;
-        const endTime = document.getElementById('endTime').value;
 
         // Check if home and away teams are the same
         if (homeTeam === awayTeam) {
@@ -162,11 +162,7 @@
             return false;
         }
 
-        // Check if end time is before start time
-        if (new Date(endTime) < new Date(startTime)) {
-            alert("End time cannot be before start time.");
-            return false;
-        }
+        // No end time validation needed
 
         // Validate set scores (max thresholds per set)
         for (let i = 1; i <= 5; i++) {

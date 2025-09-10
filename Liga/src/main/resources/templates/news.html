@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>News</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<header class="bg-primary text-white p-3">
+    <div class="container">
+        <h1 class="mb-0">Latest News & Top Players</h1>
+    </div>
+</header>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <h3>All Sports News</h3>
+            <div class="list-group">
+                <a th:each="n : ${allNews}"
+                   th:href="@{/news/details/{id}(id=${n.news_id})}"
+                   class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1" th:text="${n.title}">News title</h5>
+                        <small th:text="${n.publishedDate}">2025-01-01</small>
+                    </div>
+                    <small class="text-muted" th:text="${n.sport}">SPORT</small>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <h4>Top Players</h4>
+            <div class="mb-4">
+                <h5>Football</h5>
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="p : ${topFootballPlayers}" th:text="${p.name + ' ' + p.surname}">Player</li>
+                </ul>
+            </div>
+            <div class="mb-4">
+                <h5>Basketball</h5>
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="p : ${topBasketballPlayers}" th:text="${p.name + ' ' + p.surname}">Player</li>
+                </ul>
+            </div>
+            <div class="mb-4">
+                <h5>Volleyball</h5>
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="p : ${topVolleyballPlayers}" th:text="${p.name + ' ' + p.surname}">Player</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+

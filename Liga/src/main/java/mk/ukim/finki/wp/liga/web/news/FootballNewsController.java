@@ -13,7 +13,7 @@ import java.util.List;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping("/news")
+@RequestMapping("/football/news")
 public class FootballNewsController {
 
     private final NewsService newsService;
@@ -29,7 +29,7 @@ public class FootballNewsController {
         return "master_template";
     }
 
-    @GetMapping("details/{id}")
+    @GetMapping("/details/{id}")
     public String showNewsDetails(@PathVariable Long id, Model model) {
         News news = newsService.findById(id);
         model.addAttribute("news", news);
@@ -41,7 +41,7 @@ public class FootballNewsController {
     public String showEditForm(@PathVariable Long id, Model model) {
         News news = newsService.findById(id);
         if (news == null) {
-            return "redirect:/news";
+            return "redirect:/football/news";
         }
         model.addAttribute("news", news);
         model.addAttribute("bodyContent","edit_football_news");
@@ -54,17 +54,17 @@ public class FootballNewsController {
                            @RequestParam String content) {
         News existingNews = newsService.findById(id);
         if (existingNews == null) {
-            return "redirect:/news";
+            return "redirect:/football/news";
         }
 
         newsService.update(id, title, "FOOTBALL", content);
-        return "redirect:/news";
+        return "redirect:/football/news";
     }
 
     @GetMapping("/add")
     public String showAddNewsForm(Model model) {
-       model.addAttribute("news", new News());
-         model.addAttribute("bodyContent", "add_football_news");
+        model.addAttribute("news", new News());
+        model.addAttribute("bodyContent", "add_football_news");
         return "master_template";
     }
 
@@ -72,15 +72,13 @@ public class FootballNewsController {
     public String addNews(@RequestParam String title,
                           @RequestParam String content) {
         newsService.create(title, "FOOTBALL", content);
-        return "redirect:/news";
+        return "redirect:/football/news";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteNews(@PathVariable Long id) {
         newsService.delete(id);
-        return "redirect:/news";
+        return "redirect:/football/news";
     }
-
-
-
 }
+
