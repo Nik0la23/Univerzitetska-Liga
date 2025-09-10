@@ -109,13 +109,7 @@
         <div class="form-group">
             <label for="startTime">Start Time</label>
             <input type="datetime-local" id="startTime" name="startTime" class="form-control" 
-                   th:value="${#temporals.format(match.startTime, 'yyyy-MM-dd''T''HH:mm')}" required onchange="checkEndTime()">
-        </div>
-
-        <div class="form-group">
-            <label for="endTime">End Time</label>
-            <input type="datetime-local" id="endTime" name="endTime" class="form-control"  
-                   th:value="${#temporals.format(match.endTime, 'yyyy-MM-dd''T''HH:mm')}" required>
+                   th:value="${#temporals.format(match.startTime, 'yyyy-MM-dd''T''HH:mm')}" required>
         </div>
 
         <button type="submit" class="btn btn-warning">Update Match</button>
@@ -150,7 +144,6 @@
         const homeTeam = document.getElementById('homeTeam').value;
         const awayTeam = document.getElementById('awayTeam').value;
         const startTime = document.getElementById('startTime').value;
-        const endTime = document.getElementById('endTime').value;
 
         // Check if home and away teams are the same
         if (homeTeam === awayTeam) {
@@ -158,11 +151,7 @@
             return false;
         }
 
-        // Check if end time is before start time
-        if (new Date(endTime) < new Date(startTime)) {
-            alert("End time cannot be before start time.");
-            return false;
-        }
+        // No end time validation needed
 
         // Validate set scores (max thresholds per set)
         for (let i = 1; i <= 5; i++) {

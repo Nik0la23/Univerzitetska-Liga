@@ -133,9 +133,10 @@ public class VolleyballMatchController {
 
     @GetMapping("/live")
     public String showLive(Model model) {
+        LocalDateTime now = LocalDateTime.now();
         List<VolleyballMatch> live = volleyballMatchService.listAllVolleyballMatches().stream()
-                .filter(match -> (match.getStartTime().isBefore(LocalDateTime.now()) && match.getEndTime().isAfter(LocalDateTime
-                        .now())))
+                .filter(match -> match.getStartTime().isBefore(now)
+                        && match.getStartTime().plusMinutes(90).isAfter(now))
                 .collect(Collectors.toList());
         model.addAttribute("live", live);
         model.addAttribute("bodyContent","volleyball/volleyball_live");
@@ -272,12 +273,11 @@ public class VolleyballMatchController {
             @RequestParam int awayTeamSet3Points,
             @RequestParam int awayTeamSet4Points,
             @RequestParam int awayTeamSet5Points,
-            @RequestParam String startTime,
-            @RequestParam String endTime) {
+            @RequestParam String startTime) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         LocalDateTime start = LocalDateTime.parse(startTime, formatter);
-        LocalDateTime end = LocalDateTime.parse(endTime, formatter);
+        LocalDateTime end = start.plusMinutes(90);
 
         VolleyballTeam homeTeam = volleyballTeamService.findById(homeTeamId);
         VolleyballTeam awayTeam = volleyballTeamService.findById(awayTeamId);
