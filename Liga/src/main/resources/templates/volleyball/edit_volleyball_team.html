@@ -1,47 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Team</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Edit Volleyball Team</h1>
+        <h1 class="mb-0">🏐 Edit Volleyball Team</h1>
     </div>
 </header>
-<div class="container mt-5">
 
-    <form th:action="@{/volleyball/teams/edit/{id}(id=${team.getVolleyball_team_id()})}" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="logo" class="form-label">Team Logo</label>
-            <input type="file" class="form-control" id="logo" name="logo"
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">🏆 Update Team Information</h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">Edit volleyball team details and statistics</p>
+        </div>
+    </div>
+    
+    <form th:action="@{/volleyball/teams/edit/{id}(id=${team.getVolleyball_team_id()})}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <div class="form-group-premium">
+            <label for="logo" class="form-label-premium">🖼️ Team Logo</label>
+            <input type="file" class="form-control-premium" id="logo" name="logo"
                    th:value="${team != null ? team.getLogo() : ''}" placeholder="Upload Team Logo">
         </div>
-        <div class="form-group">
-            <label for="teamName">Team Name:</label>
-            <input type="text" id="teamName" class="form-control" th:field="*{team.teamName}" >
+        
+        <div class="form-group-premium">
+            <label for="teamName" class="form-label-premium">🏆 Team Name</label>
+            <input type="text" id="teamName" class="form-control-premium" th:field="*{team.teamName}" required placeholder="Enter team name">
+            <div class="invalid-feedback">Please enter the team name.</div>
         </div>
-        <div class="form-group">
-            <label for="teamLeaguePoints">League Points:</label>
-            <input type="number" id="teamLeaguePoints" name="teamLeaguePoints" class="form-control" th:value="${team.getTeamLeaguePoints()}" readonly>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group-premium">
+                    <label for="teamLeaguePoints" class="form-label-premium">📊 League Points</label>
+                    <input type="number" id="teamLeaguePoints" name="teamLeaguePoints" class="form-control-premium" th:value="${team.getTeamLeaguePoints()}" readonly>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group-premium">
+                    <label for="teamMatchesPlayed" class="form-label-premium">⚽ Matches Played</label>
+                    <input type="number" id="teamMatchesPlayed" name="teamMatchesPlayed" class="form-control-premium" th:value="${team.getTeamMatchesPlayed()}" readonly>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="teamMatchesPlayed">Matches Played:</label>
-            <input type="number" id="teamMatchesPlayed" name="teamMatchesPlayed" class="form-control" th:value="${team.getTeamMatchesPlayed()}" readonly>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group-premium">
+                    <label for="teamWins" class="form-label-premium">✅ Wins</label>
+                    <input type="number" id="teamWins" name="teamWins" class="form-control-premium" th:value="${team.getTeamWins()}" readonly>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group-premium">
+                    <label for="teamLosses" class="form-label-premium">❌ Losses</label>
+                    <input type="number" id="teamLosses" name="teamLosses" class="form-control-premium" th:value="${team.getTeamLoses()}" readonly>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="teamWins">Wins:</label>
-            <input type="number" id="teamWins" name="teamWins" class="form-control" th:value="${team.getTeamWins()}" readonly>
+        
+        <div class="d-flex gap-3 mt-4">
+            <button type="submit" class="btn-premium">💾 Save Changes</button>
+            <a href="/volleyball/teams" class="btn-premium" style="background: var(--gray-600);">⬅️ Cancel</a>
         </div>
-        <div class="form-group">
-            <label for="teamLosses">Wins:</label>
-            <input type="number" id="teamLosses" name="teamLosses" class="form-control" th:value="${team.getTeamLoses()}" readonly>
-        </div>
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="/volleyball/teams" class="btn btn-secondary">Cancel</a>
     </form>
-</div>
-</body>
-</html>
+</section>

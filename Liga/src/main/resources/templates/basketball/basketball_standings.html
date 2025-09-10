@@ -6,40 +6,49 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<header class="bg-primary text-white p-3">
-    <div class="container">
-        <h1 class="mb-0">Basketball Standings</h1>
-    </div>
+<header class="premium-header text-white">
+  <div class="container">
+    <h1 class="mb-0">🏀 Basketball Standings</h1>
+  </div>
 </header>
-<div class="container mt-5">
 
-    <table class="table table-striped table-hover table-bordered">
-        <thead class="table-dark">
+<section class="premium-container section-spacing">
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="page-title">📊 League Table</h2>
+      <p class="text-premium-light" style="font-size: var(--text-lg);">Current season standings with recent form</p>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table-premium">
+      <thead>
         <tr>
-            <th>Club</th>
-            <th>MP</th>
-            <th>W</th>
-            <th>L</th>
-            <th>Last 5</th>
+          <th>🏟️ Club</th>
+          <th>📅 MP</th>
+          <th>✅ W</th>
+          <th>❌ L</th>
+          <th>Last 5</th>
         </tr>
-        </thead>
-        <tbody>
+      </thead>
+      <tbody>
         <tr th:each="teamData : ${standings}">
-            <td th:text="${teamData.teamName}"></td>
-            <td th:text="${teamData.matchesPlayed}"></td>
-            <td th:text="${teamData.wins}"></td>
-            <td th:text="${teamData.loses}"></td>
-            <td>
-                <span th:each="result : ${teamData.lastFiveMatches}">
-                    <span th:if="${result == 'W'}" class="badge bg-success">W</span>
-                    <span th:if="${result == 'D'}" class="badge bg-secondary">D</span>
-                    <span th:if="${result == 'L'}" class="badge bg-danger">L</span>
-                </span>
-            </td>
+          <td class="text-readable" th:text="${teamData.teamName}"></td>
+          <td class="text-readable" th:text="${teamData.matchesPlayed}"></td>
+          <td><span class="badge-premium badge-success" th:text="${teamData.wins}"></span></td>
+          <td><span class="badge-premium badge-danger" th:text="${teamData.loses}"></span></td>
+          <td>
+            <span th:each="result : ${teamData.lastFiveMatches}">
+              <span th:if="${result == 'W'}" class="badge-premium badge-success">W</span>
+              <span th:if="${result == 'D'}" class="badge-premium badge-secondary">D</span>
+              <span th:if="${result == 'L'}" class="badge-premium badge-danger">L</span>
+            </span>
+          </td>
         </tr>
-        </tbody>
+      </tbody>
     </table>
-</div>
+  </div>
+</section>
 
 <!-- Bootstrap JS (optional) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

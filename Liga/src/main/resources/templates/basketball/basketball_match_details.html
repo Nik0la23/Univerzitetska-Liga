@@ -1,9 +1,18 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Match Details</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<header class="premium-header text-white">
+    <div class="container">
+        <h1 class="mb-0">🏀 Basketball Match Details</h1>
+    </div>
+</header>
+
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="page-title">
+                🏆 Match Information
+            </h2>
+        </div>
+    </div>
+    
     <style>
         .match-container {
             display: flex;
@@ -46,38 +55,69 @@
             background-color: #e9ecef;
         }
     </style>
-</head>
-<body>
-<header class="bg-primary text-white p-3">
-    <div class="container">
-        <h1 class="mb-0">Basketball Match Details</h1>
+    
+    <!-- Match Teams and Score -->
+    <div class="premium-card">
+        <div class="row align-items-center">
+            <!-- Home Team -->
+            <div class="col-md-4 text-center">
+                <a th:href="@{/basketball/teams/team/{id}(id=${match.homeTeam.id})}" 
+                   class="text-decoration-none">
+                    <h3 class="text-premium" style="color: var(--accent-orange); margin-bottom: var(--space-4);" 
+                        th:text="${match.homeTeam.teamName}">Home Team</h3>
+                </a>
+                <div class="premium-card" style="background: var(--gray-50);">
+                    <h5 class="text-premium" style="margin-bottom: var(--space-3);">👥 PLAYERS</h5>
+                    <div class="row">
+                        <div class="col-12" th:each="player : ${match.homeTeam.players}">
+                            <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" 
+                               class="text-readable text-decoration-none d-block mb-2">
+                                • <span th:text="${player.name + ' ' + player.surname}">Player Name</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Score -->
+            <div class="col-md-4 text-center">
+                <div class="premium-card" style="background: linear-gradient(135deg, var(--accent-orange), #ff8c00);">
+                    <h2 class="text-white" style="font-size: var(--text-5xl); margin: 0;">
+                        <span th:text="${match.homeTeamPoints}">0</span> 
+                        <span style="color: rgba(255,255,255,0.8);">-</span> 
+                        <span th:text="${match.awayTeamPoints}">0</span>
+                    </h2>
+                    <p class="text-white" style="margin: 0; opacity: 0.9;">FINAL SCORE</p>
+                </div>
+            </div>
+            
+            <!-- Away Team -->
+            <div class="col-md-4 text-center">
+                <a th:href="@{/basketball/teams/team/{id}(id=${match.awayTeam.id})}" 
+                   class="text-decoration-none">
+                    <h3 class="text-premium" style="color: var(--accent-orange); margin-bottom: var(--space-4);" 
+                        th:text="${match.awayTeam.teamName}">Away Team</h3>
+                </a>
+                <div class="premium-card" style="background: var(--gray-50);">
+                    <h5 class="text-premium" style="margin-bottom: var(--space-3);">👥 PLAYERS</h5>
+                    <div class="row">
+                        <div class="col-12" th:each="player : ${match.awayTeam.players}">
+                            <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" 
+                               class="text-readable text-decoration-none d-block mb-2">
+                                • <span th:text="${player.name + ' ' + player.surname}">Player Name</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</header>
-<div class="container mt-4">
-    <div class="match-container">
-        <div class="team-container">
-            <div class="team-name">
-                <a th:href="@{/basketball/teams/team/{id}(id=${match.homeTeam.id})}" th:text="${match.homeTeam.teamName}">Home Team Name</a>
-            </div>
-            <ul class="players-list">
-                <li th:each="player : ${match.homeTeam.players}">
-                    <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" 
-                       th:text="${player.name + ' ' + player.surname}">Player Name</a>
-                </li>
-            </ul>
-        </div>
-        <div class="points">
-            <span th:text="${match.homeTeamPoints}">0</span> - <span th:text="${match.awayTeamPoints}">0</span>
-        </div>
-        <div class="team-container">
-            <div class="team-name">
-                <a th:href="@{/basketball/teams/team/{id}(id=${match.awayTeam.id})}" th:text="${match.awayTeam.teamName}">Away Team Name</a>
-            </div>
-            <ul class="players-list">
-                <li th:each="player : ${match.awayTeam.players}">
-                    <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" 
-                       th:text="${player.name + ' ' + player.surname}">Player Name</a>
-                </li>
+    
+    <!-- Quarter by Quarter Breakdown -->
+    <div class="premium-card">
+        <h3 class="section-title">📊 Quarter Breakdown</h3>
+        <div class="table-responsive">
+            <table class="table-premium">
             </ul>
         </div>
     </div>

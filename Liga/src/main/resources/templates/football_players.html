@@ -1,110 +1,135 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Football Teams</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"> <!-- Bootstrap CSS -->
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Football Players</h1>
+        <h1 class="mb-0">⚽ Football Players</h1>
     </div>
 </header>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg premium-nav">
     <div class="container">
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a href="/players/add-form" class="nav-link">Add Player</a>
+                    <a href="/players/add-form" class="nav-link">➕ Add Player</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/matches/live" class="nav-link">Live Matches</a>
+                    <a href="/matches/live" class="nav-link">🔴 Live Matches</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/matches/fixtures" class="nav-link">Fixtures</a>
+                    <a href="/matches/fixtures" class="nav-link">📅 Fixtures</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/matches/results" class="nav-link">Results</a>
+                    <a href="/matches/results" class="nav-link">📊 Results</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/players" class="nav-link">View Players</a>
+                    <a href="/players" class="nav-link">👥 View Players</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<section class="container mt-4">
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">
+                👥 Football Players
+            </h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">
+                Manage and view all football players in the league
+            </p>
+        </div>
+    </div>
+    
     <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="thead-dark">
+        <table class="table-premium">
+            <thead>
             <tr>
-                <th>Image</th>
-                <th>Player Name</th>
-                <th>Birthdate</th>
-                <th>City</th>
-                <th>Position</th>
-                <th>Team</th>
-                <th>Actions</th>
+                <th>🖼️ Image</th>
+                <th>👤 Player Name</th>
+                <th>🎂 Birthdate</th>
+                <th>🏙️ City</th>
+                <th>⚽ Position</th>
+                <th>🏆 Team</th>
+                <th>⚙️ Actions</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="player : ${footballPlayers}">
                 <td>
-                    <img th:src="@{/players/image/{id}(id=${player.football_player_id})}" alt="Player Image" style="width:50px;height:50px;"/>
+                    <img th:src="@{/players/image/{id}(id=${player.football_player_id})}" 
+                         alt="Player Image" 
+                         style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--accent-green);"/>
                 </td>
-                <td th:text="${player.name} + ' ' + ${player.surname}"></td>
-                <td th:text="${#dates.format(player.birthdate, 'yyyy-MM-dd')}"></td>
-                <td th:text="${player.city}"></td>
-                <td th:text="${player.position}"></td>
-                <td th:text="${player.team?.teamName}"></td>
+                <td class="text-readable" th:text="${player.name} + ' ' + ${player.surname}"></td>
+                <td class="text-readable" th:text="${#dates.format(player.birthdate, 'yyyy-MM-dd')}"></td>
+                <td class="text-readable" th:text="${player.city}"></td>
                 <td>
-                    <a th:href="@{/players/edit/{id}(id=${player.football_player_id})}" class="btn btn-warning btn-sm">Edit</a>
-                    <a th:href="@{/players/details/{id}(id=${player.football_player_id})}" class="btn btn-info btn-sm">Details</a>
-                    <form th:method="POST" th:action="@{/players/delete/{id} (id=${player.football_player_id})}" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
+                    <span class="badge-premium badge-primary" th:text="${player.position}"></span>
+                </td>
+                <td class="text-readable" th:text="${player.team?.teamName}"></td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a th:href="@{/players/edit/{id}(id=${player.football_player_id})}" 
+                           class="btn btn-premium btn-warning" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">✏️ Edit</a>
+                        <a th:href="@{/players/details/{id}(id=${player.football_player_id})}" 
+                           class="btn btn-premium btn-primary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">👁️ Details</a>
+                        <form th:method="POST" th:action="@{/players/delete/{id} (id=${player.football_player_id})}" style="display:inline;">
+                            <button type="submit" class="btn btn-premium btn-danger" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">🗑️ Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
-    <a type="button" class="btn btn-secondary" href="/players/add-form">Add Player</a>
+    
+    <div class="text-center mt-4">
+        <a type="button" class="btn btn-premium btn-success" href="/players/add-form">
+            ➕ Add New Player
+        </a>
+    </div>
 </section>
 
 
-<section class="container mt-4">
-    <h2 class="mb-0">Top 5 Players</h2>
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="section-title">
+                🏆 Top 5 Football Players
+            </h3>
+        </div>
+    </div>
+    
     <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="thead-dark">
+        <table class="table-premium">
+            <thead>
             <tr>
-                <th>Image</th>
-                <th>Player Name</th>
-                <th>Goals</th>
-                <th>Assists</th>
-                <th>Points</th>
+                <th>🖼️ Image</th>
+                <th>👤 Player Name</th>
+                <th>⚽ Goals</th>
+                <th>🎯 Assists</th>
+                <th>📊 Points</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="player : ${topPlayers}">
                 <td>
-                    <img th:src="@{/players/image/{id}(id=${player.football_player_id})}" alt="Player Image" style="width:50px;height:50px;"/>
+                    <img th:src="@{/players/image/{id}(id=${player.football_player_id})}" 
+                         alt="Player Image" 
+                         style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--accent-green);"/>
                 </td>
-                <td th:text="${player.name} + ' ' + ${player.surname}"></td>
-                <td th:text="${player.getGoals()}"></td>
-                <td th:text="${player.getAssists()}"></td>
-                <td th:text="${player.getPoints()}"></td>
+                <td class="text-readable" th:text="${player.name} + ' ' + ${player.surname}"></td>
+                <td>
+                    <span class="badge-premium badge-success" th:text="${player.getGoals()}"></span>
+                </td>
+                <td>
+                    <span class="badge-premium badge-primary" th:text="${player.getAssists()}"></span>
+                </td>
+                <td>
+                    <span class="badge-premium badge-warning" th:text="${player.getPoints()}"></span>
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
 </section>
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-</body>
-</html>

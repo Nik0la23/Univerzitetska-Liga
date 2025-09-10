@@ -1,84 +1,90 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Live Basketball Matches</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <style>
-        .quarters-table {
-            width: 100%;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            border-collapse: collapse;
-        }
-        .quarters-table th, .quarters-table td {
-            text-align: center;
-            padding: 8px;
-            border: 1px solid #ddd;
-        }
-        .quarters-table th {
-            background-color: #f8f9fa;
-        }
-        .total-score {
-            font-weight: bold;
-            background-color: #e9ecef;
-        }
-    </style>
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Live Basketball Matches</h1>
+        <h1 class="mb-0">🔴 Basketball Live Matches</h1>
     </div>
 </header>
-<div class="container mt-5">
-    <div th:each="match : ${live}" class="mb-5">
-        <h3 class="mb-3">
-            <span th:text="${match.homeTeam.teamName}"></span>
-            vs
-            <span th:text="${match.awayTeam.teamName}"></span>
-        </h3>
-        
-        <table class="quarters-table">
-            <thead>
-                <tr>
-                    <th>Team</th>
-                    <th>Q1</th>
-                    <th>Q2</th>
-                    <th>Q3</th>
-                    <th>Q4</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td th:text="${match.homeTeam.teamName}">Home Team</td>
-                    <td th:text="${match.homeTeamQ1Points}">0</td>
-                    <td th:text="${match.homeTeamQ2Points}">0</td>
-                    <td th:text="${match.homeTeamQ3Points}">0</td>
-                    <td th:text="${match.homeTeamQ4Points}">0</td>
-                    <td class="total-score" th:text="${match.homeTeamPoints}">0</td>
-                </tr>
-                <tr>
-                    <td th:text="${match.awayTeam.teamName}">Away Team</td>
-                    <td th:text="${match.awayTeamQ1Points}">0</td>
-                    <td th:text="${match.awayTeamQ2Points}">0</td>
-                    <td th:text="${match.awayTeamQ3Points}">0</td>
-                    <td th:text="${match.awayTeamQ4Points}">0</td>
-                    <td class="total-score" th:text="${match.awayTeamPoints}">0</td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <div class="text-right">
-            <a th:href="@{/basketball/matches/edit_live/{id}(id=${match.basketball_match_id})}" class="btn btn-warning">Edit Live Match</a>
-        </div>
-        <hr class="mt-4">
-    </div>
-</div>
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-</body>
-</html>
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">
+                🔴 Live Matches
+            </h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">
+                View currently ongoing basketball matches and update scores in real-time
+            </p>
+        </div>
+    </div>
+    
+    <div th:each="match : ${live}" class="premium-card mb-4">
+        <div class="text-center mb-4">
+            <h3 class="text-premium" style="color: var(--accent-orange); font-size: var(--text-2xl);">
+                <span th:text="${match.homeTeam.teamName}"></span>
+                <span class="mx-3" style="color: var(--gray-600);">vs</span>
+                <span th:text="${match.awayTeam.teamName}"></span>
+            </h3>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table-premium">
+                <thead>
+                <tr>
+                    <th>🏀 Team</th>
+                    <th>1️⃣ Q1</th>
+                    <th>2️⃣ Q2</th>
+                    <th>3️⃣ Q3</th>
+                    <th>4️⃣ Q4</th>
+                    <th>📊 Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="text-readable" th:text="${match.homeTeam.teamName}">Home Team</td>
+                    <td class="text-center">
+                        <span class="badge-premium badge-primary" th:text="${match.homeTeamQ1Points}">0</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge-premium badge-primary" th:text="${match.homeTeamQ2Points}">0</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge-premium badge-primary" th:text="${match.homeTeamQ3Points}">0</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge-premium badge-primary" th:text="${match.homeTeamQ4Points}">0</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge-premium badge-warning" th:text="${match.homeTeamPoints}">0</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-readable" th:text="${match.awayTeam.teamName}">Away Team</td>
+                    <td class="text-center">
+                        <span class="badge-premium badge-primary" th:text="${match.awayTeamQ1Points}">0</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge-premium badge-primary" th:text="${match.awayTeamQ2Points}">0</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge-premium badge-primary" th:text="${match.awayTeamQ3Points}">0</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge-premium badge-primary" th:text="${match.awayTeamQ4Points}">0</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge-premium badge-warning" th:text="${match.awayTeamPoints}">0</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a th:href="@{/basketball/matches/edit_live/{id}(id=${match.basketball_match_id})}" 
+               class="btn btn-premium btn-warning">✏️ Edit Live Match</a>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4">
+        <button type="button" class="btn btn-premium btn-secondary" onclick="window.history.back()">⬅️ Back</button>
+    </div>
+</section>

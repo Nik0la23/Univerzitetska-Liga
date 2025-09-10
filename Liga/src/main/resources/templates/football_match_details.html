@@ -1,9 +1,18 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Match Details</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<header class="premium-header text-white">
+    <div class="container">
+        <h1 class="mb-0">⚽ Football Match Details</h1>
+    </div>
+</header>
+
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="page-title">
+                🏆 Match Information
+            </h2>
+        </div>
+    </div>
+    
     <style>
         .match-container {
             margin-bottom: 20px;
@@ -56,48 +65,103 @@
             margin-bottom: 20px;
         }
     </style>
-</head>
-<body>
-<header class="bg-primary text-white p-3">
-    <div class="container">
-        <h1 class="mb-0">Football Match Details</h1>
+    
+    <!-- Match Date and Time -->
+    <div class="premium-card text-center mb-4">
+        <h3 class="text-premium" style="color: var(--accent-green); margin-bottom: var(--space-3);">
+            📅 <span th:text="${#temporals.format(match.startTime.toLocalDate(), 'EEEE dd MMMM yyyy')}"></span>
+        </h3>
+        <h4 class="text-premium-light">
+            ⏰ <span th:text="${#temporals.format(match.startTime, 'HH:mm')}"></span>
+        </h4>
     </div>
-</header>
-<div class="container mt-4">
-    <div class="match-date-time">
-        <div th:text="${#temporals.format(match.startTime.toLocalDate(), 'EEEE dd MMMM yyyy')}"></div>
-        <div th:text="${#temporals.format(match.startTime, 'HH:mm')}"></div>
+    
+    <!-- Match Teams and Score -->
+    <div class="premium-card">
+        <div class="row align-items-center">
+            <!-- Home Team -->
+            <div class="col-md-4 text-center">
+                <a th:href="@{/teams/details/{id}(id=${match.homeTeam.id})}" 
+                   class="text-decoration-none">
+                    <h3 class="text-premium" style="color: var(--accent-green); margin-bottom: var(--space-4);" 
+                        th:text="${match.homeTeam.teamName}">Home Team</h3>
+                </a>
+                <div class="premium-card" style="background: var(--gray-50);">
+                    <h5 class="text-premium" style="margin-bottom: var(--space-3);">👥 PLAYERS</h5>
+                    <div class="row">
+                        <div class="col-12" th:each="player : ${match.homeTeam.players}">
+                            <a th:href="@{/players/details/{id}(id=${player.football_player_id})}" 
+                               class="text-readable text-decoration-none d-block mb-2">
+                                • <span th:text="${player.name}">Player Name</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Score -->
+            <div class="col-md-4 text-center">
+                <div class="premium-card" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));">
+                    <h2 class="text-white" style="font-size: var(--text-5xl); margin: 0;">
+                        <span th:text="${match.homeTeamPoints}">0</span> 
+                        <span style="color: rgba(255,255,255,0.8);">-</span> 
+                        <span th:text="${match.awayTeamPoints}">0</span>
+                    </h2>
+                    <p class="text-white" style="margin: 0; opacity: 0.9;">FINAL SCORE</p>
+                </div>
+            </div>
+            
+            <!-- Away Team -->
+            <div class="col-md-4 text-center">
+                <a th:href="@{/teams/details/{id}(id=${match.awayTeam.id})}" 
+                   class="text-decoration-none">
+                    <h3 class="text-premium" style="color: var(--accent-green); margin-bottom: var(--space-4);" 
+                        th:text="${match.awayTeam.teamName}">Away Team</h3>
+                </a>
+                <div class="premium-card" style="background: var(--gray-50);">
+                    <h5 class="text-premium" style="margin-bottom: var(--space-3);">👥 PLAYERS</h5>
+                    <div class="row">
+                        <div class="col-12" th:each="player : ${match.awayTeam.players}">
+                            <a th:href="@{/players/details/{id}(id=${player.football_player_id})}" 
+                               class="text-readable text-decoration-none d-block mb-2">
+                                • <span th:text="${player.name}">Player Name</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row match-container">
-        <div class="col-md-5 team-container">
-            <a th:href="@{/teams/details/{id}(id=${match.homeTeam.id})}" class="team-name" th:text="${match.homeTeam.teamName}">Home Team Name</a>
-            <div class="players-container">
-                <div class="players-header">PLAYERS:</div>
-                <ul class="players-list">
+    
+    <!-- Match Statistics -->
+    <div class="premium-card">
+        <h3 class="section-title">📊 Match Statistics</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <h5 class="text-premium" style="color: var(--accent-green);">🏠 <span th:text="${match.homeTeam.teamName}">Home Team</span></h5>
+                <div class="premium-card" style="background: var(--gray-50);">
+                    <ul class="list-unstyled">
                     <li th:each="player : ${match.homeTeam.players}">
-                        <a th:href="@{/players/details/{id}(id=${player.football_player_id})}" th:text="${player.name}">Player Name</a>
+                        <a th:href="@{/players/details/{id}(id=${player.football_player_id}, prevPage = 'matchDetails')}" th:text="${player.name}">Player Name</a>
                     </li>
                 </ul>
             </div>
-        </div>
-        <div class="col-md-2 points">
-            <span th:text="${match.homeTeamPoints}">0</span> - <span th:text="${match.awayTeamPoints}">0</span>
-        </div>
-        <div class="col-md-5 team-container">
-            <a th:href="@{/teams/details/{id}(id=${match.awayTeam.id})}" class="team-name" th:text="${match.awayTeam.teamName}">Away Team Name</a>
-            <div class="players-container">
-                <div class="players-header">PLAYERS:</div>
-                <ul class="players-list">
+            <div class="col-md-6">
+                <h5 class="text-premium" style="color: var(--accent-green);">✈️ <span th:text="${match.awayTeam.teamName}">Away Team</span></h5>
+                <div class="premium-card" style="background: var(--gray-50);">
+                    <ul class="list-unstyled">
                     <li th:each="player : ${match.awayTeam.players}">
                         <a th:href="@{/players/details/{id}(id=${player.football_player_id}, prevPage = 'matchDetails')}" th:text="${player.name}">Player Name</a>
                     </li>
                 </ul>
             </div>
         </div>
+        
+        <div class="text-center mt-4">
+            <a th:if="${match.isPlayoffMatch}" th:href="@{/matches/playoffs}" class="btn btn-sm btn-success" style="padding: 8px 16px; font-size: 14px;">🏆 Back to Playoffs</a>
+            <a th:if="${!match.isPlayoffMatch}" th:href="@{/matches}" class="btn btn-sm btn-secondary" style="padding: 8px 16px; font-size: 14px;">⬅️ Back to Matches</a>
+        </div>
     </div>
-
-    <a th:if="${match.isPlayoffMatch}" th:href="@{/matches/playoffs}" class="btn btn-primary">Back to Playoffs</a>
-    <a th:if="${!match.isPlayoffMatch}" th:href="@{/matches}" class="btn btn-primary">Back to Matches</a>
 
 </div>
 

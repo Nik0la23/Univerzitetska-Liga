@@ -1,33 +1,22 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Details</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-
-    <style>
-        a.player-link {
-            color: black;
-            text-decoration: none; /* This removes the underline, if needed */
-        }
-
-        a.player-link:hover {
-            color: grey; /* Optional: Change color on hover */
-        }
-    </style>
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Football Team Details</h1>
+        <h1 class="mb-0">⚽ Football Team Details</h1>
     </div>
 </header>
-<div class="container mt-5">
+
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="page-title">
+                🏆 Team Information
+            </h2>
+        </div>
+    </div>
+    
     <div th:if="${team != null}">
-        <div class="card">
-            <div class="card-header">
-                <h2 th:text="${team.teamName}">Team Name</h2>
+        <div class="premium-card">
+            <div class="text-center mb-4">
+                <h2 class="text-premium" style="color: var(--accent-green); font-size: var(--text-3xl);" th:text="${team.teamName}">Team Name</h2>
                 <img th:src="@{/teams/logo/{id}(id=${team.id})}" alt="Team Image" class="img-fluid mb-3" style="width:200px;height:200px;"/>
             </div>
             <div class="card-body">

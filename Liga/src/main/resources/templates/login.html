@@ -1,22 +1,51 @@
-<div class="container mt-5" xmlns:th="http://www.thymeleaf.org">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2>Login</h2>
-            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-            <form th:action="@{/auth/login}" method="post">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-                <a th:href="@{/auth/register}" class="btn btn-link">Register</a>
-            </form>
+<header class="premium-header text-white">
+  <div class="container">
+    <h1 class="mb-0">🔑 Login to University League</h1>
+  </div>
+</header>
+
+<section class="premium-container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="premium-card">
+        <div class="text-center mb-5">
+          <h2 class="text-premium" style="color: var(--primary-light); font-size: var(--text-3xl);">
+            Welcome Back
+          </h2>
+          <p class="text-premium-light" style="color: var(--gray-600);">
+            Sign in to access your account
+          </p>
         </div>
+        
+        <div th:if="${error}" class="alert-premium alert-danger" th:text="${error}"></div>
+        
+        <form th:action="@{/auth/login}" method="post">
+          <div class="form-group-premium">
+            <label for="name" class="form-label-premium">Username</label>
+            <input type="text" id="name" name="name" class="form-control-premium" required>
+          </div>
+          
+          <div class="form-group-premium">
+            <label for="password" class="form-label-premium">Password</label>
+            <input type="password" id="password" name="password" class="form-control-premium" required>
+          </div>
+          
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-premium btn-primary">Login</button>
+          </div>
+          
+          <div class="text-center mt-4">
+            <p class="text-premium-light" style="color: var(--gray-600);">
+              Don't have an account? 
+              <a th:href="@{/auth/register}" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">
+                Register here
+              </a>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
-</div>
+  </div>
+</section>
 
 
