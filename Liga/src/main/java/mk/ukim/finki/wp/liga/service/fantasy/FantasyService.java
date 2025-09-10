@@ -18,6 +18,11 @@ public interface FantasyService {
     FantasyPlayer buyBasketballPlayer(FantasyTeam team, Long playerId);
     FantasyPlayer buyVolleyballPlayer(FantasyTeam team, Long playerId);
     
+    // Player sell methods
+    void sellFootballPlayer(FantasyTeam team, Long fantasyPlayerId);
+    void sellBasketballPlayer(FantasyTeam team, Long fantasyPlayerId);
+    void sellVolleyballPlayer(FantasyTeam team, Long fantasyPlayerId);
+    
     // Get bought players
     List<FantasyPlayer> getBoughtPlayers(FantasyTeam team);
     List<FantasyPlayer> getAssignedPlayers(FantasyTeam team);

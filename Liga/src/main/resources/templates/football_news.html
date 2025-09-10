@@ -16,7 +16,7 @@
         <div class="col-md-8">
 
             <div class="mb-3">
-                <a th:href="@{/news/add}" class="btn btn-success">Add News</a>
+                <a th:href="@{/football/news/add}" class="btn btn-success">Add News</a>
             </div>
 
             <div th:each="news : ${footballNews}" class="mb-3">
@@ -28,9 +28,9 @@
                     </div>
                     <!-- Buttons Section -->
                     <div>
-                        <a th:href="@{/news/details/{id}(id=${news.news_id})}" class="btn btn-primary me-2">View</a>
-                        <a th:href="@{/news/edit/{id}(id=${news.news_id})}" class="btn btn-warning me-2">Edit</a>
-                        <a th:href="@{/news/delete/{id}(id=${news.news_id})}"
+                        <a th:href="@{/football/news/details/{id}(id=${news.news_id})}" class="btn btn-primary me-2">View</a>
+                        <a th:href="@{/football/news/edit/{id}(id=${news.news_id})}" class="btn btn-warning me-2">Edit</a>
+                        <a th:href="@{/football/news/delete/{id}(id=${news.news_id})}"
                            class="btn btn-danger"
                            onclick="return confirm('Are you sure you want to delete this news?');">Delete</a>
                     </div>

@@ -198,6 +198,54 @@ public class FantasyController {
         return "redirect:/fantasy/volleyball";
     }
 
+    @PostMapping("/sell/football/{fantasyPlayerId}")
+    public String sellFootballPlayer(@PathVariable Long fantasyPlayerId, HttpSession session,
+                                    org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/auth/login";
+        
+        try {
+            fantasyService.getTeamFor(user, FantasySport.FOOTBALL).ifPresent(team -> 
+                fantasyService.sellFootballPlayer(team, fantasyPlayerId));
+            redirectAttributes.addFlashAttribute("successMessage", "Player sold successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/fantasy/football";
+    }
+
+    @PostMapping("/sell/basketball/{fantasyPlayerId}")
+    public String sellBasketballPlayer(@PathVariable Long fantasyPlayerId, HttpSession session,
+                                      org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/auth/login";
+        
+        try {
+            fantasyService.getTeamFor(user, FantasySport.BASKETBALL).ifPresent(team -> 
+                fantasyService.sellBasketballPlayer(team, fantasyPlayerId));
+            redirectAttributes.addFlashAttribute("successMessage", "Player sold successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/fantasy/basketball";
+    }
+
+    @PostMapping("/sell/volleyball/{fantasyPlayerId}")
+    public String sellVolleyballPlayer(@PathVariable Long fantasyPlayerId, HttpSession session,
+                                      org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/auth/login";
+        
+        try {
+            fantasyService.getTeamFor(user, FantasySport.VOLLEYBALL).ifPresent(team -> 
+                fantasyService.sellVolleyballPlayer(team, fantasyPlayerId));
+            redirectAttributes.addFlashAttribute("successMessage", "Player sold successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/fantasy/volleyball";
+    }
+
     @PostMapping("/assign/{fantasyPlayerId}")
     public String assignPlayer(@PathVariable Long fantasyPlayerId, @RequestParam String position, 
                               @RequestParam FantasySport sport, HttpSession session) {
