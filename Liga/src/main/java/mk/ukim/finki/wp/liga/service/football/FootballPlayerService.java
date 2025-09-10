@@ -1,10 +1,8 @@
 package mk.ukim.finki.wp.liga.service.football;
 
-import jakarta.transaction.Transactional;
 import mk.ukim.finki.wp.liga.model.FootballPlayer;
 import mk.ukim.finki.wp.liga.model.FootballTeam;
 
-import java.awt.*;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +18,7 @@ public interface FootballPlayerService {
 
 
     FootballPlayer update(Long id, byte [] image, String name, String surname, Date birthdate, int index, String city, String position, FootballTeam team);
+    FootballPlayer update(Long id, byte [] image, String name, String surname, Date birthdate, int index, String city, String position, FootballTeam team, int appearances, int goals, int assists, int saves, Double price);
 
 
     FootballPlayer delete(Long id);
@@ -32,5 +31,6 @@ public interface FootballPlayerService {
     List<FootballPlayer> getPlayersByIds(List<Long> ids);
     List<FootballPlayer> getTop5Players();
     List<FootballPlayer> getTop5PlayersByTeam(Long teamId);
+    void recalculateAllPlayerPrices();
    // Long getTeamId();
 }

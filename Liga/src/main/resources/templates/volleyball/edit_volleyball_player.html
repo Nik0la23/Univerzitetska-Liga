@@ -56,6 +56,63 @@
                 submitButton.disabled = false;
             }
         }
+
+        function calculatePricePreview() {
+            const appearances = parseInt(document.getElementById('appearances').value) || 0;
+            const servings = parseInt(document.getElementById('servings').value) || 0;
+            const assists = parseInt(document.getElementById('assists').value) || 0;
+            const scoredPoints = parseInt(document.getElementById('scoredPoints').value) || 0;
+            const blocks = parseInt(document.getElementById('blocks').value) || 0;
+            const position = document.getElementById('playerPosition').value;
+            
+            let calculatedPrice = 5.0; // Base price
+            
+            // Scored points are highly valuable
+            calculatedPrice += scoredPoints * 1.5;
+            
+            // Assists show playmaking ability
+            calculatedPrice += assists * 1.0;
+            
+            // Blocks show defensive prowess
+            calculatedPrice += blocks * 1.2;
+            
+            // Servings show serving ability
+            calculatedPrice += servings * 0.8;
+            
+            // Appearances show consistency
+            calculatedPrice += appearances * 0.1;
+            
+            // Position-based adjustments
+            if (position === 'S') {
+                calculatedPrice += assists * 0.5;
+            } else if (position === 'OH' || position === 'OPP') {
+                calculatedPrice += scoredPoints * 0.3;
+            } else if (position === 'MB') {
+                calculatedPrice += blocks * 0.5;
+            } else if (position === 'L' || position === 'DS') {
+                calculatedPrice += appearances * 0.2;
+            }
+            
+            // Apply bounds
+            calculatedPrice = Math.max(1.0, Math.min(50.0, calculatedPrice));
+            
+            document.getElementById('priceDisplay').value = calculatedPrice.toFixed(1);
+        }
+
+        // Add event listeners to stats fields
+        document.addEventListener('DOMContentLoaded', function() {
+            const statsFields = ['appearances', 'servings', 'assists', 'scoredPoints', 'blocks', 'playerPosition'];
+            statsFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', calculatePricePreview);
+                    field.addEventListener('change', calculatePricePreview);
+                }
+            });
+            
+            // Initial calculation
+            calculatePricePreview();
+        });
     </script>
 
 </head>
@@ -115,6 +172,58 @@
                         th:selected="${team.getVolleyball_team_id() == player.getTeam().getVolleyball_team_id()}">
                 </option>
             </select>
+        </div>
+
+        <!-- Player Stats Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="text-primary" style="margin-bottom: 20px;">
+                    📊 Player Statistics
+                </h3>
+            </div>
+        </div>
+
+        <!-- Appearances -->
+        <div class="form-group">
+            <label for="appearances" class="form-label">🏐 Appearances</label>
+            <input type="number" class="form-control" id="appearances" name="appearances"
+                   th:value="${player != null ? player.getAppearances() : 0}" min="0" placeholder="Number of appearances">
+        </div>
+
+        <!-- Servings -->
+        <div class="form-group">
+            <label for="servings" class="form-label">🎯 Servings</label>
+            <input type="number" class="form-control" id="servings" name="servings"
+                   th:value="${player != null ? player.getServings() : 0}" min="0" placeholder="Number of servings">
+        </div>
+
+        <!-- Assists -->
+        <div class="form-group">
+            <label for="assists" class="form-label">🅰️ Assists</label>
+            <input type="number" class="form-control" id="assists" name="assists"
+                   th:value="${player != null ? player.getAssists() : 0}" min="0" placeholder="Number of assists">
+        </div>
+
+        <!-- Scored Points -->
+        <div class="form-group">
+            <label for="scoredPoints" class="form-label">🏆 Scored Points</label>
+            <input type="number" class="form-control" id="scoredPoints" name="scoredPoints"
+                   th:value="${player != null ? player.getScoredPoints() : 0}" min="0" placeholder="Number of scored points">
+        </div>
+
+        <!-- Blocks -->
+        <div class="form-group">
+            <label for="blocks" class="form-label">🛡️ Blocks</label>
+            <input type="number" class="form-control" id="blocks" name="blocks"
+                   th:value="${player != null ? player.getBlocks() : 0}" min="0" placeholder="Number of blocks">
+        </div>
+
+        <!-- Price Display (Read-only) -->
+        <div class="form-group">
+            <label for="priceDisplay" class="form-label">💰 Current Price</label>
+            <input type="text" class="form-control" id="priceDisplay" readonly
+                   th:value="${player != null ? player.getPrice() : 5.0}" placeholder="Price calculated automatically">
+            <small class="form-text text-muted">Price is calculated automatically based on player statistics</small>
         </div>
         <button type="submit" id="submitButton" class="btn btn-primary">Save Changes</button>
         <a class="btn btn-secondary" th:href="@{/volleyball/players}">Cancel</a>

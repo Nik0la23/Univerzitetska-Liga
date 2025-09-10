@@ -3,16 +3,9 @@ package mk.ukim.finki.wp.liga.web.basketball;
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.wp.liga.model.BasketballPlayer;
 import mk.ukim.finki.wp.liga.model.BasketballTeam;
-import mk.ukim.finki.wp.liga.model.FootballPlayer;
-import mk.ukim.finki.wp.liga.model.FootballTeam;
 import mk.ukim.finki.wp.liga.service.basketball.BasketballPlayerService;
 import mk.ukim.finki.wp.liga.service.basketball.BasketballTeamService;
-import org.hibernate.annotations.AnyKeyJavaClass;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -108,6 +101,10 @@ public class BasketballPlayerController {
                              @RequestParam String playerCity,
                              @RequestParam String playerPosition,
                              @RequestParam Long team,
+                             @RequestParam(defaultValue = "0") int appearances,
+                             @RequestParam(defaultValue = "0") int points,
+                             @RequestParam(defaultValue = "0") int assists,
+                             @RequestParam(defaultValue = "0") int rebounds,
                              Model model
     ) {
         BasketballPlayer existingPlayer = basketballPlayerService.findById(id);
@@ -126,7 +123,7 @@ public class BasketballPlayerController {
         BasketballTeam team1 = basketballTeamService.findById(team);
         Date birthDate = Date.from(playerBirthDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         // Update the player's details
-        basketballPlayerService.update(id, imageBytes, playerName, playerSurname, birthDate, playerIndex, playerCity, playerPosition, team1);
+        basketballPlayerService.update(id, imageBytes, playerName, playerSurname, birthDate, playerIndex, playerCity, playerPosition, team1, appearances, points, assists, rebounds, 0.0);
         String imageUrl = "/basketball/players/image/" + id;
         model.addAttribute("playerImageUrl", imageUrl);
         return "redirect:/basketball/players";

@@ -1,33 +1,279 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Match Stats</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <meta charset="UTF-8">
+    <title>Volleyball Match Statistics</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        :root {
+            --accent-blue: #007bff;
+            --accent-blue-light: #0056b3;
+            --gray-50: #f8f9fa;
+            --gray-600: #6c757d;
+            --text-premium: #2c3e50;
+            --text-readable: #495057;
+        }
+        
+        .premium-header {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-light));
+            padding: 2rem 0;
+        }
+        
+        .premium-container {
+            padding: 2rem 0;
+        }
+        
+        .premium-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .text-premium {
+            color: var(--text-premium);
+            font-weight: 600;
+        }
+        
+        .text-readable {
+            color: var(--text-readable);
+        }
+        
+        .match-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .team-container {
+            width: 40%;
+        }
+        
+        .team-name {
+            font-weight: bold;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        
+        .points {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .players-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .stat-card {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+        
+        .stat-label {
+            color: var(--text-readable);
+            font-size: 0.9rem;
+        }
+        
+        .sets-table {
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+        
+        .sets-table th, .sets-table td {
+            text-align: center;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .sets-table th {
+            background-color: #f8f9fa;
+        }
+        
+        .total-score {
+            font-weight: bold;
+            background-color: #e9ecef;
+        }
+    </style>
 </head>
 <body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Volleyball Match Stats</h1>
+        <h1 class="mb-0">🏐 Volleyball Match Statistics</h1>
+        <p class="mb-0 mt-2">Detailed match analysis and player performance</p>
     </div>
 </header>
+
+<section class="premium-container">
 <div class="container">
-    <h2>Home Team: <span th:text="${homeTeam.getTeamName()}">Home Team Name</span></h2>
-    <ul>
-        <li>Points: <span th:text="${homePoints}">0</span></li>
-        <li>Blocks: <span th:text="${homeBlocks}">0</span></li>
-        <li>Assists: <span th:text="${homeAssists}">0</span></li>
-        <li>Servings: <span th:text="${homeServings}">0</span></li>
-    </ul>
+        <!-- Match Summary -->
+        <div class="premium-card">
+            <div class="match-container">
+                <div class="team-container">
+                    <div class="team-name text-premium" th:text="${homeTeam.getTeamName()}">Home Team Name</div>
+                    <div class="text-readable">🏠 Home Team</div>
+                </div>
+                <div class="points text-premium" style="color: var(--accent-blue);">
+                    <span th:text="${homePoints}">0</span> - <span th:text="${awayPoints}">0</span>
+                </div>
+                <div class="team-container">
+                    <div class="team-name text-premium" th:text="${awayTeam.getTeamName()}">Away Team Name</div>
+                    <div class="text-readable">✈️ Away Team</div>
+                </div>
+            </div>
+        </div>
 
-    <h2>Away Team: <span th:text="${awayTeam.getTeamName()}">Away Team Name</span></h2>
-    <ul>
-        <li>Points: <span th:text="${awayPoints}">0</span></li>
-        <li>Blocks: <span th:text="${awayBlocks}">0</span></li>
-        <li>Assists: <span th:text="${awayAssists}">0</span></li>
-        <li>Servings: <span th:text="${awayServings}">0</span></li>
-    </ul>
+        <!-- Set Scores -->
+        <div class="premium-card">
+            <h3 class="text-premium mb-4" style="color: var(--accent-blue);">🏐 Set Scores</h3>
+            <table class="sets-table">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>Set 1</th>
+                        <th>Set 2</th>
+                        <th>Set 3</th>
+                        <th>Set 4</th>
+                        <th>Set 5</th>
+                        <th>Sets Won</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td th:text="${homeTeam.getTeamName()}">Home Team</td>
+                        <td th:text="${match.homeTeamSet1Points}">0</td>
+                        <td th:text="${match.homeTeamSet2Points}">0</td>
+                        <td th:text="${match.homeTeamSet3Points}">0</td>
+                        <td th:text="${match.homeTeamSet4Points}">0</td>
+                        <td th:text="${match.homeTeamSet5Points}">0</td>
+                        <td class="total-score" th:text="${homePoints}">0</td>
+                    </tr>
+                    <tr>
+                        <td th:text="${awayTeam.getTeamName()}">Away Team</td>
+                        <td th:text="${match.awayTeamSet1Points}">0</td>
+                        <td th:text="${match.awayTeamSet2Points}">0</td>
+                        <td th:text="${match.awayTeamSet3Points}">0</td>
+                        <td th:text="${match.awayTeamSet4Points}">0</td>
+                        <td th:text="${match.awayTeamSet5Points}">0</td>
+                        <td class="total-score" th:text="${awayPoints}">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <a th:href="@{/volleyball/matches/results/details/{id}(id=${match.getVolleyball_match_id()})}" class="btn btn-primary">Back to Match Details</a>
+        <!-- Team Statistics -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="premium-card">
+                    <h3 class="text-premium mb-4" style="color: var(--accent-blue);">🏠 <span th:text="${homeTeam.getTeamName()}">Home Team</span> Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${homePoints}">0</div>
+                            <div class="stat-label">🏐 Points</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${homeBlocks}">0</div>
+                            <div class="stat-label">🛡️ Blocks</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${homeAssists}">0</div>
+                            <div class="stat-label">🎯 Assists</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${homeServings}">0</div>
+                            <div class="stat-label">🎾 Servings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="premium-card">
+                    <h3 class="text-premium mb-4" style="color: var(--accent-blue);">✈️ <span th:text="${awayTeam.getTeamName()}">Away Team</span> Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${awayPoints}">0</div>
+                            <div class="stat-label">🏐 Points</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${awayBlocks}">0</div>
+                            <div class="stat-label">🛡️ Blocks</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${awayAssists}">0</div>
+                            <div class="stat-label">🎯 Assists</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${awayServings}">0</div>
+                            <div class="stat-label">🎾 Servings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Performance -->
+        <div class="premium-card">
+            <h3 class="text-premium mb-4" style="color: var(--accent-blue);">👥 Player Performance</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-premium" style="color: var(--accent-blue);">🏠 <span th:text="${homeTeam.getTeamName()}">Home Team</span> Players</h5>
+                    <div class="premium-card" style="background: var(--gray-50);">
+                        <ul class="list-unstyled">
+                            <li th:each="player : ${homeTeam.getPlayers()}" class="mb-2">
+                                <a th:href="@{/volleyball/players/details/{id}(id=${player.getVolleyball_player_id()})}" 
+                                   class="text-readable text-decoration-none">
+                                    • <span th:text="${player.getName() + ' ' + player.getSurname()}">Player Name</span>
+                                    <small class="text-muted">(Points: <span th:text="${player.getScoredPoints()}">0</span>, Assists: <span th:text="${player.getAssists()}">0</span>)</small>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="text-premium" style="color: var(--accent-blue);">✈️ <span th:text="${awayTeam.getTeamName()}">Away Team</span> Players</h5>
+                    <div class="premium-card" style="background: var(--gray-50);">
+                        <ul class="list-unstyled">
+                            <li th:each="player : ${awayTeam.getPlayers()}" class="mb-2">
+                                <a th:href="@{/volleyball/players/details/{id}(id=${player.getVolleyball_player_id()})}" 
+                                   class="text-readable text-decoration-none">
+                                    • <span th:text="${player.getName() + ' ' + player.getSurname()}">Player Name</span>
+                                    <small class="text-muted">(Points: <span th:text="${player.getScoredPoints()}">0</span>, Assists: <span th:text="${player.getAssists()}">0</span>)</small>
+                                </a>
+                            </li>
+    </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="text-center">
+            <a th:href="@{/volleyball/matches/results/details/{id}(id=${match.getVolleyball_match_id()})}" class="btn btn-primary mr-2">📊 Back to Match Details</a>
+            <a href="/volleyball/matches" class="btn btn-secondary">⬅️ Back to Matches</a>
+        </div>
 </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>

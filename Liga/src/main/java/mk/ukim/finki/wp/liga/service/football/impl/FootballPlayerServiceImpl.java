@@ -16,7 +16,6 @@ import mk.ukim.finki.wp.liga.service.football.FootballPlayerService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,6 +66,31 @@ public class FootballPlayerServiceImpl implements FootballPlayerService {
         p.setPosition(position);
         FootballTeam t = footballTeamRepository.findById(team.getId()).orElseThrow(InvalidFootballTeamException::new);
         p.setTeam(t);
+        return footballPlayerRepository.save(p);
+    }
+
+    @Override
+    @Transactional
+    public FootballPlayer update(Long id, byte [] image, String name, String surname, Date birthdate, int index, String city, String position, FootballTeam team, int appearances, int goals, int assists, int saves, Double price) {
+        FootballPlayer p = this.findById(id);
+        if(image!=null && image.length>0)
+        p.setImage(image);
+        p.setName(name);
+        p.setSurname(surname);
+        p.setBirthdate(birthdate);
+        p.setIndex(index);
+        p.setCity(city);
+        p.setPosition(position);
+        FootballTeam t = footballTeamRepository.findById(team.getId()).orElseThrow(InvalidFootballTeamException::new);
+        p.setTeam(t);
+        p.setAppearances(appearances);
+        p.setGoals(goals);
+        p.setAssists(assists);
+        p.setSaves(saves);
+        
+        // Calculate dynamic price based on stats
+        p.calculateDynamicPrice();
+        
         return footballPlayerRepository.save(p);
     }
 
@@ -154,5 +178,14 @@ public class FootballPlayerServiceImpl implements FootballPlayerService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public void recalculateAllPlayerPrices() {
+        List<FootballPlayer> allPlayers = footballPlayerRepository.findAll();
+        for (FootballPlayer player : allPlayers) {
+            player.calculateDynamicPrice();
+            footballPlayerRepository.save(player);
+        }
+    }
 
 }

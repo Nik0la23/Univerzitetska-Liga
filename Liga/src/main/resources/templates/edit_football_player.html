@@ -91,6 +91,51 @@
             <div class="invalid-feedback">Please select a team.</div>
         </div>
 
+        <!-- Player Stats Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="text-premium" style="color: var(--accent-green); font-size: var(--text-xl); margin-bottom: var(--space-4);">
+                    📊 Player Statistics
+                </h3>
+            </div>
+        </div>
+
+        <!-- Appearances -->
+        <div class="form-group-premium">
+            <label for="appearances" class="form-label-premium">⚽ Appearances</label>
+            <input type="number" class="form-control-premium" id="appearances" name="appearances"
+                   th:value="${player != null ? player.getAppearances() : 0}" min="0" placeholder="Number of appearances">
+        </div>
+
+        <!-- Goals -->
+        <div class="form-group-premium">
+            <label for="goals" class="form-label-premium">🎯 Goals</label>
+            <input type="number" class="form-control-premium" id="goals" name="goals"
+                   th:value="${player != null ? player.getGoals() : 0}" min="0" placeholder="Number of goals">
+        </div>
+
+        <!-- Assists -->
+        <div class="form-group-premium">
+            <label for="assists" class="form-label-premium">🅰️ Assists</label>
+            <input type="number" class="form-control-premium" id="assists" name="assists"
+                   th:value="${player != null ? player.getAssists() : 0}" min="0" placeholder="Number of assists">
+        </div>
+
+        <!-- Saves (for goalkeepers) -->
+        <div class="form-group-premium">
+            <label for="saves" class="form-label-premium">🥅 Saves</label>
+            <input type="number" class="form-control-premium" id="saves" name="saves"
+                   th:value="${player != null ? player.getSaves() : 0}" min="0" placeholder="Number of saves">
+        </div>
+
+        <!-- Price Display (Read-only) -->
+        <div class="form-group-premium">
+            <label for="priceDisplay" class="form-label-premium">💰 Current Price</label>
+            <input type="text" class="form-control-premium" id="priceDisplay" readonly
+                   th:value="${player != null ? player.getPrice() : 5.0}" placeholder="Price calculated automatically">
+            <small class="form-text text-muted">Price is calculated automatically based on player statistics</small>
+        </div>
+
         <!-- Submit and Back Buttons -->
         <div class="text-center mt-4">
             <button id="submitButton" type="submit" class="btn btn-premium btn-success">✅ Update Player</button>
@@ -139,4 +184,55 @@
             submitButton.disabled = false;
         }
     }
+
+    function calculatePricePreview() {
+        const appearances = parseInt(document.getElementById('appearances').value) || 0;
+        const goals = parseInt(document.getElementById('goals').value) || 0;
+        const assists = parseInt(document.getElementById('assists').value) || 0;
+        const saves = parseInt(document.getElementById('saves').value) || 0;
+        const position = document.getElementById('playerPosition').value;
+        
+        let calculatedPrice = 5.0; // Base price
+        
+        // Goals are highly valued
+        calculatedPrice += goals * 2.0;
+        
+        // Assists are valuable
+        calculatedPrice += assists * 1.0;
+        
+        // Saves are valuable for goalkeepers
+        calculatedPrice += saves * 1.5;
+        
+        // Appearances show consistency
+        calculatedPrice += appearances * 0.1;
+        
+        // Position-based adjustments
+        if (position === 'GK') {
+            calculatedPrice += saves * 0.5;
+        } else if (position === 'FWD') {
+            calculatedPrice += goals * 0.5;
+        } else if (position === 'MID') {
+            calculatedPrice += assists * 0.5;
+        }
+        
+        // Apply bounds
+        calculatedPrice = Math.max(1.0, Math.min(50.0, calculatedPrice));
+        
+        document.getElementById('priceDisplay').value = calculatedPrice.toFixed(1);
+    }
+
+    // Add event listeners to stats fields
+    document.addEventListener('DOMContentLoaded', function() {
+        const statsFields = ['appearances', 'goals', 'assists', 'saves', 'playerPosition'];
+        statsFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', calculatePricePreview);
+                field.addEventListener('change', calculatePricePreview);
+            }
+        });
+        
+        // Initial calculation
+        calculatePricePreview();
+    });
 </script>

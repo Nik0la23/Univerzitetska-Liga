@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.DelegatingServerHttpResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -117,7 +116,12 @@ public class VolleyballPlayerController {
                                          @RequestParam("index") int index,
                                          @RequestParam("city") String city,
                                          @RequestParam("playerPosition") String position,
-                                         @RequestParam(value = "teamId", required = false) Long teamId) {
+                                         @RequestParam(value = "teamId", required = false) Long teamId,
+                                         @RequestParam(defaultValue = "0") int appearances,
+                                         @RequestParam(defaultValue = "0") int servings,
+                                         @RequestParam(defaultValue = "0") int assists,
+                                         @RequestParam(defaultValue = "0") int scoredPoints,
+                                         @RequestParam(defaultValue = "0") int blocks) {
         byte[] imageBytes = null;
         try {
             if (!image.isEmpty()) {
@@ -133,7 +137,7 @@ public class VolleyballPlayerController {
             team = volleyballTeamService.findById(teamId);
         }
 
-        volleyballPlayerService.update(id, imageBytes, name, surname, birthdate, index, city, position, team);
+        volleyballPlayerService.update(id, imageBytes, name, surname, birthdate, index, city, position, team, appearances, servings, assists, scoredPoints, blocks, 0.0);
 
         return "redirect:/volleyball/players";
     }

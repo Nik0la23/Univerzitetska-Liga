@@ -1,7 +1,6 @@
 package mk.ukim.finki.wp.liga.web.football;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.wp.liga.model.FootballPlayer;
 import mk.ukim.finki.wp.liga.model.FootballTeam;
@@ -118,6 +117,10 @@ public class FootballPlayerController {
                              @RequestParam String playerCity,
                              @RequestParam String playerPosition,
                              @RequestParam Long team,
+                             @RequestParam(defaultValue = "0") int appearances,
+                             @RequestParam(defaultValue = "0") int goals,
+                             @RequestParam(defaultValue = "0") int assists,
+                             @RequestParam(defaultValue = "0") int saves,
                              Model model
     ) {
         if (playerName.isEmpty() || playerSurname.isEmpty() || playerBirthDate == null || playerIndex == 0 || playerCity.isEmpty() || playerPosition.isEmpty()) {
@@ -141,7 +144,7 @@ public class FootballPlayerController {
         }
         FootballTeam team1 = footballTeamService.findById(team);
         Date birthDate = Date.from(playerBirthDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        footballPlayerService.update(id, imageBytes, playerName, playerSurname, birthDate, playerIndex, playerCity, playerPosition, team1);
+        footballPlayerService.update(id, imageBytes, playerName, playerSurname, birthDate, playerIndex, playerCity, playerPosition, team1, appearances, goals, assists, saves, 0.0);
         String imageUrl = "/players/image/" + id;
         model.addAttribute("playerImageUrl", imageUrl);
         return "redirect:/players";

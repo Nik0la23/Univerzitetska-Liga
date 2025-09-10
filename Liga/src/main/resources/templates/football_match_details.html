@@ -157,6 +157,37 @@
             </div>
         </div>
         
+        <!-- Half by Half Breakdown -->
+        <div class="premium-card mt-4">
+            <h3 class="section-title">⏱️ Half Breakdown</h3>
+            <div class="table-responsive">
+                <table class="table-premium">
+                    <thead>
+                        <tr>
+                            <th>Team</th>
+                            <th>1st Half</th>
+                            <th>2nd Half</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td th:text="${match.homeTeam.teamName}">Home Team</td>
+                            <td th:text="${match.homeTeamH1Points}">0</td>
+                            <td th:text="${match.homeTeamH2Points}">0</td>
+                            <td class="total-score" th:text="${match.homeTeamPoints}">0</td>
+                        </tr>
+                        <tr>
+                            <td th:text="${match.awayTeam.teamName}">Away Team</td>
+                            <td th:text="${match.awayTeamH1Points}">0</td>
+                            <td th:text="${match.awayTeamH2Points}">0</td>
+                            <td class="total-score" th:text="${match.awayTeamPoints}">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
         <div class="text-center mt-4">
             <a th:if="${match.isPlayoffMatch}" th:href="@{/matches/playoffs}" class="btn btn-sm btn-success" style="padding: 8px 16px; font-size: 14px;">🏆 Back to Playoffs</a>
             <a th:if="${!match.isPlayoffMatch}" th:href="@{/matches}" class="btn btn-sm btn-secondary" style="padding: 8px 16px; font-size: 14px;">⬅️ Back to Matches</a>

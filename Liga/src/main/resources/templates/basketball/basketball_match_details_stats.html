@@ -2,78 +2,272 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Match Details</title>
+    <title>Basketball Match Statistics</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <style>
+        :root {
+            --accent-orange: #fd7e14;
+            --accent-orange-light: #ff8c00;
+            --gray-50: #f8f9fa;
+            --gray-600: #6c757d;
+            --text-premium: #2c3e50;
+            --text-readable: #495057;
+        }
+        
+        .premium-header {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-light));
+            padding: 2rem 0;
+        }
+        
+        .premium-container {
+            padding: 2rem 0;
+        }
+        
+        .premium-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .text-premium {
+            color: var(--text-premium);
+            font-weight: 600;
+        }
+        
+        .text-readable {
+            color: var(--text-readable);
+        }
+        
         .match-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
+        
         .team-container {
             width: 40%;
         }
+        
         .team-name {
             font-weight: bold;
             font-size: 1.5em;
             margin-bottom: 10px;
         }
+        
         .points {
             font-size: 2em;
             font-weight: bold;
         }
+        
         .players-list {
             list-style-type: none;
             padding: 0;
         }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .stat-card {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-orange);
+        }
+        
+        .stat-label {
+            color: var(--text-readable);
+            font-size: 0.9rem;
+        }
+        
+        .quarters-table {
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+        
+        .quarters-table th, .quarters-table td {
+            text-align: center;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .quarters-table th {
+            background-color: #f8f9fa;
+        }
+        
+        .total-score {
+            font-weight: bold;
+            background-color: #e9ecef;
+        }
     </style>
 </head>
 <body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Basketball Match Details</h1>
+        <h1 class="mb-0">🏀 Basketball Match Statistics</h1>
+        <p class="mb-0 mt-2">Detailed match analysis and player performance</p>
     </div>
 </header>
-<div class="container mt-4">
-    <div class="match-container">
-        <div class="team-container">
-            <div class="team-name" th:text="${match.homeTeam.teamName}">Home Team Name</div>
-            <ul class="players-list">
-                <li th:each="player : ${match.homeTeam.players}" th:text="${player.name}">Player Name</li>
-            </ul>
-        </div>
-        <div class="points">
-            <span th:text="${match.homeTeamPoints}">0</span> - <span th:text="${match.awayTeamPoints}">0</span>
-        </div>
-        <div class="team-container">
-            <div class="team-name" th:text="${match.awayTeam.teamName}">Away Team Name</div>
-            <ul class="players-list">
-                <li th:each="player : ${match.awayTeam.players}" th:text="${player.name}">Player Name</li>
-            </ul>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Home Team Stats</h3>
-            <ul class="list-group">
-                <li class="list-group-item">Points: <span th:text="${homeGoals}">0</span></li>
-                <li class="list-group-item">Assists: <span th:text="${homeAssists}">0</span></li>
-                <li class="list-group-item">Rebounds: <span th:text="${homeSaves}">0</span></li>
-            </ul>
-        </div>
-        <div class="col-md-6">
-            <h3>Away Team Stats</h3>
-            <ul class="list-group">
-                <li class="list-group-item">Points: <span th:text="${awayGoals}">0</span></li>
-                <li class="list-group-item">Assists: <span th:text="${awayAssists}">0</span></li>
-                <li class="list-group-item">Rebounds: <span th:text="${awaySaves}">0</span></li>
-            </ul>
-        </div>
-    </div>
 
-    <a href="/basketball/matches" class="btn btn-secondary">Back to Matches</a>
-</div>
+<section class="premium-container">
+    <div class="container">
+        <!-- Match Summary -->
+        <div class="premium-card">
+            <div class="match-container">
+                <div class="team-container">
+                    <div class="team-name text-premium" th:text="${match.homeTeam.teamName}">Home Team Name</div>
+                    <div class="text-readable">🏠 Home Team</div>
+                </div>
+                <div class="points text-premium" style="color: var(--accent-orange);">
+                    <span th:text="${match.homeTeamPoints}">0</span> - <span th:text="${match.awayTeamPoints}">0</span>
+                </div>
+                <div class="team-container">
+                    <div class="team-name text-premium" th:text="${match.awayTeam.teamName}">Away Team Name</div>
+                    <div class="text-readable">✈️ Away Team</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quarter Breakdown -->
+        <div class="premium-card">
+            <h3 class="text-premium mb-4" style="color: var(--accent-orange);">📊 Quarter Breakdown</h3>
+            <table class="quarters-table">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>Q1</th>
+                        <th>Q2</th>
+                        <th>Q3</th>
+                        <th>Q4</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td th:text="${match.homeTeam.teamName}">Home Team</td>
+                        <td th:text="${match.homeTeamQ1Points}">0</td>
+                        <td th:text="${match.homeTeamQ2Points}">0</td>
+                        <td th:text="${match.homeTeamQ3Points}">0</td>
+                        <td th:text="${match.homeTeamQ4Points}">0</td>
+                        <td class="total-score" th:text="${match.homeTeamPoints}">0</td>
+                    </tr>
+                    <tr>
+                        <td th:text="${match.awayTeam.teamName}">Away Team</td>
+                        <td th:text="${match.awayTeamQ1Points}">0</td>
+                        <td th:text="${match.awayTeamQ2Points}">0</td>
+                        <td th:text="${match.awayTeamQ3Points}">0</td>
+                        <td th:text="${match.awayTeamQ4Points}">0</td>
+                        <td class="total-score" th:text="${match.awayTeamPoints}">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Team Statistics -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="premium-card">
+                    <h3 class="text-premium mb-4" style="color: var(--accent-orange);">🏠 <span th:text="${match.homeTeam.teamName}">Home Team</span> Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${homeGoals}">0</div>
+                            <div class="stat-label">🏀 Points</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${homeAssists}">0</div>
+                            <div class="stat-label">🎯 Assists</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${homeSaves}">0</div>
+                            <div class="stat-label">📦 Rebounds</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${match.homeTeam.players.size()}">11</div>
+                            <div class="stat-label">👥 Players</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="premium-card">
+                    <h3 class="text-premium mb-4" style="color: var(--accent-orange);">✈️ <span th:text="${match.awayTeam.teamName}">Away Team</span> Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${awayGoals}">0</div>
+                            <div class="stat-label">🏀 Points</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${awayAssists}">0</div>
+                            <div class="stat-label">🎯 Assists</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${awaySaves}">0</div>
+                            <div class="stat-label">📦 Rebounds</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${match.awayTeam.players.size()}">11</div>
+                            <div class="stat-label">👥 Players</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Performance -->
+        <div class="premium-card">
+            <h3 class="text-premium mb-4" style="color: var(--accent-orange);">👥 Player Performance</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-premium" style="color: var(--accent-orange);">🏠 <span th:text="${match.homeTeam.teamName}">Home Team</span> Players</h5>
+                    <div class="premium-card" style="background: var(--gray-50);">
+                        <ul class="list-unstyled">
+                            <li th:each="player : ${match.homeTeam.players}" class="mb-2">
+                                <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" 
+                                   class="text-readable text-decoration-none">
+                                    • <span th:text="${player.name + ' ' + player.surname}">Player Name</span>
+                                    <small class="text-muted">(Points: <span th:text="${player.points}">0</span>, Assists: <span th:text="${player.assists}">0</span>)</small>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="text-premium" style="color: var(--accent-orange);">✈️ <span th:text="${match.awayTeam.teamName}">Away Team</span> Players</h5>
+                    <div class="premium-card" style="background: var(--gray-50);">
+                        <ul class="list-unstyled">
+                            <li th:each="player : ${match.awayTeam.players}" class="mb-2">
+                                <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" 
+                                   class="text-readable text-decoration-none">
+                                    • <span th:text="${player.name + ' ' + player.surname}">Player Name</span>
+                                    <small class="text-muted">(Points: <span th:text="${player.points}">0</span>, Assists: <span th:text="${player.assists}">0</span>)</small>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="text-center">
+            <a th:href="@{/basketball/matches/results/details/{id}(id=${match.basketball_match_id})}" class="btn btn-warning mr-2">📊 Back to Match Details</a>
+            <a href="/basketball/matches" class="btn btn-secondary">⬅️ Back to Matches</a>
+        </div>
+    </div>
+</section>
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
