@@ -24,6 +24,9 @@ import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballMatchRepository;
 import mk.ukim.finki.wp.liga.repository.football.FootballPlayerRepository;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballPlayerRepository;
 import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballPlayerRepository;
+import mk.ukim.finki.wp.liga.repository.football.FootballTeamRepository;
+import mk.ukim.finki.wp.liga.repository.basketball.BasketballTeamRepository;
+import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballTeamRepository;
 import mk.ukim.finki.wp.liga.model.shop.FootballProduct;
 import mk.ukim.finki.wp.liga.model.shop.BasketballProduct;
 import mk.ukim.finki.wp.liga.model.shop.VolleyballProduct;
@@ -71,6 +74,10 @@ public class DatabaseSeeder {
     private final FootballPlayerRepository footballPlayerRepository;
     private final BasketballPlayerRepository basketballPlayerRepository;
     private final VolleyballPlayerRepository volleyballPlayerRepository;
+    
+    private final FootballTeamRepository footballTeamRepository;
+    private final BasketballTeamRepository basketballTeamRepository;
+    private final VolleyballTeamRepository volleyballTeamRepository;
 
     public DatabaseSeeder(FootballTeamService footballTeamService, 
                          FootballPlayerService footballPlayerService, 
@@ -92,7 +99,10 @@ public class DatabaseSeeder {
                          VolleyballMatchRepository volleyballMatchRepository,
                          FootballPlayerRepository footballPlayerRepository,
                          BasketballPlayerRepository basketballPlayerRepository,
-                         VolleyballPlayerRepository volleyballPlayerRepository) {
+                         VolleyballPlayerRepository volleyballPlayerRepository,
+                         FootballTeamRepository footballTeamRepository,
+                         BasketballTeamRepository basketballTeamRepository,
+                         VolleyballTeamRepository volleyballTeamRepository) {
         this.footballTeamService = footballTeamService;
         this.footballPlayerService = footballPlayerService;
         this.footballMatchService = footballMatchService;
@@ -114,6 +124,9 @@ public class DatabaseSeeder {
         this.footballPlayerRepository = footballPlayerRepository;
         this.basketballPlayerRepository = basketballPlayerRepository;
         this.volleyballPlayerRepository = volleyballPlayerRepository;
+        this.footballTeamRepository = footballTeamRepository;
+        this.basketballTeamRepository = basketballTeamRepository;
+        this.volleyballTeamRepository = volleyballTeamRepository;
     }
 
     @PostConstruct
@@ -198,6 +211,8 @@ public class DatabaseSeeder {
         
         try {
             User admin = userService.register("admin", "admin@liga.com", "admin123");
+            admin.setIsAdmin(true);
+            userService.save(admin);
             System.out.println("✅ Created admin user: " + admin.getName() + " (ID: " + admin.getId() + ")");
             
             User user1 = userService.register("user1", "user1@liga.com", "password123");
@@ -362,7 +377,10 @@ public class DatabaseSeeder {
                 createFootballMatchWithHalves(teams.get(2), teams.get(7), 3, 1, LocalDateTime.now().minusDays(3));
                 createFootballMatchWithHalves(teams.get(4), teams.get(6), 0, 1, LocalDateTime.now().minusDays(3));
                 
-                System.out.println("✅ Created 12 football matches");
+                // Update team statistics after creating all matches
+                updateFootballTeamStatistics();
+                
+                System.out.println("✅ Created 12 football matches and updated team statistics");
             } catch (Exception e) {
                 System.out.println("⚠️ Error creating football matches: " + e.getMessage());
             }
@@ -373,6 +391,9 @@ public class DatabaseSeeder {
                                              int homeTotal, int awayTotal, LocalDateTime startTime) {
         // Create the match first
         FootballMatch match = footballMatchService.createAndAddToFixtures(homeTeam, awayTeam, homeTotal, awayTotal, startTime);
+        
+        // Set endTime to be in the past so it's counted as completed
+        match.setEndTime(startTime.plusHours(2)); // Match ends 2 hours after start
         
         // Generate random half scores that add up to the total
         int homeH1 = (int)(Math.random() * (homeTotal + 1));
@@ -388,6 +409,69 @@ public class DatabaseSeeder {
         
         // Save the updated match with half scores
         footballMatchRepository.save(match);
+    }
+
+    private void updateFootballTeamStatistics() {
+        System.out.println("📊 Updating football team statistics...");
+        
+        List<FootballTeam> teams = footballTeamService.listAllTeams();
+        
+        for (FootballTeam team : teams) {
+            try {
+                // Get all completed matches for this team
+                List<FootballMatch> teamMatches = footballMatchService.listAllFootballMatches().stream()
+                    .filter(match -> (match.getHomeTeam().equals(team) || match.getAwayTeam().equals(team))
+                            && match.getEndTime().isBefore(LocalDateTime.now())) // Only completed matches
+                    .collect(Collectors.toList());
+                
+                int wins = 0;
+                int losses = 0;
+                int draws = 0;
+                int leaguePoints = 0;
+                int goalsFor = 0;
+                int goalsAgainst = 0;
+                
+                for (FootballMatch match : teamMatches) {
+                    boolean isHomeTeam = match.getHomeTeam().equals(team);
+                    int teamGoals = isHomeTeam ? match.getHomeTeamPoints() : match.getAwayTeamPoints();
+                    int opponentGoals = isHomeTeam ? match.getAwayTeamPoints() : match.getHomeTeamPoints();
+                    
+                    goalsFor += teamGoals;
+                    goalsAgainst += opponentGoals;
+                    
+                    if (teamGoals > opponentGoals) {
+                        wins++;
+                        leaguePoints += 3; // 3 points for win
+                    } else if (teamGoals < opponentGoals) {
+                        losses++;
+                        // 0 points for loss
+                    } else {
+                        draws++;
+                        leaguePoints += 1; // 1 point for draw
+                    }
+                }
+                
+                // Update team statistics
+                team.setTeamMatchesPlayed(wins + losses + draws);
+                team.setTeamWins(wins);
+                team.setTeamLoses(losses);
+                team.setTeamDraws(draws);
+                team.setTeamLeaguePoints(leaguePoints);
+                team.setGoalsFor(goalsFor);
+                team.setGoalsAgainst(goalsAgainst);
+                team.setGoalDifference(goalsFor - goalsAgainst);
+                
+                // Save updated team using repository
+                footballTeamRepository.save(team);
+                
+                System.out.println("⚽ " + team.getTeamName() + ": " + wins + "W-" + losses + "L-" + draws + "D, " + leaguePoints + " pts, " + goalsFor + ":" + goalsAgainst);
+                
+            } catch (Exception e) {
+                System.out.println("⚠️ Error updating statistics for " + team.getTeamName() + ": " + e.getMessage());
+            }
+        }
+        
+        System.out.println("✅ Football team statistics updated successfully!");
     }
 
     private void createBasketballData() {
@@ -528,7 +612,10 @@ public class DatabaseSeeder {
                 createBasketballMatchWithQuarters(teams.get(5), teams.get(6), 77, 85, LocalDateTime.now().minusDays(4));
                 createBasketballMatchWithQuarters(teams.get(7), teams.get(0), 93, 87, LocalDateTime.now().minusDays(4));
                 
-                System.out.println("✅ Created 8 basketball matches");
+                // Update team statistics after creating all matches
+                updateBasketballTeamStatistics();
+                
+                System.out.println("✅ Created 8 basketball matches and updated team statistics");
             } catch (Exception e) {
                 System.out.println("⚠️ Error creating basketball matches: " + e.getMessage());
             }
@@ -539,6 +626,9 @@ public class DatabaseSeeder {
                                                  int homeTotal, int awayTotal, LocalDateTime startTime) {
         // Create the match first
         BasketballMatch match = basketballMatchService.createAndAddToFixtures(homeTeam, awayTeam, homeTotal, awayTotal, startTime);
+        
+        // Set endTime to be in the past so it's counted as completed
+        match.setEndTime(startTime.plusHours(2)); // Match ends 2 hours after start
         
         // Generate random quarter scores that add up to the total
         int homeQ1 = (int)(Math.random() * (homeTotal / 2 + 1));
@@ -563,6 +653,57 @@ public class DatabaseSeeder {
         
         // Save the updated match with quarter scores
         basketballMatchRepository.save(match);
+    }
+
+    private void updateBasketballTeamStatistics() {
+        System.out.println("📊 Updating basketball team statistics...");
+        
+        List<BasketballTeam> teams = basketballTeamService.listAllTeams();
+        
+        for (BasketballTeam team : teams) {
+            try {
+                // Get all completed matches for this team
+                List<BasketballMatch> teamMatches = basketballMatchService.listAllBasketballMatches().stream()
+                    .filter(match -> (match.getHomeTeam().equals(team) || match.getAwayTeam().equals(team))
+                            && match.getEndTime().isBefore(LocalDateTime.now())) // Only completed matches
+                    .collect(Collectors.toList());
+                
+                int wins = 0;
+                int losses = 0;
+                int leaguePoints = 0;
+                
+                for (BasketballMatch match : teamMatches) {
+                    boolean isHomeTeam = match.getHomeTeam().equals(team);
+                    int teamPoints = isHomeTeam ? match.getHomeTeamPoints() : match.getAwayTeamPoints();
+                    int opponentPoints = isHomeTeam ? match.getAwayTeamPoints() : match.getHomeTeamPoints();
+                    
+                    if (teamPoints > opponentPoints) {
+                        wins++;
+                        leaguePoints += 3; // 3 points for win
+                    } else if (teamPoints < opponentPoints) {
+                        losses++;
+                        // 0 points for loss
+                    }
+                    // Basketball doesn't have draws
+                }
+                
+                // Update team statistics
+                team.setTeamMatchesPlayed(wins + losses);
+                team.setTeamWins(wins);
+                team.setTeamLoses(losses);
+                team.setTeamLeaguePoints(leaguePoints);
+                
+                // Save updated team using repository
+                basketballTeamRepository.save(team);
+                
+                System.out.println("🏀 " + team.getTeamName() + ": " + wins + "W-" + losses + "L, " + leaguePoints + " pts");
+                
+            } catch (Exception e) {
+                System.out.println("⚠️ Error updating statistics for " + team.getTeamName() + ": " + e.getMessage());
+            }
+        }
+        
+        System.out.println("✅ Basketball team statistics updated successfully!");
     }
 
     private void createVolleyballData() {
@@ -718,7 +859,10 @@ public class DatabaseSeeder {
                 createVolleyballMatchWithSets(teams.get(5), teams.get(6), 3, 2, LocalDateTime.now().minusDays(6));
                 createVolleyballMatchWithSets(teams.get(7), teams.get(0), 0, 3, LocalDateTime.now().minusDays(6));
                 
-                System.out.println("✅ Created 8 volleyball matches");
+                // Update team statistics after creating all matches
+                updateVolleyballTeamStatistics();
+                
+                System.out.println("✅ Created 8 volleyball matches and updated team statistics");
             } catch (Exception e) {
                 System.out.println("⚠️ Error creating volleyball matches: " + e.getMessage());
             }
@@ -729,6 +873,9 @@ public class DatabaseSeeder {
                                              int homeSetsWon, int awaySetsWon, LocalDateTime startTime) {
         // Create the match first
         VolleyballMatch match = volleyballMatchService.createAndAddToFixtures(homeTeam, awayTeam, homeSetsWon, awaySetsWon, startTime);
+        
+        // Set endTime to be in the past so it's counted as completed
+        match.setEndTime(startTime.plusHours(2)); // Match ends 2 hours after start
         
         // Determine how many sets were played (minimum 3, maximum 5)
         int totalSetsPlayed = Math.max(3, homeSetsWon + awaySetsWon);
@@ -780,6 +927,57 @@ public class DatabaseSeeder {
         
         // Save the updated match with set scores
         volleyballMatchRepository.save(match);
+    }
+
+    private void updateVolleyballTeamStatistics() {
+        System.out.println("📊 Updating volleyball team statistics...");
+        
+        List<VolleyballTeam> teams = volleyballTeamService.listAllTeams();
+        
+        for (VolleyballTeam team : teams) {
+            try {
+                // Get all completed matches for this team
+                List<VolleyballMatch> teamMatches = volleyballMatchService.listAllVolleyballMatches().stream()
+                    .filter(match -> (match.getHomeTeam().equals(team) || match.getAwayTeam().equals(team))
+                            && match.getEndTime().isBefore(LocalDateTime.now())) // Only completed matches
+                    .collect(Collectors.toList());
+                
+                int wins = 0;
+                int losses = 0;
+                int leaguePoints = 0;
+                
+                for (VolleyballMatch match : teamMatches) {
+                    boolean isHomeTeam = match.getHomeTeam().equals(team);
+                    int teamSetsWon = isHomeTeam ? match.getHomeTeamPoints() : match.getAwayTeamPoints();
+                    int opponentSetsWon = isHomeTeam ? match.getAwayTeamPoints() : match.getHomeTeamPoints();
+                    
+                    if (teamSetsWon > opponentSetsWon) {
+                        wins++;
+                        leaguePoints += 3; // 3 points for win
+                    } else if (teamSetsWon < opponentSetsWon) {
+                        losses++;
+                        // 0 points for loss
+                    }
+                    // Volleyball doesn't have draws
+                }
+                
+                // Update team statistics
+                team.setTeamMatchesPlayed(wins + losses);
+                team.setTeamWins(wins);
+                team.setTeamLoses(losses);
+                team.setTeamLeaguePoints(leaguePoints);
+                
+                // Save updated team using repository
+                volleyballTeamRepository.save(team);
+                
+                System.out.println("🏐 " + team.getTeamName() + ": " + wins + "W-" + losses + "L, " + leaguePoints + " pts");
+                
+            } catch (Exception e) {
+                System.out.println("⚠️ Error updating statistics for " + team.getTeamName() + ": " + e.getMessage());
+            }
+        }
+        
+        System.out.println("✅ Volleyball team statistics updated successfully!");
     }
 
     private void createNews() {

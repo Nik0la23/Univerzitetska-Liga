@@ -314,7 +314,7 @@
                     <a href="/football/news" class="nav-link">📰 News</a>
 
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" th:if="${session.user != null and session.user.isAdmin}">
                     <a href="/matches/add-form" class="nav-link">➕ Add Match</a>
                 </li>
                 <li class="nav-item">
@@ -356,7 +356,7 @@
                     </div>
                 </div>
             </a>
-            <div class="actions mt-3 d-flex justify-content-center align-items-center">
+            <div class="actions mt-3 d-flex justify-content-center align-items-center" th:if="${session.user != null and session.user.isAdmin}">
                 <a th:href="@{/matches/edit-form/{id}(id=${match.football_match_id})}" class="btn btn-warning btn-premium me-2">✏️ Edit</a>
                 <form th:if="${!match.isPlayoffMatch}" th:method="POST" th:action="@{'/matches/finish/{id}'(id=${match.football_match_id})}" style="display:inline;" onsubmit="return confirmFinish(this)">
                     <button type="submit" class="btn btn-success btn-premium me-2">✅ Finish</button>

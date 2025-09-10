@@ -327,7 +327,7 @@
     <!-- Action Buttons -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <a th:href="@{/basketball/products/new}" class="btn-premium btn-success me-3">➕ Add New Product</a>
+            <a th:if="${session.user != null and session.user.isAdmin}" th:href="@{/basketball/products/new}" class="btn-premium btn-success me-3">➕ Add New Product</a>
             <a th:href="@{/shop}" class="btn-premium btn-secondary">🏠 Back to Shop Home</a>
         </div>
     </div>
@@ -359,8 +359,8 @@
                     <td>
                         <div class="action-buttons">
                             <a th:href="@{/basketball/products/{id}(id=${product.getId()})}" class="btn btn-outline-primary btn-sm">👁️</a>
-                            <a th:href="@{/basketball/products/edit/{id}(id=${product.getId()})}" class="btn btn-outline-warning btn-sm">✏️</a>
-                            <a th:href="@{/basketball/products/delete/{id}(id=${product.getId()})}" class="btn btn-outline-danger btn-sm">🗑️</a>
+                            <a th:if="${session.user != null and session.user.isAdmin}" th:href="@{/basketball/products/edit/{id}(id=${product.getId()})}" class="btn btn-outline-warning btn-sm">✏️</a>
+                            <a th:if="${session.user != null and session.user.isAdmin}" th:href="@{/basketball/products/delete/{id}(id=${product.getId()})}" class="btn btn-outline-danger btn-sm">🗑️</a>
                             <form th:action="@{/cart/add/basketball/{productId}(productId=${product.getId()})}" method="post" style="display: inline;">
                                 <input type="number" name="quantity" class="quantity-input form-control" value="1" min="1" />
                                 <button class="btn btn-success btn-sm" type="submit">🛒</button>

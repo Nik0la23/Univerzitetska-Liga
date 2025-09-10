@@ -28,7 +28,7 @@
                             <span class="badge badge-premium" th:classappend="${match.awayTeamPoints > match.homeTeamPoints} ? 'badge-success' : 'badge-secondary'" th:text="${match.awayTeamPoints}">0</span>
                         </div>
                     </a>
-                    <a th:if="${match.homeTeamPoints == match.awayTeamPoints}" th:href="@{/matches/playoffs/edit/{id}(id=${match.football_match_id})}" class="btn-premium btn-sm mt-2">✏️ Edit</a>
+                    <a th:if="${match.homeTeamPoints == match.awayTeamPoints and session.user != null and session.user.isAdmin}" th:href="@{/matches/playoffs/edit/{id}(id=${match.football_match_id})}" class="btn-premium btn-sm mt-2">✏️ Edit</a>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                             <span class="badge badge-premium" th:classappend="${match.awayTeamPoints > match.homeTeamPoints} ? 'badge-success' : 'badge-secondary'" th:text="${match.awayTeamPoints}">0</span>
                         </div>
                     </a>
-                    <a th:if="${match.homeTeamPoints == match.awayTeamPoints}" th:href="@{/matches/playoffs/edit/{id}(id=${match.football_match_id})}" class="btn-premium btn-sm mt-2">✏️ Edit</a>
+                    <a th:if="${match.homeTeamPoints == match.awayTeamPoints and session.user != null and session.user.isAdmin}" th:href="@{/matches/playoffs/edit/{id}(id=${match.football_match_id})}" class="btn-premium btn-sm mt-2">✏️ Edit</a>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@
                             <span class="badge badge-premium" th:classappend="${match.awayTeamPoints > match.homeTeamPoints} ? 'badge-success' : 'badge-secondary'" th:text="${match.awayTeamPoints}">0</span>
                         </div>
                     </a>
-                    <a th:if="${match.homeTeamPoints == match.awayTeamPoints}" th:href="@{/matches/playoffs/edit/{id}(id=${match.football_match_id})}" class="btn-premium btn-sm mt-2">✏️ Edit</a>
+                    <a th:if="${match.homeTeamPoints == match.awayTeamPoints and session.user != null and session.user.isAdmin}" th:href="@{/matches/playoffs/edit/{id}(id=${match.football_match_id})}" class="btn-premium btn-sm mt-2">✏️ Edit</a>
                 </div>
             </div>
         </div>

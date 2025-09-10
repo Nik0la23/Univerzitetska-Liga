@@ -15,7 +15,7 @@
     <div class="row">
         <!-- News Section (Left side) -->
         <div class="col-md-8">
-            <div class="mb-4">
+            <div class="mb-4" th:if="${session.user != null and session.user.isAdmin}">
                 <a th:href="@{/football/news/add}" class="btn-premium">📝 Add News</a>
 
             </div>
@@ -30,8 +30,8 @@
                     <!-- Buttons Section -->
                     <div class="d-flex flex-column gap-2">
                         <a th:href="@{/football/news/details/{id}(id=${news.news_id})}" class="btn-premium btn-sm">👁️ View</a>
-                        <a th:href="@{/football/news/edit/{id}(id=${news.news_id})}" class="btn-premium btn-sm">✏️ Edit</a>
-                        <a th:href="@{/football/news/delete/{id}(id=${news.news_id})}"
+                        <a th:if="${session.user != null and session.user.isAdmin}" th:href="@{/football/news/edit/{id}(id=${news.news_id})}" class="btn-premium btn-sm">✏️ Edit</a>
+                        <a th:if="${session.user != null and session.user.isAdmin}" th:href="@{/football/news/delete/{id}(id=${news.news_id})}"
                            class="btn-premium btn-sm"
                            style="background: var(--accent-red);"
                            onclick="return confirm('Are you sure you want to delete this news?');">🗑️ Delete</a>
