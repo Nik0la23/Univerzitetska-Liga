@@ -108,9 +108,12 @@
         </div>
     </div>
     
-    <div class="d-flex gap-3 justify-content-center mt-5">
+    <div class="d-flex gap-3 justify-content-center mt-5 flex-wrap">
         <a th:href="@{/basketball/news/edit/{id}(id=${news.news_id})}" class="btn-premium btn-warning">✏️ Edit Article</a>
-        <a th:href="@{/basketball/news}" class="btn-premium btn-secondary">⬅️ Back to News List</a>
+        <a th:href="@{/news}" class="btn-premium btn-secondary">📰 All Sports News</a>
+        <a th:href="@{/football/news}" class="btn-premium" style="background: var(--accent-green);">⚽ Football News</a>
+        <a th:href="@{/basketball/news}" class="btn-premium" style="background: var(--accent-orange);">🏀 Basketball News</a>
+        <a th:href="@{/volleyball/news}" class="btn-premium" style="background: var(--accent-blue);">🏐 Volleyball News</a>
     </div>
 </section>
 
