@@ -36,5 +36,13 @@ public class PlayoffMatch {
         this.awayTeamPoints = awayTeamPoints;
         this.isCompleted = isCompleted;
     }
+    public PlayoffMatch(PlayoffStage stage, FootballTeam homeTeam, FootballTeam awayTeam, int homeTeamPoints, int awayTeamPoints, boolean isCompleted) {
+        this.stage = stage;
+        this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;
+        this.homeTeamPoints = homeTeamPoints;
+        this.awayTeamPoints = awayTeamPoints;
+        this.isCompleted = isCompleted;
+    }
     public PlayoffMatch(){}
 }

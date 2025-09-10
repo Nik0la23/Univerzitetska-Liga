@@ -53,7 +53,7 @@ public class FootballMatchServiceImpl implements FootballMatchService {
             throw new InvalidFootballMatchException();
         }
         FootballTeam home = teamRepository.findById(homeTeam.getId()).orElseThrow(InvalidFootballTeamException::new);
-        FootballTeam away = teamRepository.findById(awayTeam.getId()).orElseThrow(InvalidFootballMatchException::new);
+        FootballTeam away = teamRepository.findById(awayTeam.getId()).orElseThrow(InvalidFootballTeamException::new);
         FootballMatch fm = new FootballMatch(home, away, homeTeamPoints, awayTeamPoints, startTime, false);
         fm.setEndTime(startTime.plusMinutes(120));
         return matchRepository.save(fm);

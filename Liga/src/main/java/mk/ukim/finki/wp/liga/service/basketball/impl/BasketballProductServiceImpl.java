@@ -3,17 +3,13 @@ package mk.ukim.finki.wp.liga.service.basketball.impl;
 import mk.ukim.finki.wp.liga.model.BasketballTeam;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidBasketballProductException;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidFootballProductException;
-import mk.ukim.finki.wp.liga.model.FootballTeam;
 import mk.ukim.finki.wp.liga.model.shop.BasketballProduct;
-import mk.ukim.finki.wp.liga.model.shop.FootballProduct;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballProductRepository;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballTeamRepository;
-import mk.ukim.finki.wp.liga.repository.football.FootballProductRepository;
 import mk.ukim.finki.wp.liga.service.basketball.BasketballProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BasketballProductServiceImpl implements BasketballProductService {

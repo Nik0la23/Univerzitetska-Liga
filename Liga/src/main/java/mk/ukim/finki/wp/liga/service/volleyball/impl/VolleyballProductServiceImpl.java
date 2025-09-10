@@ -2,9 +2,7 @@ package mk.ukim.finki.wp.liga.service.volleyball.impl;
 
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidFootballProductException;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidVolleyballProductException;
-import mk.ukim.finki.wp.liga.model.FootballTeam;
 import mk.ukim.finki.wp.liga.model.VolleyballTeam;
-import mk.ukim.finki.wp.liga.model.shop.FootballProduct;
 import mk.ukim.finki.wp.liga.model.shop.VolleyballProduct;
 import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballProductRepository;
 import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballTeamRepository;
@@ -12,7 +10,6 @@ import mk.ukim.finki.wp.liga.service.volleyball.VolleyballProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VolleyballProductServiceImpl implements VolleyballProductService {

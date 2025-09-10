@@ -311,101 +311,112 @@ public class VolleyballMatchServiceImpl implements VolleyballMatchService {
         VolleyballMatch match = matchRepository.findById(volleyballMatchId)
                 .orElseThrow(() -> new RuntimeException("Match not found"));
         VolleyballTeam team = teamRepository.findAll().stream()
-                .filter(t -> t.getPlayers().contains(player))
+                .filter(t -> t.getPlayers() != null && t.getPlayers().contains(player))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Team not found"));
+                .orElseThrow(() -> new RuntimeException("Team not found for player"));
 
         boolean isHomeTeam = match.getHomeTeam().equals(team);
 
-        // Update the points for the specific set by adding to existing points
+        // Debug: Print initial state
+        System.out.println("=== BEFORE UPDATE ===");
+        System.out.println("Set 1: " + match.getHomeTeamSet1Points() + "-" + match.getAwayTeamSet1Points());
+        System.out.println("Set 2: " + match.getHomeTeamSet2Points() + "-" + match.getAwayTeamSet2Points());
+        System.out.println("Set 3: " + match.getHomeTeamSet3Points() + "-" + match.getAwayTeamSet3Points());
+        System.out.println("Set 4: " + match.getHomeTeamSet4Points() + "-" + match.getAwayTeamSet4Points());
+        System.out.println("Set 5: " + match.getHomeTeamSet5Points() + "-" + match.getAwayTeamSet5Points());
+        System.out.println("Current match score: " + match.getHomeTeamPoints() + "-" + match.getAwayTeamPoints());
+
         switch (currentSet) {
-            case 1:
-                if (isHomeTeam) {
-                    match.setHomeTeamSet1Points(match.getHomeTeamSet1Points() + pointsScored);
-                } else {
-                    match.setAwayTeamSet1Points(match.getAwayTeamSet1Points() + pointsScored);
-                }
-                break;
-            case 2:
-                if (isHomeTeam) {
-                    match.setHomeTeamSet2Points(match.getHomeTeamSet2Points() + pointsScored);
-                } else {
-                    match.setAwayTeamSet2Points(match.getAwayTeamSet2Points() + pointsScored);
-                }
-                break;
-            case 3:
-                if (isHomeTeam) {
-                    match.setHomeTeamSet3Points(match.getHomeTeamSet3Points() + pointsScored);
-                } else {
-                    match.setAwayTeamSet3Points(match.getAwayTeamSet3Points() + pointsScored);
-                }
-                break;
-            case 4:
-                if (isHomeTeam) {
-                    match.setHomeTeamSet4Points(match.getHomeTeamSet4Points() + pointsScored);
-                } else {
-                    match.setAwayTeamSet4Points(match.getAwayTeamSet4Points() + pointsScored);
-                }
-                break;
-            case 5:
-                if (isHomeTeam) {
-                    match.setHomeTeamSet5Points(match.getHomeTeamSet5Points() + pointsScored);
-                } else {
-                    match.setAwayTeamSet5Points(match.getAwayTeamSet5Points() + pointsScored);
-                }
-                break;
+            case 1 -> {
+                if (isHomeTeam) match.setHomeTeamSet1Points(match.getHomeTeamSet1Points() + pointsScored);
+                else match.setAwayTeamSet1Points(match.getAwayTeamSet1Points() + pointsScored);
+            }
+            case 2 -> {
+                if (isHomeTeam) match.setHomeTeamSet2Points(match.getHomeTeamSet2Points() + pointsScored);
+                else match.setAwayTeamSet2Points(match.getAwayTeamSet2Points() + pointsScored);
+            }
+            case 3 -> {
+                if (isHomeTeam) match.setHomeTeamSet3Points(match.getHomeTeamSet3Points() + pointsScored);
+                else match.setAwayTeamSet3Points(match.getAwayTeamSet3Points() + pointsScored);
+            }
+            case 4 -> {
+                if (isHomeTeam) match.setHomeTeamSet4Points(match.getHomeTeamSet4Points() + pointsScored);
+                else match.setAwayTeamSet4Points(match.getAwayTeamSet4Points() + pointsScored);
+            }
+            case 5 -> {
+                if (isHomeTeam) match.setHomeTeamSet5Points(match.getHomeTeamSet5Points() + pointsScored);
+                else match.setAwayTeamSet5Points(match.getAwayTeamSet5Points() + pointsScored);
+            }
         }
 
-        // Calculate total sets won
+        // Debug: Print state after point update
+        System.out.println("=== AFTER POINT UPDATE ===");
+        System.out.println("Set 1: " + match.getHomeTeamSet1Points() + "-" + match.getAwayTeamSet1Points());
+        System.out.println("Set 2: " + match.getHomeTeamSet2Points() + "-" + match.getAwayTeamSet2Points());
+        System.out.println("Set 3: " + match.getHomeTeamSet3Points() + "-" + match.getAwayTeamSet3Points());
+        System.out.println("Set 4: " + match.getHomeTeamSet4Points() + "-" + match.getAwayTeamSet4Points());
+        System.out.println("Set 5: " + match.getHomeTeamSet5Points() + "-" + match.getAwayTeamSet5Points());
+
         int homeSetsWon = 0;
         int awaySetsWon = 0;
 
-        // Check Set 1 (to 25, win by 2)
-        int set1Result = determineSetWinner(1, match.getHomeTeamSet1Points(), match.getAwayTeamSet1Points());
-        if (set1Result == 1) homeSetsWon++;
-        else if (set1Result == -1) awaySetsWon++;
+        // Debug each set determination
+        int set1Winner = determineSetWinner(1, match.getHomeTeamSet1Points(), match.getAwayTeamSet1Points());
+        System.out.println("Set 1 winner: " + set1Winner);
+        if (set1Winner == 1) homeSetsWon++;
+        if (set1Winner == -1) awaySetsWon++;
 
-        // Check Set 2 (to 25, win by 2)
-        int set2Result = determineSetWinner(2, match.getHomeTeamSet2Points(), match.getAwayTeamSet2Points());
-        if (set2Result == 1) homeSetsWon++;
-        else if (set2Result == -1) awaySetsWon++;
+        int set2Winner = determineSetWinner(2, match.getHomeTeamSet2Points(), match.getAwayTeamSet2Points());
+        System.out.println("Set 2 winner: " + set2Winner);
+        if (set2Winner == 1) homeSetsWon++;
+        if (set2Winner == -1) awaySetsWon++;
 
-        // Check Set 3 (to 25, win by 2)
-        int set3Result = determineSetWinner(3, match.getHomeTeamSet3Points(), match.getAwayTeamSet3Points());
-        if (set3Result == 1) homeSetsWon++;
-        else if (set3Result == -1) awaySetsWon++;
+        int set3Winner = determineSetWinner(3, match.getHomeTeamSet3Points(), match.getAwayTeamSet3Points());
+        System.out.println("Set 3 winner: " + set3Winner);
+        if (set3Winner == 1) homeSetsWon++;
+        if (set3Winner == -1) awaySetsWon++;
 
-        // Check Set 4 (to 25, win by 2)
-        int set4Result = determineSetWinner(4, match.getHomeTeamSet4Points(), match.getAwayTeamSet4Points());
-        if (set4Result == 1) homeSetsWon++;
-        else if (set4Result == -1) awaySetsWon++;
+        int set4Winner = determineSetWinner(4, match.getHomeTeamSet4Points(), match.getAwayTeamSet4Points());
+        System.out.println("Set 4 winner: " + set4Winner);
+        if (set4Winner == 1) homeSetsWon++;
+        if (set4Winner == -1) awaySetsWon++;
 
-        // Check Set 5 (tie-break to 15, win by 2)
-        int set5Result = determineSetWinner(5, match.getHomeTeamSet5Points(), match.getAwayTeamSet5Points());
-        if (set5Result == 1) homeSetsWon++;
-        else if (set5Result == -1) awaySetsWon++;
+        int set5Winner = determineSetWinner(5, match.getHomeTeamSet5Points(), match.getAwayTeamSet5Points());
+        System.out.println("Set 5 winner: " + set5Winner);
+        if (set5Winner == 1) homeSetsWon++;
+        if (set5Winner == -1) awaySetsWon++;
 
-        // Update total sets won
+        System.out.println("Final sets won - Home: " + homeSetsWon + ", Away: " + awaySetsWon);
+
         match.setHomeTeamPoints(homeSetsWon);
         match.setAwayTeamPoints(awaySetsWon);
 
-        // Check if match is finished (one team has won 3 sets)
         if (homeSetsWon >= 3 || awaySetsWon >= 3) {
+            System.out.println("MATCH ENDED!");
             match.setEndTime(LocalDateTime.now());
+        } else {
+            System.out.println("Match continues...");
         }
 
         matchRepository.save(match);
     }
 
     private int determineSetWinner(int setIndex, int homePoints, int awayPoints) {
-        int minPointsToWin = (setIndex == 5) ? 15 : 25;
+        // If both teams have 0 points, the set hasn't been played yet
+        if (homePoints == 0 && awayPoints == 0) {
+            return 0; // No winner yet
+        }
+
+        int minPointsToWin = (setIndex <= 4) ? 25 : 15; // Sets 1-4 need 25, set 5 needs 15
+        System.out.println("Set " + setIndex + ": " + homePoints + "-" + awayPoints + " (min: " + minPointsToWin + ")");
+
         if (homePoints >= minPointsToWin && (homePoints - awayPoints) >= 2) {
-            return 1;
+            return 1;  // Home team wins
         }
         if (awayPoints >= minPointsToWin && (awayPoints - homePoints) >= 2) {
-            return -1;
+            return -1; // Away team wins
         }
-        return 0;
+        return 0; // No winner yet
     }
     @Override
     @Transactional

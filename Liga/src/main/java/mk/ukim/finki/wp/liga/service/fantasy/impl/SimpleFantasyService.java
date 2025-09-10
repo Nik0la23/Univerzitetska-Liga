@@ -288,16 +288,11 @@ public class SimpleFantasyService implements FantasyService {
 
     @Override
     public boolean isPlayerAlreadyBought(FantasyTeam team, FantasySport sport, Long playerId) {
-        switch (sport) {
-            case FOOTBALL:
-                return fantasyPlayerRepository.existsByFantasyTeamAndFootballPlayerId(team, playerId);
-            case BASKETBALL:
-                return fantasyPlayerRepository.existsByFantasyTeamAndBasketballPlayerId(team, playerId);
-            case VOLLEYBALL:
-                return fantasyPlayerRepository.existsByFantasyTeamAndVolleyballPlayerId(team, playerId);
-            default:
-                return false;
-        }
+        return switch (sport) {
+            case FOOTBALL -> fantasyPlayerRepository.existsByFantasyTeamAndFootballPlayerId(team, playerId);
+            case BASKETBALL -> fantasyPlayerRepository.existsByFantasyTeamAndBasketballPlayerId(team, playerId);
+            case VOLLEYBALL -> fantasyPlayerRepository.existsByFantasyTeamAndVolleyballPlayerId(team, playerId);
+        };
     }
 
     @Override

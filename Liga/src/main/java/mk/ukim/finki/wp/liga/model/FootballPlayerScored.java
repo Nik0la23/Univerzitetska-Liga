@@ -38,4 +38,11 @@ public class FootballPlayerScored {
     public FootballPlayerScored() {
 
     }
+    public FootballPlayerScored(FootballMatch footballMatch, FootballPlayer player, int goalsScored, int assistsScored, int saves) {
+        this.footballMatch = footballMatch;
+        this.player = player;
+        this.goalsScored = goalsScored;
+        this.assistsScored = assistsScored;
+        this.saves = saves;
+    }
 }

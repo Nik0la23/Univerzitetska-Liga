@@ -144,7 +144,7 @@ public class VolleyballPlayerServiceImpl implements VolleyballPlayerService {
     @Override
     public VolleyballPlayer addServings(Long id, int servingsToAdd) {
         VolleyballPlayer p = this.findById(id);
-        p.setAssists(p.getServings() + servingsToAdd);
+        p.setServings(p.getServings() + servingsToAdd);
         return volleyballPlayerRepository.save(p);
     }
 
