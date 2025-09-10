@@ -6,8 +6,6 @@ import mk.ukim.finki.wp.liga.model.BasketballPlayerMatchStats;
 import mk.ukim.finki.wp.liga.model.BasketballTeam;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidBasketballPlayerException;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidBasketballTeamException;
-import mk.ukim.finki.wp.liga.model.FootballPlayer;
-import mk.ukim.finki.wp.liga.model.FootballTeam;
 import mk.ukim.finki.wp.liga.model.fantasy.FantasyPlayer;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballPlayerMatchStatsRepository;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballPlayerRepository;

@@ -1,9 +1,11 @@
 package mk.ukim.finki.wp.liga.model.fantasy;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import mk.ukim.finki.wp.liga.model.User;
 
 @Entity
+@Data
 public class FantasyTeam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,39 +58,12 @@ public class FantasyTeam {
     }
 
     private String getDefaultFormation(FantasySport sport) {
-        switch (sport) {
-            case FOOTBALL:
-                return "4-4-2";
-            case BASKETBALL:
-                return "1-2-2";
-            case VOLLEYBALL:
-                return "6-2";
-            default:
-                return "4-4-2";
-        }
+        return switch (sport) {
+            case FOOTBALL -> "4-4-2";
+            case BASKETBALL -> "1-2-2";
+            case VOLLEYBALL -> "6-2";
+        };
     }
-
-    public Long getId() { return id; }
-    public User getOwner() { return owner; }
-    public void setOwner(User owner) { this.owner = owner; }
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-    public FantasySport getSport() { return sport; }
-    public void setSport(FantasySport sport) { this.sport = sport; }
-    public String getTeamName() { return teamName; }
-    public void setTeamName(String teamName) { this.teamName = teamName; }
-    public Double getBudgetTotal() { return budgetTotal; }
-    public void setBudgetTotal(Double budgetTotal) { this.budgetTotal = budgetTotal; }
-    public Double getBudgetSpent() { return budgetSpent; }
-    public void setBudgetSpent(Double budgetSpent) { this.budgetSpent = budgetSpent; }
-    public String getFormation() { return formation; }
-    public void setFormation(String formation) { this.formation = formation; }
-    public Double getTotalPoints() { return totalPoints; }
-    public void setTotalPoints(Double totalPoints) { this.totalPoints = totalPoints; }
-    public java.time.LocalDateTime getCreatedDate() { return createdDate; }
-    public void setCreatedDate(java.time.LocalDateTime createdDate) { this.createdDate = createdDate; }
-    public java.time.LocalDateTime getLastUpdated() { return lastUpdated; }
-    public void setLastUpdated(java.time.LocalDateTime lastUpdated) { this.lastUpdated = lastUpdated; }
 }
 
 

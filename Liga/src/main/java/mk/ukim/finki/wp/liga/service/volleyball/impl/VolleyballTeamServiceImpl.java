@@ -2,13 +2,10 @@ package mk.ukim.finki.wp.liga.service.volleyball.impl;
 
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.wp.liga.model.Exceptions.InvalidVolleyballTeamException;
-import mk.ukim.finki.wp.liga.model.FootballTeam;
 import mk.ukim.finki.wp.liga.model.VolleyballMatch;
 import mk.ukim.finki.wp.liga.model.VolleyballPlayer;
 import mk.ukim.finki.wp.liga.model.VolleyballTeam;
 import mk.ukim.finki.wp.liga.model.dtos.VolleyBallStandings;
-import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballMatchRepository;
-import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballPlayerRepository;
 import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballTeamRepository;
 import mk.ukim.finki.wp.liga.service.volleyball.VolleyballTeamService;
 import org.springframework.stereotype.Service;
@@ -22,8 +19,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class VolleyballTeamServiceImpl implements VolleyballTeamService {
     private final VolleyballTeamRepository volleyballTeamRepository;
-    private final VolleyballPlayerRepository volleyballPlayerRepository;
-    private final VolleyballMatchRepository volleyballMatchRepository;
 
     @Override
     @Transactional(readOnly = true)

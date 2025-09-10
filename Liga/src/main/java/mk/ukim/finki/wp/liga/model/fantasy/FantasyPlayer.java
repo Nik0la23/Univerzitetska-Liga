@@ -1,11 +1,13 @@
 package mk.ukim.finki.wp.liga.model.fantasy;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import mk.ukim.finki.wp.liga.model.BasketballPlayer;
 import mk.ukim.finki.wp.liga.model.FootballPlayer;
 import mk.ukim.finki.wp.liga.model.VolleyballPlayer;
 
 @Entity
+@Data
 public class FantasyPlayer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
