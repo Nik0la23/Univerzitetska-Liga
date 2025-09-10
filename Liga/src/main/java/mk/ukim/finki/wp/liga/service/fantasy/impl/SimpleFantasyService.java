@@ -150,7 +150,9 @@ public class SimpleFantasyService implements FantasyService {
             maxPositions.put("L", 1);
             maxPositions.put("DS", 1);
             Integer maxAllowed = maxPositions.get(player.getPosition());
-            throw new RuntimeException("Formation constraint violated: You can only have " + maxAllowed + " " + player.getPosition() + " player(s)");
+            String positionName = player.getPosition() != null ? player.getPosition() : "Unknown";
+            String maxAllowedStr = maxAllowed != null ? maxAllowed.toString() : "0";
+            throw new RuntimeException("Formation constraint violated: You can only have " + maxAllowedStr + " " + positionName + " player(s)");
         }
         
         double price = player.getPrice() != null ? player.getPrice() : 5.0;

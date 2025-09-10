@@ -45,7 +45,20 @@ public class NewsController {
     public String showNewsDetails(@PathVariable Long id, Model model) {
         News news = newsService.findById(id);
         model.addAttribute("news", news);
-        model.addAttribute("bodyContent", "football_news_details");
+        
+        // Use sport-specific template based on the news sport
+        String templateName;
+        if (news.getSport().equals("FOOTBALL")) {
+            templateName = "football_news_details";
+        } else if (news.getSport().equals("BASKETBALL")) {
+            templateName = "basketball/basketball_news_details";
+        } else if (news.getSport().equals("VOLLEYBALL")) {
+            templateName = "volleyball/volleyball_news_details";
+        } else {
+            templateName = "football_news_details"; // fallback
+        }
+        
+        model.addAttribute("bodyContent", templateName);
         return "master_template";
     }
 }

@@ -1,48 +1,71 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Add Product</title>
+  <title>Add Volleyball Product</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" th:href="@{/css/premium-design-system.css}">
 </head>
 <body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header">
   <div class="container">
-    <h1 class="mb-0">Add Product</h1>
+    <h1 class="text-center">➕ Add Volleyball Product</h1>
   </div>
 </header>
-<div class="container mt-5">
-  <form th:action="@{/volleyball/products}" method="post">
-    <div class="mb-3">
-      <label for="name" class="form-label">Name</label>
-      <input type="text" id="name" name="name" class="form-control" placeholder="Product Name" required />
-    </div>
-
-    <div class="mb-3">
-      <label for="description" class="form-label">Description</label>
-      <textarea id="description" name="description" class="form-control" placeholder="Product Description" required></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label for="price" class="form-label">Price</label>
-      <input type="number" id="price" name="price" class="form-control" placeholder="Price" step="0.01" required />
-    </div>
-
-    <div class="mb-3">
-      <label for="imageUrl" class="form-label">Image URL</label>
-      <input type="text" id="imageUrl" name="imageUrl" class="form-control" placeholder="Image URL" required />
-    </div>
-
-    <div class="mb-3">
-      <label for="team" class="form-label">Team</label>
-      <select id="team" name="team" class="form-select" required>
-        <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}">Team Name</option>
-      </select>
-    </div>
-
-    <button type="submit" class="btn btn-success">Create</button>
-  </form>
-
-  <a th:href="@{/volleyball/products}" class="btn btn-secondary mt-4">Back to Products</a>
+<div class="premium-container">
+  <div class="premium-card">
+    <h3 class="section-title">📝 Product Information</h3>
+    <form th:action="@{/volleyball/products}" method="post" class="needs-validation" novalidate>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="form-group-premium">
+            <label for="name" class="form-label-premium">📝 Product Name</label>
+            <input type="text" id="name" name="name" class="form-control-premium" placeholder="Enter product name" required />
+            <div class="invalid-feedback">Please enter a product name.</div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-group-premium">
+            <label for="price" class="form-label-premium">💰 Price</label>
+            <input type="number" id="price" name="price" class="form-control-premium" placeholder="0.00" step="0.01" required />
+            <div class="invalid-feedback">Please enter a valid price.</div>
+          </div>
+        </div>
+        
+        <div class="col-12">
+          <div class="form-group-premium">
+            <label for="description" class="form-label-premium">📄 Description</label>
+            <textarea id="description" name="description" class="form-control-premium" placeholder="Enter product description" required></textarea>
+            <div class="invalid-feedback">Please provide a description.</div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-group-premium">
+            <label for="imageUrl" class="form-label-premium">🖼️ Image URL</label>
+            <input type="text" id="imageUrl" name="imageUrl" class="form-control-premium" placeholder="https://example.com/image.jpg" required />
+            <div class="invalid-feedback">Please provide an image URL.</div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-group-premium">
+            <label for="team" class="form-label-premium">🏆 Team</label>
+            <select id="team" name="team" class="form-control-premium" required>
+              <option value="" selected>Select Team</option>
+              <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}">Team Name</option>
+            </select>
+            <div class="invalid-feedback">Please select a team.</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="d-flex justify-content-between align-items-center mt-5">
+        <button type="submit" class="btn-premium btn-success">✅ Create Product</button>
+        <a th:href="@{/volleyball/products}" class="btn-premium btn-secondary">🔙 Back to Products</a>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

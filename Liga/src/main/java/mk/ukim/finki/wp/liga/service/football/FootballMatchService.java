@@ -21,6 +21,9 @@ public interface FootballMatchService {
 
 
     FootballMatch update(Long id, FootballTeam homeTeam, FootballTeam awayTeam, int homeTeamPoints, int awayTeamPoints, LocalDateTime startTime);
+    
+    FootballMatch update(Long id, FootballTeam homeTeam, FootballTeam awayTeam, int homeTeamPoints, int awayTeamPoints, 
+                        int homeTeamH1Points, int homeTeamH2Points, int awayTeamH1Points, int awayTeamH2Points, LocalDateTime startTime);
 
 
     FootballMatch delete(Long id);

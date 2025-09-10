@@ -8,7 +8,7 @@
     <div class="container">
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
+                <li class="nav-item" th:if="${session.user != null and session.user.isAdmin}">
                     <a href="/players/add-form" class="nav-link">➕ Add Player</a>
                 </li>
                 <li class="nav-item">
@@ -69,11 +69,11 @@
                 <td class="text-readable" th:text="${player.team?.teamName}"></td>
                 <td>
                     <div class="btn-group" role="group">
-                        <a th:href="@{/players/edit/{id}(id=${player.football_player_id})}" 
+                        <a th:if="${session.user != null and session.user.isAdmin}" th:href="@{/players/edit/{id}(id=${player.football_player_id})}" 
                            class="btn btn-premium btn-warning" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">✏️ Edit</a>
                         <a th:href="@{/players/details/{id}(id=${player.football_player_id})}" 
                            class="btn btn-premium btn-primary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">👁️ Details</a>
-                        <form th:method="POST" th:action="@{/players/delete/{id} (id=${player.football_player_id})}" style="display:inline;">
+                        <form th:if="${session.user != null and session.user.isAdmin}" th:method="POST" th:action="@{/players/delete/{id} (id=${player.football_player_id})}" style="display:inline;">
                             <button type="submit" class="btn btn-premium btn-danger" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">🗑️ Delete</button>
                         </form>
                     </div>
@@ -83,7 +83,7 @@
         </table>
     </div>
     
-    <div class="text-center mt-4">
+    <div class="text-center mt-4" th:if="${session.user != null and session.user.isAdmin}">
         <a type="button" class="btn btn-premium btn-success" href="/players/add-form">
             ➕ Add New Player
         </a>

@@ -67,4 +67,47 @@ public class BasketballPlayer {
     public int getTotalPoints() {
         return points * 2 + assists + rebounds;
     }
+    
+    /**
+     * Calculate dynamic price based on player statistics
+     * Base price: 5.0
+     * Points: +0.5 per point
+     * Assists: +1.0 per assist
+     * Rebounds: +0.8 per rebound
+     * Appearances: +0.1 per appearance
+     * Minimum price: 1.0, Maximum price: 50.0
+     */
+    public void calculateDynamicPrice() {
+        double basePrice = 5.0;
+        double calculatedPrice = basePrice;
+        
+        // Points are valuable
+        calculatedPrice += points * 0.5;
+        
+        // Assists show playmaking ability
+        calculatedPrice += assists * 1.0;
+        
+        // Rebounds show defensive/offensive presence
+        calculatedPrice += rebounds * 0.8;
+        
+        // Appearances show consistency
+        calculatedPrice += appearances * 0.1;
+        
+        // Position-based adjustments
+        if ("PG".equals(position)) {
+            // Point guards get bonus for assists
+            calculatedPrice += assists * 0.5;
+        } else if ("SG".equals(position) || "SF".equals(position)) {
+            // Guards and forwards get bonus for points
+            calculatedPrice += points * 0.3;
+        } else if ("PF".equals(position) || "C".equals(position)) {
+            // Big men get bonus for rebounds
+            calculatedPrice += rebounds * 0.5;
+        }
+        
+        // Apply bounds
+        calculatedPrice = Math.max(1.0, Math.min(50.0, calculatedPrice));
+        
+        this.price = calculatedPrice;
+    }
 }

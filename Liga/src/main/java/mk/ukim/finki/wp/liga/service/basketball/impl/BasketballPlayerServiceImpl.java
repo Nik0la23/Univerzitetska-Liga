@@ -68,6 +68,31 @@ public class BasketballPlayerServiceImpl implements BasketballPlayerService {
 
     @Override
     @Transactional
+    public BasketballPlayer update(Long id, byte[] image, String name, String surname, Date birthdate, int index, String city, String position, BasketballTeam team, int appearances, int points, int assists, int rebounds, Double price) {
+        BasketballPlayer p = this.findById(id);
+        if(image!=null && image.length>0)
+            p.setImage(image);
+            p.setName(name);
+            p.setSurname(surname);
+            p.setBirthdate(birthdate);
+            p.setIndex(index);
+            p.setCity(city);
+            p.setPosition(position);
+            BasketballTeam t = basketballTeamRepository.findById(team.getId()).orElseThrow(InvalidBasketballTeamException::new);
+            p.setTeam(t);
+            p.setAppearances(appearances);
+            p.setPoints(points);
+            p.setAssists(assists);
+            p.setRebounds(rebounds);
+            
+            // Calculate dynamic price based on stats
+            p.calculateDynamicPrice();
+            
+        return basketballPlayerRepository.save(p);
+    }
+
+    @Override
+    @Transactional
     public BasketballPlayer delete(Long id) {
         BasketballPlayer p = this.findById(id);
         
@@ -164,4 +189,14 @@ public class BasketballPlayerServiceImpl implements BasketballPlayerService {
             // Save the updated player
             basketballPlayerRepository.save(player);
         }
+
+    @Override
+    @Transactional
+    public void recalculateAllPlayerPrices() {
+        List<BasketballPlayer> allPlayers = basketballPlayerRepository.findAll();
+        for (BasketballPlayer player : allPlayers) {
+            player.calculateDynamicPrice();
+            basketballPlayerRepository.save(player);
+        }
+    }
 }

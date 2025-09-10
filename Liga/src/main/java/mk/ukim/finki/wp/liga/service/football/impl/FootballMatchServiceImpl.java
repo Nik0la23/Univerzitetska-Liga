@@ -79,6 +79,38 @@ public class FootballMatchServiceImpl implements FootballMatchService {
 
     @Override
     @Transactional
+    public FootballMatch update(Long id, FootballTeam homeTeam, FootballTeam awayTeam, int homeTeamPoints, int awayTeamPoints, 
+                               int homeTeamH1Points, int homeTeamH2Points, int awayTeamH1Points, int awayTeamH2Points, LocalDateTime startTime) {
+        if(homeTeam.getId().equals(awayTeam.getId())){
+            throw new InvalidFootballMatchException();
+        }
+        FootballTeam home = teamRepository.findById(homeTeam.getId()).orElseThrow(InvalidFootballTeamException::new);
+        FootballTeam away = teamRepository.findById(awayTeam.getId()).orElseThrow(InvalidFootballMatchException::new);
+        FootballMatch fm = matchRepository.findById(id).orElseThrow(InvalidFootballMatchException::new);
+        
+        // Validate that halftime goals sum equals total goals
+        if(homeTeamH1Points + homeTeamH2Points != homeTeamPoints){
+            throw new InvalidFootballMatchException("Home team halftime goals must equal total goals");
+        }
+        if(awayTeamH1Points + awayTeamH2Points != awayTeamPoints){
+            throw new InvalidFootballMatchException("Away team halftime goals must equal total goals");
+        }
+        
+        fm.setHomeTeam(home);
+        fm.setAwayTeam(away);
+        fm.setHomeTeamPoints(homeTeamPoints);
+        fm.setAwayTeamPoints(awayTeamPoints);
+        fm.setHomeTeamH1Points(homeTeamH1Points);
+        fm.setHomeTeamH2Points(homeTeamH2Points);
+        fm.setAwayTeamH1Points(awayTeamH1Points);
+        fm.setAwayTeamH2Points(awayTeamH2Points);
+        fm.setStartTime(startTime);
+        fm.setEndTime(startTime.plusMinutes(120));
+        return matchRepository.save(fm);
+    }
+
+    @Override
+    @Transactional
     public FootballMatch delete(Long id) {
         FootballMatch fm = matchRepository.findById(id).orElseThrow(InvalidFootballMatchException::new);
         if(fm.getEndTime().isBefore(LocalDateTime.now())){

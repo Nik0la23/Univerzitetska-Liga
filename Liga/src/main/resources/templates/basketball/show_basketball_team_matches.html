@@ -27,7 +27,7 @@
             <tbody>
             <tr th:each="fixture : ${fixtures}">
                 <td th:text="${fixture.awayTeam.teamName == team.teamName ? fixture.homeTeam.teamName : fixture.awayTeam.teamName}">Opponent</td>
-<!--                <td th:text="${#dates.format(fixture.startTime, 'dd-MM-yyyy HH:mm')}">Date</td>-->
+                <td th:text="${#temporals.format(fixture.startTime, 'dd-MM-yyyy HH:mm')}">Date</td>
                 <td th:text="${fixture.awayTeam.teamName == team.teamName ? 'Away' : 'Home'}">Venue</td>
             </tr>
             </tbody>
@@ -49,7 +49,7 @@
             <tbody>
             <tr th:each="result : ${results}">
                 <td th:text="${result.awayTeam.teamName == team.teamName ? result.homeTeam.teamName : result.awayTeam.teamName}">Opponent</td>
-<!--                <td th:text="${#dates.format(result.endTime, 'dd-MM-yyyy HH:mm')}">Date</td>-->
+                <td th:text="${#temporals.format(result.endTime, 'dd-MM-yyyy HH:mm')}">Date</td>
                 <td th:text="${result.homeTeamPoints} + ' - ' + ${result.awayTeamPoints}">Score</td>
                 <td th:text="${result.awayTeam.teamName == team.teamName ? 'Away' : 'Home'}">Venue</td>
             </tr>

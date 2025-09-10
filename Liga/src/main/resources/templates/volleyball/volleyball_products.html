@@ -3,65 +3,378 @@
 <head>
   <title>Volleyball Products</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" th:href="@{/css/premium-design-system.css}">
+  <style>
+      .product-table {
+          width: 100%;
+          table-layout: fixed;
+      }
+      .product-table th:nth-child(1) { width: 12%; } /* Image */
+      .product-table th:nth-child(2) { width: 20%; } /* Name */
+      .product-table th:nth-child(3) { width: 25%; } /* Description */
+      .product-table th:nth-child(4) { width: 10%; } /* Price */
+      .product-table th:nth-child(5) { width: 15%; } /* Team */
+      .product-table th:nth-child(6) { width: 18%; } /* Actions */
+      
+      .action-buttons {
+          display: flex;
+          gap: 4px;
+          align-items: center;
+          flex-wrap: wrap;
+      }
+      
+      .action-buttons .btn {
+          padding: 4px 8px;
+          font-size: 0.75rem;
+          border-radius: 6px;
+      }
+      
+      .quantity-input {
+          width: 60px;
+          padding: 4px 6px;
+          font-size: 0.75rem;
+          border-radius: 6px;
+      }
+      
+      .premium-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+      
+      .btn-premium:hover {
+          transform: translateY(-1px) scale(1.02);
+      }
+      
+      /* Sidebar Styles */
+      .sidebar {
+          height: 100vh;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 280px;
+          background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+          z-index: 1000;
+          overflow-y: auto;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255,255,255,0.3) transparent;
+      }
+      
+      .sidebar::-webkit-scrollbar {
+          width: 6px;
+      }
+      
+      .sidebar::-webkit-scrollbar-track {
+          background: transparent;
+      }
+      
+      .sidebar::-webkit-scrollbar-thumb {
+          background: rgba(255,255,255,0.3);
+          border-radius: 3px;
+      }
+      
+      .sidebar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255,255,255,0.5);
+      }
+      
+      .sidebar-header {
+          background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+          padding: 25px 20px;
+          border-bottom: 2px solid rgba(255,255,255,0.1);
+          position: relative;
+          overflow: hidden;
+      }
+      
+      .sidebar-header::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -20%;
+          width: 200px;
+          height: 200px;
+          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+          border-radius: 50%;
+          animation: sidebarGlow 4s ease-in-out infinite;
+      }
+      
+      @keyframes sidebarGlow {
+          0%, 100% { transform: scale(1) rotate(0deg); }
+          50% { transform: scale(1.1) rotate(180deg); }
+      }
+      
+      .sidebar-title {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: #fff;
+          text-align: center;
+          margin: 0;
+          text-shadow: 0 0 20px rgba(255,255,255,0.3);
+          position: relative;
+          z-index: 2;
+          letter-spacing: 2px;
+      }
+      
+      .sidebar .sports-title {
+          font-family: 'Montserrat', sans-serif;
+          font-weight: 700;
+          font-size: 1.1rem;
+          padding: 20px 25px 15px 25px;
+          color: #e94560;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          border-bottom: 2px solid rgba(233,69,96,0.3);
+          margin: 0;
+          position: relative;
+          background: linear-gradient(90deg, rgba(233,69,96,0.1) 0%, transparent 100%);
+      }
+      
+      .sidebar .sports-title::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 25px;
+          width: 50px;
+          height: 2px;
+          background: linear-gradient(90deg, #e94560, #ff6b9d);
+          border-radius: 1px;
+      }
+      
+      .sidebar .nav {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          padding: 20px 0;
+      }
+      
+      .sidebar .nav a {
+          padding: 15px 25px;
+          text-decoration: none;
+          color: rgba(255,255,255,0.8);
+          font-family: 'Inter', sans-serif;
+          font-weight: 500;
+          font-size: 0.95rem;
+          transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          position: relative;
+          margin: 2px 15px;
+          border-radius: 12px;
+          overflow: hidden;
+      }
+      
+      .sidebar .nav a::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+          transition: left 0.5s ease;
+      }
+      
+      .sidebar .nav a:hover::before {
+          left: 100%;
+      }
+      
+      .sidebar .nav a:hover {
+          background: linear-gradient(135deg, rgba(233,69,96,0.2), rgba(255,107,157,0.1));
+          color: #fff;
+          transform: translateX(8px);
+          box-shadow: 0 4px 15px rgba(233,69,96,0.3);
+      }
+      
+      .sidebar .nav a:active {
+          transform: translateX(5px) scale(0.98);
+      }
+      
+      .sidebar .nav a {
+          background: transparent !important;
+      }
+      
+      .sidebar .nav a:not(:hover):not(:focus) {
+          background: transparent !important;
+          transform: none !important;
+          box-shadow: none !important;
+      }
+      
+      .sidebar .nav .nav-item:last-child {
+          margin-top: auto;
+          border-top: 2px solid rgba(255,255,255,0.1);
+          padding-top: 20px;
+      }
+      
+      .sidebar .nav .nav-item:last-child a {
+          background: linear-gradient(135deg, rgba(255,193,7,0.2), rgba(255,152,0,0.1));
+          color: #ffc107;
+          font-weight: 600;
+      }
+      
+      .sidebar .nav .nav-item:last-child a:hover {
+          background: linear-gradient(135deg, rgba(255,193,7,0.3), rgba(255,152,0,0.2));
+          color: #fff;
+          box-shadow: 0 4px 15px rgba(255,193,7,0.4);
+      }
+      
+      .fantasy-section {
+          border-top: 2px solid rgba(255,255,255,0.1);
+          margin-top: 20px;
+          padding-top: 20px;
+      }
+      
+      .fantasy-section .sports-title {
+          font-size: 0.9rem;
+          padding: 15px 25px 10px 25px;
+          color: #9c27b0;
+      }
+      
+      .fantasy-section .sports-title::after {
+          background: linear-gradient(90deg, #9c27b0, #e1bee7);
+      }
+      
+      .fantasy-section .nav a {
+          padding-left: 35px;
+          font-size: 0.85rem;
+          color: rgba(255,255,255,0.7);
+      }
+      
+      .fantasy-section .nav a:hover {
+          background: linear-gradient(135deg, rgba(156,39,176,0.2), rgba(225,190,231,0.1));
+          box-shadow: 0 4px 15px rgba(156,39,176,0.3);
+      }
+      
+      @media (max-width: 768px) {
+          .sidebar {
+              width: 100%;
+              transform: translateX(-100%);
+              transition: transform 0.3s ease;
+          }
+          
+          .sidebar.open {
+              transform: translateX(0);
+          }
+      }
+  </style>
 </head>
 <body>
-<header class="bg-primary text-white p-3">
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h2 class="sidebar-title">🏆 UNIVERSITY LEAGUE</h2>
+    </div>
+    
+    <div class="sports-title">⚽ Sports</div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="/football">⚽ Football</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/basketball">🏀 Basketball</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/volleyball">🏐 Volleyball</a>
+        </li>
+    </ul>
+    
+    <div class="fantasy-section">
+        <div class="sports-title">🎮 Fantasy Leagues</div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="/fantasy/football">⚽ Football Fantasy</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/fantasy/basketball">🏀 Basketball Fantasy</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/fantasy/volleyball">🏐 Volleyball Fantasy</a>
+            </li>
+        </ul>
+    </div>
+    
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="/news">📰 News</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/shop">🛒 Shop</a>
+        </li>
+    </ul>
+</aside>
+<header class="premium-header">
   <div class="container">
-    <h1 class="mb-0">Volleyball Products</h1>
+    <h1 class="text-center">🏐 Volleyball Products</h1>
   </div>
 </header>
-<div class="container mt-5">
+<div class="premium-container">
 
-  <form th:action="@{/volleyball/products}" method="get" class="mb-4">
-    <div class="mb-3">
-      <label for="team" class="form-label">Filter by Team:</label>
-      <select name="team" id="team" class="form-select">
-        <option value="">All Teams</option>
-        <option th:each="team : ${teams}" th:value="${team.getTeamName()}" th:text="${team.getTeamName()}"></option>
-      </select>
+  <!-- Filter Form -->
+  <div class="premium-card">
+    <h3 class="section-title">🔍 Filter Products</h3>
+    <form th:action="@{/volleyball/products}" method="get" class="row g-3">
+      <div class="col-md-8">
+        <label for="team" class="form-label-premium">Filter by Team:</label>
+        <select name="team" id="team" class="form-control-premium">
+          <option value="">All Teams</option>
+          <option th:each="team : ${teams}" th:value="${team.getTeamName()}" th:text="${team.getTeamName()}"></option>
+        </select>
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <button type="submit" class="btn-premium btn-primary w-100">Filter Products</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <a th:if="${session.user != null and session.user.isAdmin}" th:href="@{/volleyball/products/new}" class="btn-premium btn-success me-3">➕ Add New Product</a>
+      <a th:href="@{/shop}" class="btn-premium btn-secondary">🏠 Back to Shop Home</a>
     </div>
-    <button type="submit" class="btn btn-primary">Filter</button>
-  </form>
+  </div>
+  <!-- Products Table -->
+  <div class="premium-card">
+    <h3 class="section-title">🏐 Volleyball Products</h3>
+    <div class="table-responsive">
+      <table class="table-premium product-table">
+        <thead>
+        <tr>
+          <th>🖼️ Image</th>
+          <th>📝 Name</th>
+          <th>📄 Description</th>
+          <th>💰 Price</th>
+          <th>🏆 Team</th>
+          <th>⚙️ Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+          <td>
+            <img th:src="@{${product.getImage()}}" alt="Product Image" class="rounded-premium" style="width: 60px; height: 60px; object-fit: cover;"/>
+          </td>
+          <td class="text-premium" th:text="${product.getName()}">Product Name</td>
+          <td class="text-premium-light" style="font-size: 0.9rem;" th:text="${product.getDescription()}">Product Description</td>
+          <td class="text-premium-dark fw-bold" th:text="${product.getPrice()}">Product Price</td>
+          <td class="text-premium-light" th:text="${product.volleyballMerch.getTeamName()}">Team Name</td>
+          <td>
+            <div class="action-buttons">
+              <a th:href="@{/volleyball/products/{id}(id=${product.getId()})}" class="btn btn-outline-primary btn-sm">👁️</a>
+              <a th:if="${session.user != null and session.user.isAdmin}" th:href="@{/volleyball/products/edit/{id}(id=${product.getId()})}" class="btn btn-outline-warning btn-sm">✏️</a>
+              <a th:if="${session.user != null and session.user.isAdmin}" th:href="@{/volleyball/products/delete/{id}(id=${product.getId()})}" class="btn btn-outline-danger btn-sm">🗑️</a>
+              <form th:action="@{/cart/add/volleyball/{productId}(productId=${product.getId()})}" method="post" style="display: inline;">
+                <input type="number" name="quantity" class="quantity-input form-control" value="1" min="1" />
+                <button class="btn btn-success btn-sm" type="submit">🛒</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-  <!-- Link to Create New Product -->
-  <a th:href="@{/volleyball/products/new}" class="btn btn-primary mb-4">Add New Product</a>
-    <a th:href="@{/shop}" class="btn btn-secondary btn-lg">Back to Shop Home</a>
-  <table class="table table-striped">
-    <thead class="table-dark">
-    <tr>
-      <th>Image</th>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Price</th>
-      <th>Team</th>
-      <th>Actions</th>
-      <th>Add to Cart</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="product : ${products}">
-      <td><img th:src="@{${product.getImage()}}" alt="Product Image" class="img-thumbnail" width="100"/></td>
-      <td th:text="${product.getName()}">Product Name</td>
-      <td th:text="${product.getDescription()}">Product Description</td>
-      <td th:text="${product.getPrice()}">Product Price</td>
-      <td th:text="${product.volleyballMerch.getTeamName()}">Team Name</td>
-      <td>
-        <a th:href="@{/volleyball/products/{id}(id=${product.getId()})}" class="btn btn-info btn-sm">Details</a> |
-        <a th:href="@{/volleyball/products/edit/{id}(id=${product.getId()})}" class="btn btn-warning btn-sm">Edit</a> |
-        <a th:href="@{/volleyball/products/delete/{id}(id=${product.getId()})}" class="btn btn-danger btn-sm">Delete</a>
-      </td>
-      <td>
-        <form th:action="@{/cart/add/volleyball/{productId}(productId=${product.getId()})}" method="post" class="d-flex align-items-center">
-            <input type="number" name="quantity" id="quantity" class="form-control" value="1" min="1" />
-            <button class="btn btn-primary" type="submit">Add to Cart</button>
-        </form>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-
-  <div class="text-center my-4">
-    <a th:href="@{/shop}" class="btn btn-secondary btn-lg">Back to Shop Home</a>
+  <div class="text-center mt-5">
+    <a th:href="@{/shop}" class="btn-premium btn-secondary btn-lg">🏠 Back to Shop Home</a>
   </div>
 </div>
 

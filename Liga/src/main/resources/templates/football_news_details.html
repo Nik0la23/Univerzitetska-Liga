@@ -71,7 +71,12 @@
 
 <header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">⚽ <span th:text="${news.title}">News Title</span></h1>
+        <h1 class="mb-0">
+            <span th:if="${news.sport == 'FOOTBALL'}">⚽</span>
+            <span th:if="${news.sport == 'BASKETBALL'}">🏀</span>
+            <span th:if="${news.sport == 'VOLLEYBALL'}">🏐</span>
+            <span th:text="${news.title}">News Title</span>
+        </h1>
     </div>
 </header>
 
@@ -99,15 +104,19 @@
     </div>
 
     <div class="news-content">
-        <h3 class="text-premium mb-4" style="color: #4CAF50;">📖 Article Content</h3>
+        <h3 class="text-premium mb-4" 
+            th:style="${news.sport == 'FOOTBALL'} ? 'color: #4CAF50;' : (${news.sport == 'BASKETBALL'} ? 'color: #FF9800;' : 'color: #2196F3;')">📖 Article Content</h3>
         <div class="text-readable" style="font-size: 1.1rem; line-height: 1.8;" th:text="${news.content}">
             News Content
         </div>
     </div>
     
-    <div class="d-flex gap-3 justify-content-center mt-5">
-        <a th:href="@{/news/edit/{id}(id=${news.news_id})}" class="btn-premium btn-warning">✏️ Edit Article</a>
-        <a th:href="@{/news}" class="btn-premium btn-secondary">⬅️ Back to News List</a>
+    <div class="d-flex gap-3 justify-content-center mt-5 flex-wrap">
+        <a th:href="@{/football/news/edit/{id}(id=${news.news_id})}" class="btn-premium btn-warning">✏️ Edit Article</a>
+        <a th:href="@{/news}" class="btn-premium btn-secondary">📰 All Sports News</a>
+        <a th:href="@{/football/news}" class="btn-premium" style="background: var(--accent-green);">⚽ Football News</a>
+        <a th:href="@{/basketball/news}" class="btn-premium" style="background: var(--accent-orange);">🏀 Basketball News</a>
+        <a th:href="@{/volleyball/news}" class="btn-premium" style="background: var(--accent-blue);">🏐 Volleyball News</a>
     </div>
 </section>
 

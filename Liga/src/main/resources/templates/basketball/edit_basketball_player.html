@@ -58,6 +58,57 @@
                 submitButton.disabled = false;
             }
         }
+
+        function calculatePricePreview() {
+            const appearances = parseInt(document.getElementById('appearances').value) || 0;
+            const points = parseInt(document.getElementById('points').value) || 0;
+            const assists = parseInt(document.getElementById('assists').value) || 0;
+            const rebounds = parseInt(document.getElementById('rebounds').value) || 0;
+            const position = document.getElementById('playerPosition').value;
+            
+            let calculatedPrice = 5.0; // Base price
+            
+            // Points are valuable
+            calculatedPrice += points * 0.5;
+            
+            // Assists show playmaking ability
+            calculatedPrice += assists * 1.0;
+            
+            // Rebounds show defensive/offensive presence
+            calculatedPrice += rebounds * 0.8;
+            
+            // Appearances show consistency
+            calculatedPrice += appearances * 0.1;
+            
+            // Position-based adjustments
+            if (position === 'PG') {
+                calculatedPrice += assists * 0.5;
+            } else if (position === 'SG' || position === 'SF') {
+                calculatedPrice += points * 0.3;
+            } else if (position === 'PF' || position === 'C') {
+                calculatedPrice += rebounds * 0.5;
+            }
+            
+            // Apply bounds
+            calculatedPrice = Math.max(1.0, Math.min(50.0, calculatedPrice));
+            
+            document.getElementById('priceDisplay').value = calculatedPrice.toFixed(1);
+        }
+
+        // Add event listeners to stats fields
+        document.addEventListener('DOMContentLoaded', function() {
+            const statsFields = ['appearances', 'points', 'assists', 'rebounds', 'playerPosition'];
+            statsFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', calculatePricePreview);
+                    field.addEventListener('change', calculatePricePreview);
+                }
+            });
+            
+            // Initial calculation
+            calculatePricePreview();
+        });
     </script>
 
 </head>
@@ -127,6 +178,51 @@
                         th:selected="${team.getId() == player.team.getId()}"></option>
             </select>
             <div class="invalid-feedback">Please select a team.</div>
+        </div>
+
+        <!-- Player Stats Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="text-primary" style="margin-bottom: 20px;">
+                    📊 Player Statistics
+                </h3>
+            </div>
+        </div>
+
+        <!-- Appearances -->
+        <div class="form-group">
+            <label for="appearances" class="form-label">🏀 Appearances</label>
+            <input type="number" class="form-control" id="appearances" name="appearances"
+                   th:value="${player != null ? player.getAppearances() : 0}" min="0" placeholder="Number of appearances">
+        </div>
+
+        <!-- Points -->
+        <div class="form-group">
+            <label for="points" class="form-label">🎯 Points</label>
+            <input type="number" class="form-control" id="points" name="points"
+                   th:value="${player != null ? player.getPoints() : 0}" min="0" placeholder="Number of points">
+        </div>
+
+        <!-- Assists -->
+        <div class="form-group">
+            <label for="assists" class="form-label">🅰️ Assists</label>
+            <input type="number" class="form-control" id="assists" name="assists"
+                   th:value="${player != null ? player.getAssists() : 0}" min="0" placeholder="Number of assists">
+        </div>
+
+        <!-- Rebounds -->
+        <div class="form-group">
+            <label for="rebounds" class="form-label">🏀 Rebounds</label>
+            <input type="number" class="form-control" id="rebounds" name="rebounds"
+                   th:value="${player != null ? player.getRebounds() : 0}" min="0" placeholder="Number of rebounds">
+        </div>
+
+        <!-- Price Display (Read-only) -->
+        <div class="form-group">
+            <label for="priceDisplay" class="form-label">💰 Current Price</label>
+            <input type="text" class="form-control" id="priceDisplay" readonly
+                   th:value="${player != null ? player.getPrice() : 5.0}" placeholder="Price calculated automatically">
+            <small class="form-text text-muted">Price is calculated automatically based on player statistics</small>
         </div>
 
         <button id="submit" type="submit" class="btn btn-primary">Submit</button>

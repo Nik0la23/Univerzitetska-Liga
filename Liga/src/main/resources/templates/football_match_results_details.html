@@ -50,6 +50,37 @@
         </div>
     </div>
 
+    <!-- Half by Half Breakdown -->
+    <div class="premium-card mb-5">
+        <h3 class="text-premium mb-4" style="color: var(--accent-green);">⏱️ Half Breakdown</h3>
+        <div class="table-responsive">
+            <table class="table-premium">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>1st Half</th>
+                        <th>2nd Half</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td th:text="${match.homeTeam.teamName}">Home Team</td>
+                        <td th:text="${match.homeTeamH1Points}">0</td>
+                        <td th:text="${match.homeTeamH2Points}">0</td>
+                        <td class="total-score" th:text="${match.homeTeamPoints}">0</td>
+                    </tr>
+                    <tr>
+                        <td th:text="${match.awayTeam.teamName}">Away Team</td>
+                        <td th:text="${match.awayTeamH1Points}">0</td>
+                        <td th:text="${match.awayTeamH2Points}">0</td>
+                        <td class="total-score" th:text="${match.awayTeamPoints}">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="d-flex gap-3 justify-content-center">
         <a th:href="@{/matches/results/details/stats/{id}(id=${match.football_match_id})}" class="btn-premium">📊 View Stats</a>
         <a href="/matches" class="btn-premium" style="background: var(--gray-600);">⬅️ Back to Matches</a>

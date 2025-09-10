@@ -42,18 +42,71 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group-premium">
-                    <label for="homeTeamPoints" class="form-label-premium">🏠 Home Team Goals</label>
+                    <label for="homeTeamPoints" class="form-label-premium">🏠 Home Team Goals <small class="text-muted">(Auto-calculated)</small></label>
                     <input type="number" class="form-control-premium" id="homeTeamPoints" name="homeTeamPoints"
                            th:value="${match.homeTeamPoints}" min="0" required placeholder="Enter home team goals">
-                    <div class="invalid-feedback">Please enter home team goals.</div>
+                    <small class="form-text text-muted">This field updates automatically when you enter halftime goals below</small>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group-premium">
-                    <label for="awayTeamPoints" class="form-label-premium">✈️ Away Team Goals</label>
+                    <label for="awayTeamPoints" class="form-label-premium">✈️ Away Team Goals <small class="text-muted">(Auto-calculated)</small></label>
                     <input type="number" class="form-control-premium" id="awayTeamPoints" name="awayTeamPoints"
                            th:value="${match.awayTeamPoints}" min="0" required placeholder="Enter away team goals">
-                    <div class="invalid-feedback">Please enter away team goals.</div>
+                    <small class="form-text text-muted">This field updates automatically when you enter halftime goals below</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Halftime Goals Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <h4 class="text-premium mb-3">⚽ Halftime Goals</h4>
+                <p class="text-premium-light mb-4">Enter the goals scored in each half. The total goals above will be automatically calculated.</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="premium-card">
+                    <h5 class="text-premium mb-3" style="color: var(--accent-green);">🏠 Home Team Halftime Goals</h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group-premium">
+                                <label for="homeTeamH1Points" class="form-label-premium">1st Half</label>
+                                <input type="number" class="form-control-premium" id="homeTeamH1Points" name="homeTeamH1Points"
+                                       th:value="${match.homeTeamH1Points}" min="0" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group-premium">
+                                <label for="homeTeamH2Points" class="form-label-premium">2nd Half</label>
+                                <input type="number" class="form-control-premium" id="homeTeamH2Points" name="homeTeamH2Points"
+                                       th:value="${match.homeTeamH2Points}" min="0" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="premium-card">
+                    <h5 class="text-premium mb-3" style="color: var(--accent-blue);">✈️ Away Team Halftime Goals</h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group-premium">
+                                <label for="awayTeamH1Points" class="form-label-premium">1st Half</label>
+                                <input type="number" class="form-control-premium" id="awayTeamH1Points" name="awayTeamH1Points"
+                                       th:value="${match.awayTeamH1Points}" min="0" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group-premium">
+                                <label for="awayTeamH2Points" class="form-label-premium">2nd Half</label>
+                                <input type="number" class="form-control-premium" id="awayTeamH2Points" name="awayTeamH2Points"
+                                       th:value="${match.awayTeamH2Points}" min="0" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -82,4 +135,114 @@
         }
         return true;
     }
+    
+    function validateHalftimeGoals(){
+        const homeTotal = parseInt(document.getElementById("homeTeamPoints").value) || 0;
+        const awayTotal = parseInt(document.getElementById("awayTeamPoints").value) || 0;
+        const homeH1 = parseInt(document.getElementById("homeTeamH1Points").value) || 0;
+        const homeH2 = parseInt(document.getElementById("homeTeamH2Points").value) || 0;
+        const awayH1 = parseInt(document.getElementById("awayTeamH1Points").value) || 0;
+        const awayH2 = parseInt(document.getElementById("awayTeamH2Points").value) || 0;
+        
+        if(homeH1 + homeH2 !== homeTotal){
+            alert("Home team halftime goals must equal total goals (" + homeTotal + ")");
+            return false;
+        }
+        
+        if(awayH1 + awayH2 !== awayTotal){
+            alert("Away team halftime goals must equal total goals (" + awayTotal + ")");
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Function to automatically update total goals when halftime goals change
+    function updateTotalGoals() {
+        const homeH1 = parseInt(document.getElementById("homeTeamH1Points").value) || 0;
+        const homeH2 = parseInt(document.getElementById("homeTeamH2Points").value) || 0;
+        const awayH1 = parseInt(document.getElementById("awayTeamH1Points").value) || 0;
+        const awayH2 = parseInt(document.getElementById("awayTeamH2Points").value) || 0;
+        
+        // Update home team total
+        const homeTotal = homeH1 + homeH2;
+        const homeTotalField = document.getElementById("homeTeamPoints");
+        homeTotalField.value = homeTotal;
+        
+        // Update away team total
+        const awayTotal = awayH1 + awayH2;
+        const awayTotalField = document.getElementById("awayTeamPoints");
+        awayTotalField.value = awayTotal;
+        
+        // Add visual feedback
+        homeTotalField.style.backgroundColor = '#e8f5e8';
+        awayTotalField.style.backgroundColor = '#e8f5e8';
+        
+        setTimeout(() => {
+            homeTotalField.style.backgroundColor = '';
+            awayTotalField.style.backgroundColor = '';
+        }, 1000);
+    }
+    
+    // Function to automatically distribute halftime goals when total goals change
+    function distributeHalftimeGoals(teamType) {
+        const totalGoals = parseInt(document.getElementById(teamType + "TeamPoints").value) || 0;
+        const h1Field = document.getElementById(teamType + "TeamH1Points");
+        const h2Field = document.getElementById(teamType + "TeamH2Points");
+        
+        const currentH1 = parseInt(h1Field.value) || 0;
+        const currentH2 = parseInt(h2Field.value) || 0;
+        
+        // If both halftime fields are empty, distribute evenly
+        if (currentH1 === 0 && currentH2 === 0) {
+            const h1Goals = Math.floor(totalGoals / 2);
+            const h2Goals = totalGoals - h1Goals;
+            h1Field.value = h1Goals;
+            h2Field.value = h2Goals;
+            
+            // Add visual feedback
+            h1Field.style.backgroundColor = '#e8f5e8';
+            h2Field.style.backgroundColor = '#e8f5e8';
+            
+            setTimeout(() => {
+                h1Field.style.backgroundColor = '';
+                h2Field.style.backgroundColor = '';
+            }, 1000);
+        } else {
+            // If halftime goals don't match total, adjust the second half
+            const newH2 = totalGoals - currentH1;
+            h2Field.value = Math.max(0, newH2);
+            
+            // Add visual feedback
+            h2Field.style.backgroundColor = '#e8f5e8';
+            setTimeout(() => {
+                h2Field.style.backgroundColor = '';
+            }, 1000);
+        }
+    }
+    
+    // Update form validation to include halftime goals validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            if(!validateTeams() || !validateHalftimeGoals()){
+                e.preventDefault();
+            }
+        });
+        
+        // Add event listeners for automatic calculations
+        const halftimeFields = ['homeTeamH1Points', 'homeTeamH2Points', 'awayTeamH1Points', 'awayTeamH2Points'];
+        halftimeFields.forEach(fieldId => {
+            document.getElementById(fieldId).addEventListener('input', updateTotalGoals);
+        });
+        
+        // Add event listeners for total goals fields
+        document.getElementById('homeTeamPoints').addEventListener('input', function() {
+            distributeHalftimeGoals('home');
+        });
+        
+        document.getElementById('awayTeamPoints').addEventListener('input', function() {
+            distributeHalftimeGoals('away');
+        });
+    });
 </script>
