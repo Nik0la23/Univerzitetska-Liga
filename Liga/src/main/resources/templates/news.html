@@ -3,58 +3,477 @@
 <head>
     <meta charset="UTF-8">
     <title>News</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/premium-design-system.css}">
+    <style>
+        /* Sidebar Styles */
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.3) transparent;
+        }
+        
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+        
+        .sidebar-header {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            padding: 25px 20px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: sidebarGlow 4s ease-in-out infinite;
+        }
+        
+        @keyframes sidebarGlow {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+        
+        .sidebar-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            position: relative;
+            z-index: 2;
+            letter-spacing: 2px;
+        }
+        
+        .sidebar .sports-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 20px 25px 15px 25px;
+            color: #e94560;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid rgba(233,69,96,0.3);
+            margin: 0;
+            position: relative;
+            background: linear-gradient(90deg, rgba(233,69,96,0.1) 0%, transparent 100%);
+        }
+        
+        .sidebar .sports-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 25px;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, #e94560, #ff6b9d);
+            border-radius: 1px;
+        }
+        
+        .sidebar .nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+        
+        .sidebar .nav a {
+            padding: 15px 25px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.8);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            margin: 2px 15px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .sidebar .nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .sidebar .nav a:hover::before {
+            left: 100%;
+        }
+        
+        .sidebar .nav a:hover {
+            background: linear-gradient(135deg, rgba(233,69,96,0.2), rgba(255,107,157,0.1));
+            color: #fff;
+            transform: translateX(8px);
+            box-shadow: 0 4px 15px rgba(233,69,96,0.3);
+        }
+        
+        .sidebar .nav a:active {
+            transform: translateX(5px) scale(0.98);
+        }
+        
+        .sidebar .nav a {
+            background: transparent !important;
+        }
+        
+        .sidebar .nav a:not(:hover):not(:focus) {
+            background: transparent !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .sidebar .nav .nav-item:last-child {
+            margin-top: auto;
+            border-top: 2px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+        }
+        
+        .sidebar .nav .nav-item:last-child a {
+            background: linear-gradient(135deg, rgba(255,193,7,0.2), rgba(255,152,0,0.1));
+            color: #ffc107;
+            font-weight: 600;
+        }
+        
+        .sidebar .nav .nav-item:last-child a:hover {
+            background: linear-gradient(135deg, rgba(255,193,7,0.3), rgba(255,152,0,0.2));
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255,193,7,0.4);
+        }
+        
+        .fantasy-section {
+            border-top: 2px solid rgba(255,255,255,0.1);
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+        
+        .fantasy-section .sports-title {
+            font-size: 0.9rem;
+            padding: 15px 25px 10px 25px;
+            color: #9c27b0;
+        }
+        
+        .fantasy-section .sports-title::after {
+            background: linear-gradient(90deg, #9c27b0, #e1bee7);
+        }
+        
+        .fantasy-section .nav a {
+            padding-left: 35px;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .fantasy-section .nav a:hover {
+            background: linear-gradient(135deg, rgba(156,39,176,0.2), rgba(225,190,231,0.1));
+            box-shadow: 0 4px 15px rgba(156,39,176,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        /* News Card Styles */
+        .news-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            border-color: rgba(233, 69, 96, 0.3);
+        }
+
+        .news-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .news-date {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .news-sport {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .sport-football {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .sport-basketball {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .sport-volleyball {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        /* Player Card Styles */
+        .player-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .player-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: rgba(233, 69, 96, 0.2);
+        }
+
+        .player-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-view {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-edit {
+            background: var(--accent-orange);
+            color: white;
+        }
+
+        .btn-delete {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
 <body>
-<header class="bg-primary text-white p-3">
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h2 class="sidebar-title">🏆 UNIVERSITY LEAGUE</h2>
+    </div>
+    
+    <div class="sports-title">⚽ Sports</div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="/football">⚽ Football</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/basketball">🏀 Basketball</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/volleyball">🏐 Volleyball</a>
+        </li>
+    </ul>
+    
+    <div class="fantasy-section">
+        <div class="sports-title">🎮 Fantasy Leagues</div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="/fantasy/football">⚽ Football Fantasy</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/fantasy/basketball">🏀 Basketball Fantasy</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/fantasy/volleyball">🏐 Volleyball Fantasy</a>
+            </li>
+        </ul>
+    </div>
+    
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="/news">📰 News</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/shop">🛒 Shop</a>
+        </li>
+    </ul>
+</aside>
+
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Latest News & Top Players</h1>
+        <h1 class="mb-0">📰 Latest News & Top Players</h1>
     </div>
 </header>
 
-<div class="container mt-4">
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">📰 All Sports News</h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">Stay updated with the latest news from all sports</p>
+        </div>
+    </div>
+
     <div class="row">
+        <!-- News Section (Left side) -->
         <div class="col-lg-8">
-            <h3>All Sports News</h3>
-            <div class="list-group">
-                <a th:each="n : ${allNews}"
-                   th:href="@{/news/details/{id}(id=${n.news_id})}"
-                   class="list-group-item list-group-item-action">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1" th:text="${n.title}">News title</h5>
-                        <small th:text="${n.publishedDate}">2025-01-01</small>
+            <div class="premium-card">
+                <div th:each="n : ${allNews}" class="news-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="news-title" th:text="${n.title}">News title</h3>
+                            <p class="news-date" th:text="${n.publishedDate}">2025-01-01</p>
+                            <span class="news-sport" 
+                                  th:classappend="${n.sport == 'FOOTBALL'} ? 'sport-football' : (${n.sport == 'BASKETBALL'} ? 'sport-basketball' : 'sport-volleyball')"
+                                  th:text="${n.sport}">SPORT</span>
+                        </div>
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <a th:href="@{/news/details/{id}(id=${n.news_id})}" class="btn-action btn-view">👁️ View</a>
+                            <a th:href="@{/football/news/edit/{id}(id=${n.news_id})}" 
+                               th:if="${n.sport == 'FOOTBALL'}"
+                               class="btn-action btn-edit">✏️ Edit</a>
+                            <a th:href="@{/basketball/news/edit/{id}(id=${n.news_id})}" 
+                               th:if="${n.sport == 'BASKETBALL'}"
+                               class="btn-action btn-edit">✏️ Edit</a>
+                            <a th:href="@{/volleyball/news/edit/{id}(id=${n.news_id})}" 
+                               th:if="${n.sport == 'VOLLEYBALL'}"
+                               class="btn-action btn-edit">✏️ Edit</a>
+                            <a th:href="@{/football/news/delete/{id}(id=${n.news_id})}" 
+                               th:if="${n.sport == 'FOOTBALL'}"
+                               class="btn-action btn-delete"
+                               onclick="return confirm('Are you sure you want to delete this news?');">🗑️ Delete</a>
+                            <a th:href="@{/basketball/news/delete/{id}(id=${n.news_id})}" 
+                               th:if="${n.sport == 'BASKETBALL'}"
+                               class="btn-action btn-delete"
+                               onclick="return confirm('Are you sure you want to delete this news?');">🗑️ Delete</a>
+                            <a th:href="@{/volleyball/news/delete/{id}(id=${n.news_id})}" 
+                               th:if="${n.sport == 'VOLLEYBALL'}"
+                               class="btn-action btn-delete"
+                               onclick="return confirm('Are you sure you want to delete this news?');">🗑️ Delete</a>
+                        </div>
                     </div>
-                    <small class="text-muted" th:text="${n.sport}">SPORT</small>
-                </a>
+                    </div>
             </div>
         </div>
+
+        <!-- Top Players Section (Right side) -->
         <div class="col-lg-4">
-            <h4>Top Players</h4>
+            <div class="premium-card">
+                <h3 class="text-premium mb-4">🏆 Top Players</h3>
+                
             <div class="mb-4">
-                <h5>Football</h5>
-                <ul class="list-group">
-                    <li class="list-group-item" th:each="p : ${topFootballPlayers}" th:text="${p.name + ' ' + p.surname}">Player</li>
-                </ul>
+                    <h5 class="text-premium mb-3" style="color: var(--accent-green);">⚽ Football</h5>
+                    <div th:each="p : ${topFootballPlayers}" class="player-card">
+                        <p class="player-name" th:text="${p.name + ' ' + p.surname}">Player</p>
+                    </div>
             </div>
+                
             <div class="mb-4">
-                <h5>Basketball</h5>
-                <ul class="list-group">
-                    <li class="list-group-item" th:each="p : ${topBasketballPlayers}" th:text="${p.name + ' ' + p.surname}">Player</li>
-                </ul>
+                    <h5 class="text-premium mb-3" style="color: var(--accent-orange);">🏀 Basketball</h5>
+                    <div th:each="p : ${topBasketballPlayers}" class="player-card">
+                        <p class="player-name" th:text="${p.name + ' ' + p.surname}">Player</p>
+                    </div>
             </div>
+                
             <div class="mb-4">
-                <h5>Volleyball</h5>
-                <ul class="list-group">
-                    <li class="list-group-item" th:each="p : ${topVolleyballPlayers}" th:text="${p.name + ' ' + p.surname}">Player</li>
-                </ul>
+                    <h5 class="text-premium mb-3" style="color: var(--accent-blue);">🏐 Volleyball</h5>
+                    <div th:each="p : ${topVolleyballPlayers}" class="player-card">
+                        <p class="player-name" th:text="${p.name + ' ' + p.surname}">Player</p>
+                    </div>
             </div>
         </div>
     </div>
 </div>
+</section>
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </body>
 </html>
 
