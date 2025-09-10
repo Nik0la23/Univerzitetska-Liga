@@ -18,6 +18,15 @@ import mk.ukim.finki.wp.liga.service.volleyball.VolleyballTeamService;
 import mk.ukim.finki.wp.liga.repository.football.FootballProductRepository;
 import mk.ukim.finki.wp.liga.repository.basketball.BasketballProductRepository;
 import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballProductRepository;
+import mk.ukim.finki.wp.liga.repository.football.FootballMatchRepository;
+import mk.ukim.finki.wp.liga.repository.basketball.BasketballMatchRepository;
+import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballMatchRepository;
+import mk.ukim.finki.wp.liga.repository.football.FootballPlayerRepository;
+import mk.ukim.finki.wp.liga.repository.basketball.BasketballPlayerRepository;
+import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballPlayerRepository;
+import mk.ukim.finki.wp.liga.repository.football.FootballTeamRepository;
+import mk.ukim.finki.wp.liga.repository.basketball.BasketballTeamRepository;
+import mk.ukim.finki.wp.liga.repository.volleyball.VolleyballTeamRepository;
 import mk.ukim.finki.wp.liga.model.shop.FootballProduct;
 import mk.ukim.finki.wp.liga.model.shop.BasketballProduct;
 import mk.ukim.finki.wp.liga.model.shop.VolleyballProduct;
@@ -28,11 +37,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 @Component
 public class DatabaseSeeder {
@@ -56,6 +66,18 @@ public class DatabaseSeeder {
     private final FootballProductRepository footballProductRepository;
     private final BasketballProductRepository basketballProductRepository;
     private final VolleyballProductRepository volleyballProductRepository;
+    
+    private final FootballMatchRepository footballMatchRepository;
+    private final BasketballMatchRepository basketballMatchRepository;
+    private final VolleyballMatchRepository volleyballMatchRepository;
+    
+    private final FootballPlayerRepository footballPlayerRepository;
+    private final BasketballPlayerRepository basketballPlayerRepository;
+    private final VolleyballPlayerRepository volleyballPlayerRepository;
+    
+    private final FootballTeamRepository footballTeamRepository;
+    private final BasketballTeamRepository basketballTeamRepository;
+    private final VolleyballTeamRepository volleyballTeamRepository;
 
     public DatabaseSeeder(FootballTeamService footballTeamService, 
                          FootballPlayerService footballPlayerService, 
@@ -71,7 +93,16 @@ public class DatabaseSeeder {
                          NewsService newsService,
                          FootballProductRepository footballProductRepository,
                          BasketballProductRepository basketballProductRepository,
-                         VolleyballProductRepository volleyballProductRepository) {
+                         VolleyballProductRepository volleyballProductRepository,
+                         FootballMatchRepository footballMatchRepository,
+                         BasketballMatchRepository basketballMatchRepository,
+                         VolleyballMatchRepository volleyballMatchRepository,
+                         FootballPlayerRepository footballPlayerRepository,
+                         BasketballPlayerRepository basketballPlayerRepository,
+                         VolleyballPlayerRepository volleyballPlayerRepository,
+                         FootballTeamRepository footballTeamRepository,
+                         BasketballTeamRepository basketballTeamRepository,
+                         VolleyballTeamRepository volleyballTeamRepository) {
         this.footballTeamService = footballTeamService;
         this.footballPlayerService = footballPlayerService;
         this.footballMatchService = footballMatchService;
@@ -87,6 +118,15 @@ public class DatabaseSeeder {
         this.footballProductRepository = footballProductRepository;
         this.basketballProductRepository = basketballProductRepository;
         this.volleyballProductRepository = volleyballProductRepository;
+        this.footballMatchRepository = footballMatchRepository;
+        this.basketballMatchRepository = basketballMatchRepository;
+        this.volleyballMatchRepository = volleyballMatchRepository;
+        this.footballPlayerRepository = footballPlayerRepository;
+        this.basketballPlayerRepository = basketballPlayerRepository;
+        this.volleyballPlayerRepository = volleyballPlayerRepository;
+        this.footballTeamRepository = footballTeamRepository;
+        this.basketballTeamRepository = basketballTeamRepository;
+        this.volleyballTeamRepository = volleyballTeamRepository;
     }
 
     @PostConstruct
@@ -171,6 +211,8 @@ public class DatabaseSeeder {
         
         try {
             User admin = userService.register("admin", "admin@liga.com", "admin123");
+            admin.setIsAdmin(true);
+            userService.save(admin);
             System.out.println("✅ Created admin user: " + admin.getName() + " (ID: " + admin.getId() + ")");
             
             User user1 = userService.register("user1", "user1@liga.com", "password123");
@@ -232,7 +274,7 @@ public class DatabaseSeeder {
                     (int)(Math.random() * 28) + 1);
                 Date birthDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
                 
-                footballPlayerService.create(
+                FootballPlayer player = footballPlayerService.create(
                     readImageFile(getPlayerImagePath(i)), // real player image
                     firstNames[i % firstNames.length],
                     lastNames[i % lastNames.length],
@@ -242,10 +284,73 @@ public class DatabaseSeeder {
                     positions[i],
                     team
                 );
+                
+                // Assign realistic statistics based on position
+                assignFootballPlayerStats(player, positions[i]);
+                
             } catch (Exception e) {
                 System.out.println("⚠️ Error creating football player: " + e.getMessage());
             }
         }
+    }
+    
+    private void assignFootballPlayerStats(FootballPlayer player, String position) {
+        // Assign realistic statistics based on position
+        int appearances = 8 + (int)(Math.random() * 5); // 8-12 appearances
+        
+        // Get team's total goals from COMPLETED matches only (Past Results)
+        List<FootballMatch> teamMatches = footballMatchService.listAllFootballMatches().stream()
+            .filter(match -> (match.getHomeTeam().equals(player.getTeam()) || match.getAwayTeam().equals(player.getTeam()))
+                    && match.getEndTime().isBefore(LocalDateTime.now())) // Only completed matches
+            .collect(Collectors.toList());
+        
+        int teamTotalGoals = teamMatches.stream()
+            .mapToInt(match -> match.getHomeTeam().equals(player.getTeam()) ? 
+                match.getHomeTeamPoints() : match.getAwayTeamPoints())
+            .sum();
+        
+        // Calculate realistic stats based on team performance (only from completed matches)
+        int maxGoalsPerPlayer = Math.max(1, teamTotalGoals / 11); // Distribute goals among 11 players
+        
+        System.out.println("⚽ " + player.getTeam().getTeamName() + " - " + player.getName() + " " + player.getSurname() + 
+                          " (Completed matches: " + teamMatches.size() + ", Team total goals: " + teamTotalGoals + 
+                          ", Max goals per player: " + maxGoalsPerPlayer + ")");
+        
+        switch (position) {
+            case "GK":
+                player.setGoals(0); // Goalkeepers rarely score
+                player.setAssists(1 + (int)(Math.random() * 3)); // 1-3 assists
+                player.setSaves(15 + (int)(Math.random() * 20)); // 15-35 saves
+                break;
+            case "DEF":
+                player.setGoals(Math.min(1 + (int)(Math.random() * 3), maxGoalsPerPlayer)); // 1-3 goals, but not more than team average
+                player.setAssists(2 + (int)(Math.random() * 4)); // 2-5 assists
+                player.setSaves(0); // Defenders don't make saves
+                break;
+            case "MID":
+                player.setGoals(Math.min(2 + (int)(Math.random() * 5), maxGoalsPerPlayer * 2)); // 2-6 goals, but constrained
+                player.setAssists(3 + (int)(Math.random() * 6)); // 3-8 assists
+                player.setSaves(0); // Midfielders don't make saves
+                break;
+            case "FWD":
+                player.setGoals(Math.min(4 + (int)(Math.random() * 8), maxGoalsPerPlayer * 3)); // 4-11 goals, but constrained
+                player.setAssists(1 + (int)(Math.random() * 4)); // 1-4 assists
+                player.setSaves(0); // Forwards don't make saves
+                break;
+            case "SUB":
+                player.setGoals(Math.min(0 + (int)(Math.random() * 2), maxGoalsPerPlayer)); // 0-1 goals, but constrained
+                player.setAssists(0 + (int)(Math.random() * 2)); // 0-1 assists
+                player.setSaves(0); // Substitutes rarely make saves
+                break;
+        }
+        
+        player.setAppearances(appearances);
+        
+        // Update fantasy points
+        player.setFantasyPoints(player.getPoints());
+        
+        // Save the updated player with statistics
+        footballPlayerRepository.save(player);
     }
 
     private void createFootballMatches() {
@@ -255,85 +360,118 @@ public class DatabaseSeeder {
         if (teams.size() >= 8) {
             try {
                 // Week 1 matches
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(0), teams.get(1), 
-                    2, 1, 
-                    LocalDateTime.now().minusDays(7)
-                );
-                
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(2), teams.get(3), 
-                    0, 3, 
-                    LocalDateTime.now().minusDays(7)
-                );
-                
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(4), teams.get(5), 
-                    1, 1, 
-                    LocalDateTime.now().minusDays(7)
-                );
-                
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(6), teams.get(7), 
-                    2, 0, 
-                    LocalDateTime.now().minusDays(7)
-                );
+                createFootballMatchWithHalves(teams.get(0), teams.get(1), 2, 1, LocalDateTime.now().minusDays(7));
+                createFootballMatchWithHalves(teams.get(2), teams.get(3), 0, 3, LocalDateTime.now().minusDays(7));
+                createFootballMatchWithHalves(teams.get(4), teams.get(5), 1, 1, LocalDateTime.now().minusDays(7));
+                createFootballMatchWithHalves(teams.get(6), teams.get(7), 2, 0, LocalDateTime.now().minusDays(7));
                 
                 // Week 2 matches
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(1), teams.get(2), 
-                    1, 2, 
-                    LocalDateTime.now().minusDays(5)
-                );
-                
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(3), teams.get(4), 
-                    3, 1, 
-                    LocalDateTime.now().minusDays(5)
-                );
-                
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(5), teams.get(6), 
-                    0, 2, 
-                    LocalDateTime.now().minusDays(5)
-                );
-                
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(7), teams.get(0), 
-                    1, 1, 
-                    LocalDateTime.now().minusDays(5)
-                );
+                createFootballMatchWithHalves(teams.get(1), teams.get(2), 1, 2, LocalDateTime.now().minusDays(5));
+                createFootballMatchWithHalves(teams.get(3), teams.get(4), 3, 1, LocalDateTime.now().minusDays(5));
+                createFootballMatchWithHalves(teams.get(5), teams.get(6), 0, 2, LocalDateTime.now().minusDays(5));
+                createFootballMatchWithHalves(teams.get(7), teams.get(0), 1, 1, LocalDateTime.now().minusDays(5));
                 
                 // Week 3 matches
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(0), teams.get(3), 
-                    2, 2, 
-                    LocalDateTime.now().minusDays(3)
-                );
+                createFootballMatchWithHalves(teams.get(0), teams.get(3), 2, 2, LocalDateTime.now().minusDays(3));
+                createFootballMatchWithHalves(teams.get(1), teams.get(5), 1, 0, LocalDateTime.now().minusDays(3));
+                createFootballMatchWithHalves(teams.get(2), teams.get(7), 3, 1, LocalDateTime.now().minusDays(3));
+                createFootballMatchWithHalves(teams.get(4), teams.get(6), 0, 1, LocalDateTime.now().minusDays(3));
                 
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(1), teams.get(5), 
-                    1, 0, 
-                    LocalDateTime.now().minusDays(3)
-                );
+                // Update team statistics after creating all matches
+                updateFootballTeamStatistics();
                 
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(2), teams.get(7), 
-                    3, 1, 
-                    LocalDateTime.now().minusDays(3)
-                );
-                
-                footballMatchService.createAndAddToFixtures(
-                    teams.get(4), teams.get(6), 
-                    0, 1, 
-                    LocalDateTime.now().minusDays(3)
-                );
-                
-                System.out.println("✅ Created 12 football matches");
+                System.out.println("✅ Created 12 football matches and updated team statistics");
             } catch (Exception e) {
                 System.out.println("⚠️ Error creating football matches: " + e.getMessage());
             }
         }
+    }
+    
+    private void createFootballMatchWithHalves(FootballTeam homeTeam, FootballTeam awayTeam, 
+                                             int homeTotal, int awayTotal, LocalDateTime startTime) {
+        // Create the match first
+        FootballMatch match = footballMatchService.createAndAddToFixtures(homeTeam, awayTeam, homeTotal, awayTotal, startTime);
+        
+        // Set endTime to be in the past so it's counted as completed
+        match.setEndTime(startTime.plusHours(2)); // Match ends 2 hours after start
+        
+        // Generate random half scores that add up to the total
+        int homeH1 = (int)(Math.random() * (homeTotal + 1));
+        int homeH2 = homeTotal - homeH1;
+        int awayH1 = (int)(Math.random() * (awayTotal + 1));
+        int awayH2 = awayTotal - awayH1;
+        
+        // Set the half scores
+        match.setHomeTeamH1Points(homeH1);
+        match.setHomeTeamH2Points(homeH2);
+        match.setAwayTeamH1Points(awayH1);
+        match.setAwayTeamH2Points(awayH2);
+        
+        // Save the updated match with half scores
+        footballMatchRepository.save(match);
+    }
+
+    private void updateFootballTeamStatistics() {
+        System.out.println("📊 Updating football team statistics...");
+        
+        List<FootballTeam> teams = footballTeamService.listAllTeams();
+        
+        for (FootballTeam team : teams) {
+            try {
+                // Get all completed matches for this team
+                List<FootballMatch> teamMatches = footballMatchService.listAllFootballMatches().stream()
+                    .filter(match -> (match.getHomeTeam().equals(team) || match.getAwayTeam().equals(team))
+                            && match.getEndTime().isBefore(LocalDateTime.now())) // Only completed matches
+                    .collect(Collectors.toList());
+                
+                int wins = 0;
+                int losses = 0;
+                int draws = 0;
+                int leaguePoints = 0;
+                int goalsFor = 0;
+                int goalsAgainst = 0;
+                
+                for (FootballMatch match : teamMatches) {
+                    boolean isHomeTeam = match.getHomeTeam().equals(team);
+                    int teamGoals = isHomeTeam ? match.getHomeTeamPoints() : match.getAwayTeamPoints();
+                    int opponentGoals = isHomeTeam ? match.getAwayTeamPoints() : match.getHomeTeamPoints();
+                    
+                    goalsFor += teamGoals;
+                    goalsAgainst += opponentGoals;
+                    
+                    if (teamGoals > opponentGoals) {
+                        wins++;
+                        leaguePoints += 3; // 3 points for win
+                    } else if (teamGoals < opponentGoals) {
+                        losses++;
+                        // 0 points for loss
+                    } else {
+                        draws++;
+                        leaguePoints += 1; // 1 point for draw
+                    }
+                }
+                
+                // Update team statistics
+                team.setTeamMatchesPlayed(wins + losses + draws);
+                team.setTeamWins(wins);
+                team.setTeamLoses(losses);
+                team.setTeamDraws(draws);
+                team.setTeamLeaguePoints(leaguePoints);
+                team.setGoalsFor(goalsFor);
+                team.setGoalsAgainst(goalsAgainst);
+                team.setGoalDifference(goalsFor - goalsAgainst);
+                
+                // Save updated team using repository
+                footballTeamRepository.save(team);
+                
+                System.out.println("⚽ " + team.getTeamName() + ": " + wins + "W-" + losses + "L-" + draws + "D, " + leaguePoints + " pts, " + goalsFor + ":" + goalsAgainst);
+                
+            } catch (Exception e) {
+                System.out.println("⚠️ Error updating statistics for " + team.getTeamName() + ": " + e.getMessage());
+            }
+        }
+        
+        System.out.println("✅ Football team statistics updated successfully!");
     }
 
     private void createBasketballData() {
@@ -376,7 +514,7 @@ public class DatabaseSeeder {
                     (int)(Math.random() * 28) + 1);
                 Date birthDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
                 
-                basketballPlayerService.create(
+                BasketballPlayer player = basketballPlayerService.create(
                     readImageFile(getPlayerImagePath(i)), // real player image
                     firstNames[i % firstNames.length],
                     lastNames[i % lastNames.length],
@@ -386,10 +524,75 @@ public class DatabaseSeeder {
                     positions[i],
                     team
                 );
+                
+                // Assign realistic statistics based on position
+                assignBasketballPlayerStats(player, positions[i]);
+                
             } catch (Exception e) {
                 System.out.println("⚠️ Error creating basketball player: " + e.getMessage());
             }
         }
+    }
+
+    private void assignBasketballPlayerStats(BasketballPlayer player, String position) {
+        // Assign realistic statistics based on position
+        int appearances = 8 + (int)(Math.random() * 5); // 8-12 appearances
+        
+        // Get team's total points from COMPLETED matches only (Past Results)
+        List<BasketballMatch> teamMatches = basketballMatchService.listAllBasketballMatches().stream()
+            .filter(match -> (match.getHomeTeam().equals(player.getTeam()) || match.getAwayTeam().equals(player.getTeam()))
+                    && match.getEndTime().isBefore(LocalDateTime.now())) // Only completed matches
+            .collect(Collectors.toList());
+        
+        int teamTotalPoints = teamMatches.stream()
+            .mapToInt(match -> match.getHomeTeam().equals(player.getTeam()) ? 
+                match.getHomeTeamPoints() : match.getAwayTeamPoints())
+            .sum();
+        
+        // Calculate realistic stats based on team performance (only from completed matches)
+        int maxPointsPerPlayer = Math.max(1, teamTotalPoints / 11); // Distribute points among 11 players
+        
+        System.out.println("🏀 " + player.getTeam().getTeamName() + " - " + player.getName() + " " + player.getSurname() + 
+                          " (Completed matches: " + teamMatches.size() + ", Team total points: " + teamTotalPoints + 
+                          ", Max points per player: " + maxPointsPerPlayer + ")");
+        
+        switch (position) {
+            case "PG": // Point Guard
+                player.setPoints(Math.min(8 + (int)(Math.random() * 12), maxPointsPerPlayer * 2)); // 8-19 points, but constrained
+                player.setAssists(4 + (int)(Math.random() * 8)); // 4-11 assists
+                player.setRebounds(2 + (int)(Math.random() * 6)); // 2-7 rebounds
+                break;
+            case "SG": // Shooting Guard
+                player.setPoints(Math.min(10 + (int)(Math.random() * 15), maxPointsPerPlayer * 3)); // 10-24 points, but constrained
+                player.setAssists(2 + (int)(Math.random() * 6)); // 2-7 assists
+                player.setRebounds(3 + (int)(Math.random() * 7)); // 3-9 rebounds
+                break;
+            case "SF": // Small Forward
+                player.setPoints(Math.min(12 + (int)(Math.random() * 18), maxPointsPerPlayer * 4)); // 12-29 points, but constrained
+                player.setAssists(2 + (int)(Math.random() * 5)); // 2-6 assists
+                player.setRebounds(4 + (int)(Math.random() * 8)); // 4-11 rebounds
+                break;
+            case "PF": // Power Forward
+                player.setPoints(Math.min(8 + (int)(Math.random() * 12), maxPointsPerPlayer * 2)); // 8-19 points, but constrained
+                player.setAssists(1 + (int)(Math.random() * 4)); // 1-4 assists
+                player.setRebounds(6 + (int)(Math.random() * 10)); // 6-15 rebounds
+                break;
+            case "C": // Center
+                player.setPoints(Math.min(6 + (int)(Math.random() * 10), maxPointsPerPlayer * 2)); // 6-15 points, but constrained
+                player.setAssists(1 + (int)(Math.random() * 3)); // 1-3 assists
+                player.setRebounds(8 + (int)(Math.random() * 12)); // 8-19 rebounds
+                break;
+            case "SUB":
+                player.setPoints(Math.min(2 + (int)(Math.random() * 6), maxPointsPerPlayer)); // 2-7 points, but constrained
+                player.setAssists(0 + (int)(Math.random() * 3)); // 0-2 assists
+                player.setRebounds(1 + (int)(Math.random() * 4)); // 1-4 rebounds
+                break;
+        }
+        
+        player.setAppearances(appearances);
+        
+        // Save the updated player with statistics
+        basketballPlayerRepository.save(player);
     }
 
     private void createBasketballMatches() {
@@ -398,60 +601,109 @@ public class DatabaseSeeder {
         if (teams.size() >= 8) {
             try {
                 // Week 1 matches
-                basketballMatchService.createAndAddToFixtures(
-                    teams.get(0), teams.get(1), 
-                    85, 78, 
-                    LocalDateTime.now().minusDays(6)
-                );
-                
-                basketballMatchService.createAndAddToFixtures(
-                    teams.get(2), teams.get(3), 
-                    92, 88, 
-                    LocalDateTime.now().minusDays(6)
-                );
-                
-                basketballMatchService.createAndAddToFixtures(
-                    teams.get(4), teams.get(5), 
-                    76, 82, 
-                    LocalDateTime.now().minusDays(6)
-                );
-                
-                basketballMatchService.createAndAddToFixtures(
-                    teams.get(6), teams.get(7), 
-                    95, 89, 
-                    LocalDateTime.now().minusDays(6)
-                );
+                createBasketballMatchWithQuarters(teams.get(0), teams.get(1), 85, 78, LocalDateTime.now().minusDays(6));
+                createBasketballMatchWithQuarters(teams.get(2), teams.get(3), 92, 88, LocalDateTime.now().minusDays(6));
+                createBasketballMatchWithQuarters(teams.get(4), teams.get(5), 76, 82, LocalDateTime.now().minusDays(6));
+                createBasketballMatchWithQuarters(teams.get(6), teams.get(7), 95, 89, LocalDateTime.now().minusDays(6));
                 
                 // Week 2 matches
-                basketballMatchService.createAndAddToFixtures(
-                    teams.get(1), teams.get(2), 
-                    88, 91, 
-                    LocalDateTime.now().minusDays(4)
-                );
+                createBasketballMatchWithQuarters(teams.get(1), teams.get(2), 88, 91, LocalDateTime.now().minusDays(4));
+                createBasketballMatchWithQuarters(teams.get(3), teams.get(4), 84, 79, LocalDateTime.now().minusDays(4));
+                createBasketballMatchWithQuarters(teams.get(5), teams.get(6), 77, 85, LocalDateTime.now().minusDays(4));
+                createBasketballMatchWithQuarters(teams.get(7), teams.get(0), 93, 87, LocalDateTime.now().minusDays(4));
                 
-                basketballMatchService.createAndAddToFixtures(
-                    teams.get(3), teams.get(4), 
-                    84, 79, 
-                    LocalDateTime.now().minusDays(4)
-                );
+                // Update team statistics after creating all matches
+                updateBasketballTeamStatistics();
                 
-                basketballMatchService.createAndAddToFixtures(
-                    teams.get(5), teams.get(6), 
-                    77, 85, 
-                    LocalDateTime.now().minusDays(4)
-                );
-                
-                basketballMatchService.createAndAddToFixtures(
-                    teams.get(7), teams.get(0), 
-                    93, 87, 
-                    LocalDateTime.now().minusDays(4)
-                );
-                
-                System.out.println("✅ Created 8 basketball matches");
+                System.out.println("✅ Created 8 basketball matches and updated team statistics");
             } catch (Exception e) {
                 System.out.println("⚠️ Error creating basketball matches: " + e.getMessage());
             }
         }
+    }
+    
+    private void createBasketballMatchWithQuarters(BasketballTeam homeTeam, BasketballTeam awayTeam, 
+                                                 int homeTotal, int awayTotal, LocalDateTime startTime) {
+        // Create the match first
+        BasketballMatch match = basketballMatchService.createAndAddToFixtures(homeTeam, awayTeam, homeTotal, awayTotal, startTime);
+        
+        // Set endTime to be in the past so it's counted as completed
+        match.setEndTime(startTime.plusHours(2)); // Match ends 2 hours after start
+        
+        // Generate random quarter scores that add up to the total
+        int homeQ1 = (int)(Math.random() * (homeTotal / 2 + 1));
+        int homeQ2 = (int)(Math.random() * ((homeTotal - homeQ1) / 2 + 1));
+        int homeQ3 = (int)(Math.random() * ((homeTotal - homeQ1 - homeQ2) / 2 + 1));
+        int homeQ4 = homeTotal - homeQ1 - homeQ2 - homeQ3;
+        
+        int awayQ1 = (int)(Math.random() * (awayTotal / 2 + 1));
+        int awayQ2 = (int)(Math.random() * ((awayTotal - awayQ1) / 2 + 1));
+        int awayQ3 = (int)(Math.random() * ((awayTotal - awayQ1 - awayQ2) / 2 + 1));
+        int awayQ4 = awayTotal - awayQ1 - awayQ2 - awayQ3;
+        
+        // Set the quarter scores
+        match.setHomeTeamQ1Points(homeQ1);
+        match.setHomeTeamQ2Points(homeQ2);
+        match.setHomeTeamQ3Points(homeQ3);
+        match.setHomeTeamQ4Points(homeQ4);
+        match.setAwayTeamQ1Points(awayQ1);
+        match.setAwayTeamQ2Points(awayQ2);
+        match.setAwayTeamQ3Points(awayQ3);
+        match.setAwayTeamQ4Points(awayQ4);
+        
+        // Save the updated match with quarter scores
+        basketballMatchRepository.save(match);
+    }
+
+    private void updateBasketballTeamStatistics() {
+        System.out.println("📊 Updating basketball team statistics...");
+        
+        List<BasketballTeam> teams = basketballTeamService.listAllTeams();
+        
+        for (BasketballTeam team : teams) {
+            try {
+                // Get all completed matches for this team
+                List<BasketballMatch> teamMatches = basketballMatchService.listAllBasketballMatches().stream()
+                    .filter(match -> (match.getHomeTeam().equals(team) || match.getAwayTeam().equals(team))
+                            && match.getEndTime().isBefore(LocalDateTime.now())) // Only completed matches
+                    .collect(Collectors.toList());
+                
+                int wins = 0;
+                int losses = 0;
+                int leaguePoints = 0;
+                
+                for (BasketballMatch match : teamMatches) {
+                    boolean isHomeTeam = match.getHomeTeam().equals(team);
+                    int teamPoints = isHomeTeam ? match.getHomeTeamPoints() : match.getAwayTeamPoints();
+                    int opponentPoints = isHomeTeam ? match.getAwayTeamPoints() : match.getHomeTeamPoints();
+                    
+                    if (teamPoints > opponentPoints) {
+                        wins++;
+                        leaguePoints += 3; // 3 points for win
+                    } else if (teamPoints < opponentPoints) {
+                        losses++;
+                        // 0 points for loss
+                    }
+                    // Basketball doesn't have draws
+                }
+                
+                // Update team statistics
+                team.setTeamMatchesPlayed(wins + losses);
+                team.setTeamWins(wins);
+                team.setTeamLoses(losses);
+                team.setTeamLeaguePoints(leaguePoints);
+                
+                // Save updated team using repository
+                basketballTeamRepository.save(team);
+                
+                System.out.println("🏀 " + team.getTeamName() + ": " + wins + "W-" + losses + "L, " + leaguePoints + " pts");
+                
+            } catch (Exception e) {
+                System.out.println("⚠️ Error updating statistics for " + team.getTeamName() + ": " + e.getMessage());
+            }
+        }
+        
+        System.out.println("✅ Basketball team statistics updated successfully!");
     }
 
     private void createVolleyballData() {
@@ -482,7 +734,7 @@ public class DatabaseSeeder {
     }
 
     private void createVolleyballPlayers(VolleyballTeam team, String teamPrefix) {
-        String[] positions = {"Setter", "OH", "OH", "MB", "MB", "Opposite", "Libero", "Setter", "OH", "MB", "Opposite"};
+        String[] positions = {"S", "OH", "OH", "MB", "MB", "OPP", "L", "DS", "S", "OH", "MB"};
         String[] firstNames = {"Александар", "Марко", "Никола", "Стефан", "Димитар", "Петар", "Владимир", "Милош", "Бојан", "Филип", "Андреј"};
         String[] lastNames = {"Петровски", "Јовановски", "Стојановски", "Трајковски", "Ангеловски", "Митевски", "Георгиевски", "Ивановски", "Наумовски", "Спасовски", "Крстевски"};
 
@@ -494,7 +746,7 @@ public class DatabaseSeeder {
                     (int)(Math.random() * 28) + 1);
                 Date birthDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
                 
-                volleyballPlayerService.create(
+                VolleyballPlayer player = volleyballPlayerService.create(
                     readImageFile(getPlayerImagePath(i)), // real player image
                     firstNames[i % firstNames.length],
                     lastNames[i % lastNames.length],
@@ -504,10 +756,90 @@ public class DatabaseSeeder {
                     positions[i],
                     team
                 );
+                
+                // Assign realistic statistics based on position
+                assignVolleyballPlayerStats(player, positions[i]);
+                
             } catch (Exception e) {
                 System.out.println("⚠️ Error creating volleyball player: " + e.getMessage());
             }
         }
+    }
+    
+    private void assignVolleyballPlayerStats(VolleyballPlayer player, String position) {
+        // Assign realistic statistics based on position
+        int appearances = 8 + (int)(Math.random() * 5); // 8-12 appearances
+        
+        // Get team's total points from COMPLETED matches only (Past Results)
+        List<VolleyballMatch> teamMatches = volleyballMatchService.listAllVolleyballMatches().stream()
+            .filter(match -> (match.getHomeTeam().equals(player.getTeam()) || match.getAwayTeam().equals(player.getTeam()))
+                    && match.getEndTime().isBefore(LocalDateTime.now())) // Only completed matches
+            .collect(Collectors.toList());
+        
+        int teamTotalPoints = teamMatches.stream()
+            .mapToInt(match -> {
+                if (match.getHomeTeam().equals(player.getTeam())) {
+                    return match.getHomeTeamSet1Points() + match.getHomeTeamSet2Points() + 
+                           match.getHomeTeamSet3Points() + match.getHomeTeamSet4Points() + 
+                           match.getHomeTeamSet5Points();
+                } else {
+                    return match.getAwayTeamSet1Points() + match.getAwayTeamSet2Points() + 
+                           match.getAwayTeamSet3Points() + match.getAwayTeamSet4Points() + 
+                           match.getAwayTeamSet5Points();
+                }
+            })
+            .sum();
+        
+        // Calculate realistic stats based on team performance (only from completed matches)
+        int maxPointsPerPlayer = Math.max(1, teamTotalPoints / 11); // Distribute points among 11 players
+        
+        System.out.println("🏐 " + player.getTeam().getTeamName() + " - " + player.getName() + " " + player.getSurname() + 
+                          " (Completed matches: " + teamMatches.size() + ", Team total points: " + teamTotalPoints + 
+                          ", Max points per player: " + maxPointsPerPlayer + ")");
+        
+        switch (position) {
+            case "S": // Setter
+                player.setScoredPoints(Math.min(2 + (int)(Math.random() * 4), maxPointsPerPlayer)); // 2-5 points, but constrained
+                player.setAssists(15 + (int)(Math.random() * 20)); // 15-34 assists
+                player.setServings(8 + (int)(Math.random() * 12)); // 8-19 servings
+                player.setBlocks(1 + (int)(Math.random() * 3)); // 1-3 blocks
+                break;
+            case "OH": // Outside Hitter
+                player.setScoredPoints(Math.min(12 + (int)(Math.random() * 18), maxPointsPerPlayer * 3)); // 12-29 points, but constrained
+                player.setAssists(1 + (int)(Math.random() * 3)); // 1-3 assists
+                player.setServings(10 + (int)(Math.random() * 15)); // 10-24 servings
+                player.setBlocks(2 + (int)(Math.random() * 5)); // 2-6 blocks
+                break;
+            case "MB": // Middle Blocker
+                player.setScoredPoints(Math.min(8 + (int)(Math.random() * 12), maxPointsPerPlayer * 2)); // 8-19 points, but constrained
+                player.setAssists(0 + (int)(Math.random() * 2)); // 0-1 assists
+                player.setServings(6 + (int)(Math.random() * 10)); // 6-15 servings
+                player.setBlocks(5 + (int)(Math.random() * 10)); // 5-14 blocks
+                break;
+            case "OPP": // Opposite
+                player.setScoredPoints(Math.min(10 + (int)(Math.random() * 15), maxPointsPerPlayer * 3)); // 10-24 points, but constrained
+                player.setAssists(1 + (int)(Math.random() * 3)); // 1-3 assists
+                player.setServings(8 + (int)(Math.random() * 12)); // 8-19 servings
+                player.setBlocks(2 + (int)(Math.random() * 4)); // 2-5 blocks
+                break;
+            case "L": // Libero
+                player.setScoredPoints(Math.min(1 + (int)(Math.random() * 2), maxPointsPerPlayer)); // 1-2 points, but constrained
+                player.setAssists(2 + (int)(Math.random() * 4)); // 2-5 assists
+                player.setServings(5 + (int)(Math.random() * 8)); // 5-12 servings
+                player.setBlocks(0); // Liberos rarely block
+                break;
+            case "DS": // Defensive Specialist
+                player.setScoredPoints(Math.min(2 + (int)(Math.random() * 3), maxPointsPerPlayer)); // 2-4 points, but constrained
+                player.setAssists(1 + (int)(Math.random() * 2)); // 1-2 assists
+                player.setServings(6 + (int)(Math.random() * 8)); // 6-13 servings
+                player.setBlocks(1 + (int)(Math.random() * 2)); // 1-2 blocks
+                break;
+        }
+        
+        player.setAppearances(appearances);
+        
+        // Save the updated player with statistics
+        volleyballPlayerRepository.save(player);
     }
 
     private void createVolleyballMatches() {
@@ -516,60 +848,136 @@ public class DatabaseSeeder {
         if (teams.size() >= 8) {
             try {
                 // Week 1 matches
-                volleyballMatchService.createAndAddToFixtures(
-                    teams.get(0), teams.get(1), 
-                    3, 1, 
-                    LocalDateTime.now().minusDays(8)
-                );
-                
-                volleyballMatchService.createAndAddToFixtures(
-                    teams.get(2), teams.get(3), 
-                    3, 2, 
-                    LocalDateTime.now().minusDays(8)
-                );
-                
-                volleyballMatchService.createAndAddToFixtures(
-                    teams.get(4), teams.get(5), 
-                    3, 0, 
-                    LocalDateTime.now().minusDays(8)
-                );
-                
-                volleyballMatchService.createAndAddToFixtures(
-                    teams.get(6), teams.get(7), 
-                    2, 3, 
-                    LocalDateTime.now().minusDays(8)
-                );
+                createVolleyballMatchWithSets(teams.get(0), teams.get(1), 3, 1, LocalDateTime.now().minusDays(8));
+                createVolleyballMatchWithSets(teams.get(2), teams.get(3), 3, 2, LocalDateTime.now().minusDays(8));
+                createVolleyballMatchWithSets(teams.get(4), teams.get(5), 3, 0, LocalDateTime.now().minusDays(8));
+                createVolleyballMatchWithSets(teams.get(6), teams.get(7), 2, 3, LocalDateTime.now().minusDays(8));
                 
                 // Week 2 matches
-                volleyballMatchService.createAndAddToFixtures(
-                    teams.get(1), teams.get(2), 
-                    3, 1, 
-                    LocalDateTime.now().minusDays(6)
-                );
+                createVolleyballMatchWithSets(teams.get(1), teams.get(2), 3, 1, LocalDateTime.now().minusDays(6));
+                createVolleyballMatchWithSets(teams.get(3), teams.get(4), 1, 3, LocalDateTime.now().minusDays(6));
+                createVolleyballMatchWithSets(teams.get(5), teams.get(6), 3, 2, LocalDateTime.now().minusDays(6));
+                createVolleyballMatchWithSets(teams.get(7), teams.get(0), 0, 3, LocalDateTime.now().minusDays(6));
                 
-                volleyballMatchService.createAndAddToFixtures(
-                    teams.get(3), teams.get(4), 
-                    1, 3, 
-                    LocalDateTime.now().minusDays(6)
-                );
+                // Update team statistics after creating all matches
+                updateVolleyballTeamStatistics();
                 
-                volleyballMatchService.createAndAddToFixtures(
-                    teams.get(5), teams.get(6), 
-                    3, 2, 
-                    LocalDateTime.now().minusDays(6)
-                );
-                
-                volleyballMatchService.createAndAddToFixtures(
-                    teams.get(7), teams.get(0), 
-                    0, 3, 
-                    LocalDateTime.now().minusDays(6)
-                );
-                
-                System.out.println("✅ Created 8 volleyball matches");
+                System.out.println("✅ Created 8 volleyball matches and updated team statistics");
             } catch (Exception e) {
                 System.out.println("⚠️ Error creating volleyball matches: " + e.getMessage());
             }
         }
+    }
+    
+    private void createVolleyballMatchWithSets(VolleyballTeam homeTeam, VolleyballTeam awayTeam, 
+                                             int homeSetsWon, int awaySetsWon, LocalDateTime startTime) {
+        // Create the match first
+        VolleyballMatch match = volleyballMatchService.createAndAddToFixtures(homeTeam, awayTeam, homeSetsWon, awaySetsWon, startTime);
+        
+        // Set endTime to be in the past so it's counted as completed
+        match.setEndTime(startTime.plusHours(2)); // Match ends 2 hours after start
+        
+        // Determine how many sets were played (minimum 3, maximum 5)
+        int totalSetsPlayed = Math.max(3, homeSetsWon + awaySetsWon);
+        
+        // Generate random set scores for each set played
+        for (int set = 1; set <= totalSetsPlayed; set++) {
+            int maxPoints = (set == 5) ? 15 : 25; // Set 5 has max 15 points, others have max 25
+            
+            // Generate realistic volleyball scores (usually close, with one team winning by at least 2)
+            int homePoints, awayPoints;
+            do {
+                homePoints = (int)(Math.random() * (maxPoints - 1)) + 1; // 1 to maxPoints-1
+                awayPoints = (int)(Math.random() * (maxPoints - 1)) + 1; // 1 to maxPoints-1
+            } while (Math.abs(homePoints - awayPoints) < 2); // Ensure at least 2 point difference
+            
+            // Ensure one team reaches the winning score
+            if (homePoints > awayPoints) {
+                homePoints = Math.min(homePoints, maxPoints);
+                awayPoints = Math.min(awayPoints, maxPoints - 2);
+            } else {
+                awayPoints = Math.min(awayPoints, maxPoints);
+                homePoints = Math.min(homePoints, maxPoints - 2);
+            }
+            
+            // Set the set scores
+            switch (set) {
+                case 1:
+                    match.setHomeTeamSet1Points(homePoints);
+                    match.setAwayTeamSet1Points(awayPoints);
+                    break;
+                case 2:
+                    match.setHomeTeamSet2Points(homePoints);
+                    match.setAwayTeamSet2Points(awayPoints);
+                    break;
+                case 3:
+                    match.setHomeTeamSet3Points(homePoints);
+                    match.setAwayTeamSet3Points(awayPoints);
+                    break;
+                case 4:
+                    match.setHomeTeamSet4Points(homePoints);
+                    match.setAwayTeamSet4Points(awayPoints);
+                    break;
+                case 5:
+                    match.setHomeTeamSet5Points(homePoints);
+                    match.setAwayTeamSet5Points(awayPoints);
+                    break;
+            }
+        }
+        
+        // Save the updated match with set scores
+        volleyballMatchRepository.save(match);
+    }
+
+    private void updateVolleyballTeamStatistics() {
+        System.out.println("📊 Updating volleyball team statistics...");
+        
+        List<VolleyballTeam> teams = volleyballTeamService.listAllTeams();
+        
+        for (VolleyballTeam team : teams) {
+            try {
+                // Get all completed matches for this team
+                List<VolleyballMatch> teamMatches = volleyballMatchService.listAllVolleyballMatches().stream()
+                    .filter(match -> (match.getHomeTeam().equals(team) || match.getAwayTeam().equals(team))
+                            && match.getEndTime().isBefore(LocalDateTime.now())) // Only completed matches
+                    .collect(Collectors.toList());
+                
+                int wins = 0;
+                int losses = 0;
+                int leaguePoints = 0;
+                
+                for (VolleyballMatch match : teamMatches) {
+                    boolean isHomeTeam = match.getHomeTeam().equals(team);
+                    int teamSetsWon = isHomeTeam ? match.getHomeTeamPoints() : match.getAwayTeamPoints();
+                    int opponentSetsWon = isHomeTeam ? match.getAwayTeamPoints() : match.getHomeTeamPoints();
+                    
+                    if (teamSetsWon > opponentSetsWon) {
+                        wins++;
+                        leaguePoints += 3; // 3 points for win
+                    } else if (teamSetsWon < opponentSetsWon) {
+                        losses++;
+                        // 0 points for loss
+                    }
+                    // Volleyball doesn't have draws
+                }
+                
+                // Update team statistics
+                team.setTeamMatchesPlayed(wins + losses);
+                team.setTeamWins(wins);
+                team.setTeamLoses(losses);
+                team.setTeamLeaguePoints(leaguePoints);
+                
+                // Save updated team using repository
+                volleyballTeamRepository.save(team);
+                
+                System.out.println("🏐 " + team.getTeamName() + ": " + wins + "W-" + losses + "L, " + leaguePoints + " pts");
+                
+            } catch (Exception e) {
+                System.out.println("⚠️ Error updating statistics for " + team.getTeamName() + ": " + e.getMessage());
+            }
+        }
+        
+        System.out.println("✅ Volleyball team statistics updated successfully!");
     }
 
     private void createNews() {

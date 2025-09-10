@@ -24,6 +24,15 @@ public class FootballMatch {
     private FootballTeam awayTeam;
     private int homeTeamPoints;
     private int awayTeamPoints;
+    
+    // Half scores for home team
+    private int homeTeamH1Points;
+    private int homeTeamH2Points;
+    
+    // Half scores for away team
+    private int awayTeamH1Points;
+    private int awayTeamH2Points;
+    
     @OneToMany(mappedBy = "footballMatch", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FootballPlayerScored> playersWhoScored;
     @ManyToMany(mappedBy = "footballFixtures")
@@ -41,6 +50,10 @@ public class FootballMatch {
         this.awayTeam = awayTeam;
         this.homeTeamPoints = homeTeamPoints;
         this.awayTeamPoints = awayTeamPoints;
+        this.homeTeamH1Points = 0;
+        this.homeTeamH2Points = 0;
+        this.awayTeamH1Points = 0;
+        this.awayTeamH2Points = 0;
         this.playersWhoScored = new ArrayList<>();
         this.startTime = startTime;
         this.endTime = startTime.plusHours(2);

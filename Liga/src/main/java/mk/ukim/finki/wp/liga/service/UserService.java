@@ -8,6 +8,7 @@ public interface UserService {
     User register(String name, String email, String rawPassword);
     Optional<User> login(String name, String rawPassword);
     Optional<User> findByName(String name);
+    User save(User user);
 }
 
 

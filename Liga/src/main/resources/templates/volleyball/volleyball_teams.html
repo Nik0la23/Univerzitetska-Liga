@@ -71,7 +71,7 @@
         </div>
     </div>
     
-    <div class="text-center mb-4">
+    <div class="text-center mb-4" th:if="${session.user != null and session.user.isAdmin}">
         <a th:href="@{/volleyball/teams/add-form}" class="btn btn-premium btn-success">➕ Add New Team</a>
     </div>
     
@@ -82,8 +82,8 @@
                 <th>🏐 Team Logo</th>
                 <th>👥 Team Name</th>
                 <th>👁️ Details</th>
-                <th>✏️ Edit</th>
-                <th>🗑️ Delete</th>
+                <th th:if="${session.user != null and session.user.isAdmin}">✏️ Edit</th>
+                <th th:if="${session.user != null and session.user.isAdmin}">🗑️ Delete</th>
             </tr>
             </thead>
             <tbody>
@@ -97,10 +97,10 @@
                 <td>
                     <a th:href="@{/volleyball/teams/team/{id}(id=${team.getVolleyball_team_id})}" class="btn btn-premium btn-primary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">👁️ Details</a>
                 </td>
-                <td>
+                <td th:if="${session.user != null and session.user.isAdmin}">
                     <a th:href="@{/volleyball/teams/edit/{id}(id=${team.getVolleyball_team_id})}" class="btn btn-premium btn-warning" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">✏️ Edit</a>
                 </td>
-                <td>
+                <td th:if="${session.user != null and session.user.isAdmin}">
                     <form th:method="POST" th:action="@{'/volleyball/teams/delete/{id}'(id=${team.getVolleyball_team_id})}" style="display:inline;">
                         <button type="submit" class="btn btn-premium btn-danger" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">🗑️ Delete</button>
                     </form>

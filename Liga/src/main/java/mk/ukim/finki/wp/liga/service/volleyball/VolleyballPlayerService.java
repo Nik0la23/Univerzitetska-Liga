@@ -1,7 +1,5 @@
 package mk.ukim.finki.wp.liga.service.volleyball;
 
-import mk.ukim.finki.wp.liga.model.FootballPlayer;
-import mk.ukim.finki.wp.liga.model.FootballTeam;
 import mk.ukim.finki.wp.liga.model.VolleyballPlayer;
 import mk.ukim.finki.wp.liga.model.VolleyballTeam;
 
@@ -19,6 +17,7 @@ public interface VolleyballPlayerService {
 
 
     VolleyballPlayer update(Long id, byte [] image, String name, String surname, Date birthdate, int index, String city, String position, VolleyballTeam team);
+    VolleyballPlayer update(Long id, byte [] image, String name, String surname, Date birthdate, int index, String city, String position, VolleyballTeam team, int appearances, int servings, int assists, int scoredPoints, int blocks, Double price);
 
 
     VolleyballPlayer delete(Long id);
@@ -33,4 +32,5 @@ public interface VolleyballPlayerService {
     List<VolleyballPlayer> getTop5Players();
 
     List<VolleyballPlayer> getTop5PlayersByTeam(Long id);
+    void recalculateAllPlayerPrices();
 }

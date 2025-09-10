@@ -19,6 +19,9 @@ public class User {
     @Column(name = "password", nullable = false)
     private String passwordHash;
 
+    @Column(name = "is_admin", nullable = false)
+    private Boolean isAdmin = false;
+
     public Long getId() {
         return id;
     }
@@ -45,6 +48,14 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }
 

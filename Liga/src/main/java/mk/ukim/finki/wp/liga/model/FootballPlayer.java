@@ -77,6 +77,50 @@ public class FootballPlayer {
     public void setFantasyPoints(Integer fantasyPoints) {
         this.fantasyPoints = fantasyPoints;
     }
+    
+    /**
+     * Calculate dynamic price based on player statistics
+     * Base price: 5.0
+     * Goals: +2.0 per goal
+     * Assists: +1.0 per assist  
+     * Saves: +1.5 per save (for goalkeepers)
+     * Appearances: +0.1 per appearance
+     * Minimum price: 1.0, Maximum price: 50.0
+     */
+    public void calculateDynamicPrice() {
+        double basePrice = 5.0;
+        double calculatedPrice = basePrice;
+        
+        // Goals are highly valued
+        calculatedPrice += goals * 2.0;
+        
+        // Assists are valuable
+        calculatedPrice += assists * 1.0;
+        
+        // Saves are valuable for goalkeepers
+        calculatedPrice += saves * 1.5;
+        
+        // Appearances show consistency
+        calculatedPrice += appearances * 0.1;
+        
+        // Position-based adjustments
+        if ("GK".equals(position)) {
+            // Goalkeepers get bonus for saves
+            calculatedPrice += saves * 0.5;
+        } else if ("FWD".equals(position)) {
+            // Forwards get bonus for goals
+            calculatedPrice += goals * 0.5;
+        } else if ("MID".equals(position)) {
+            // Midfielders get bonus for assists
+            calculatedPrice += assists * 0.5;
+        }
+        
+        // Apply bounds
+        calculatedPrice = Math.max(1.0, Math.min(50.0, calculatedPrice));
+        
+        this.price = calculatedPrice;
+    }
+    
     @Override
     public String toString() {
         return "Football Player{" +

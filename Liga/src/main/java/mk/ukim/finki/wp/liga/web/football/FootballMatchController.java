@@ -255,6 +255,10 @@ public class FootballMatchController {
             @RequestParam Long awayTeamId,
             @RequestParam int homeTeamPoints,
             @RequestParam int awayTeamPoints,
+            @RequestParam int homeTeamH1Points,
+            @RequestParam int homeTeamH2Points,
+            @RequestParam int awayTeamH1Points,
+            @RequestParam int awayTeamH2Points,
             @RequestParam String startTime
             ) {
 
@@ -264,7 +268,8 @@ public class FootballMatchController {
         FootballTeam homeTeam = footballTeamService.findById(homeTeamId);
         FootballTeam awayTeam = footballTeamService.findById(awayTeamId);
 
-        footballMatchService.update(id, homeTeam, awayTeam, homeTeamPoints, awayTeamPoints, start);
+        footballMatchService.update(id, homeTeam, awayTeam, homeTeamPoints, awayTeamPoints, 
+                                  homeTeamH1Points, homeTeamH2Points, awayTeamH1Points, awayTeamH2Points, start);
         return "redirect:/matches";
     }
 

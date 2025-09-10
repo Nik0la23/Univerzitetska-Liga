@@ -69,6 +69,32 @@ public class VolleyballPlayerServiceImpl implements VolleyballPlayerService {
 
     @Override
     @Transactional
+    public VolleyballPlayer update(Long id, byte[] image, String name, String surname, Date birthdate, int index, String city, String position, VolleyballTeam team, int appearances, int servings, int assists, int scoredPoints, int blocks, Double price) {
+        VolleyballPlayer p = this.findById(id);
+        if (image != null && image.length > 0)
+            p.setImage(image);
+        p.setName(name);
+        p.setSurname(surname);
+        p.setBirthdate(birthdate);
+        p.setIndex(index);
+        p.setCity(city);
+        p.setPosition(position);
+        VolleyballTeam t = volleyballTeamRepository.findById(team.getVolleyball_team_id()).orElseThrow(InvalidVolleyballTeamException::new);
+        p.setTeam(t);
+        p.setAppearances(appearances);
+        p.setServings(servings);
+        p.setAssists(assists);
+        p.setScoredPoints(scoredPoints);
+        p.setBlocks(blocks);
+        
+        // Calculate dynamic price based on stats
+        p.calculateDynamicPrice();
+        
+        return volleyballPlayerRepository.save(p);
+    }
+
+    @Override
+    @Transactional
     public VolleyballPlayer delete(Long id) {
         VolleyballPlayer p = this.findById(id);
         
@@ -159,5 +185,14 @@ public class VolleyballPlayerServiceImpl implements VolleyballPlayerService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public void recalculateAllPlayerPrices() {
+        List<VolleyballPlayer> allPlayers = volleyballPlayerRepository.findAll();
+        for (VolleyballPlayer player : allPlayers) {
+            player.calculateDynamicPrice();
+            volleyballPlayerRepository.save(player);
+        }
+    }
 
 }

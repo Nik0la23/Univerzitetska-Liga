@@ -87,16 +87,16 @@
     <div th:if="${team != null}">
         <div class="premium-card">
             <div class="text-center mb-4">
-                <h2 class="text-premium" style="color: #3282b8; font-size: var(--text-3xl);" th:text="${team.getTeamName()}">Team Name</h2>
-                <img th:src="@{/volleyball/teams/logo/{id}(id=${team.getVolleyball_team_id})}" alt="Team Image" class="img-fluid mb-3" style="width:200px;height:200px;border-radius:10px;border:3px solid #3282b8;"/>
+                <h2 class="text-premium" style="color: #3282b8; font-size: var(--text-3xl);" th:text="${team.teamName}">Team Name</h2>
+                <img th:src="@{/volleyball/teams/logo/{id}(id=${team.volleyball_team_id})}" alt="Team Image" class="img-fluid mb-3" style="width:200px;height:200px;border-radius:10px;border:3px solid #3282b8;"/>
             </div>
             <div class="card-body">
                 <h3 class="text-premium" style="color: #3282b8; margin-bottom: var(--space-4);">🏐 Team Statistics</h3>
                 <ul class="list-unstyled" style="font-size: var(--text-lg); line-height: 2;">
-                    <li class="text-readable"><strong>🏁 Matches Played:</strong> <span class="badge badge-primary" th:text="${team.getTeamMatchesPlayed()}"></span></li>
-                    <li class="text-readable"><strong>🏆 League Points:</strong> <span class="badge badge-success" th:text="${team.getTeamLeaguePoints()}"></span></li>
-                    <li class="text-readable"><strong>✅ Wins:</strong> <span class="badge badge-success" th:text="${team.getTeamWins()}"></span></li>
-                    <li class="text-readable"><strong>❌ Losses:</strong> <span class="badge badge-danger" th:text="${team.getTeamLoses()}"></span></li>
+                    <li class="text-readable"><strong>🏁 Matches Played:</strong> <span class="badge badge-primary" th:text="${team.teamMatchesPlayed}"></span></li>
+                    <li class="text-readable"><strong>🏆 League Points:</strong> <span class="badge badge-success" th:text="${team.teamLeaguePoints}"></span></li>
+                    <li class="text-readable"><strong>✅ Wins:</strong> <span class="badge badge-success" th:text="${team.teamWins}"></span></li>
+                    <li class="text-readable"><strong>❌ Losses:</strong> <span class="badge badge-danger" th:text="${team.teamLoses}"></span></li>
                 </ul>
                 
                 <h3 class="text-premium" style="color: #3282b8; margin-top: var(--space-8); margin-bottom: var(--space-4);">👥 Players</h3>
@@ -104,8 +104,8 @@
                     <div class="col-12">
                         <ul class="list-unstyled" style="font-size: var(--text-lg); line-height: 2;">
                             <li th:each="player : ${players}" class="mb-2">
-                                <a th:href="@{/volleyball/players/details/{id}(id=${player.getVolleyball_player_id()})}" 
-                                   th:text="${player.getName()}" 
+                                <a th:href="@{/volleyball/players/details/{id}(id=${player.volleyball_player_id})}" 
+                                   th:text="${player.name}" 
                                    class="player-link">Player Name</a>
                             </li>
                         </ul>
@@ -115,7 +115,7 @@
         </div>
         
         <div class="text-center mt-4">
-            <a th:href="@{/volleyball/teams/show/{id}(id=${team.getVolleyball_team_id()})}" class="btn btn-premium btn-info mr-3">📅 Fixtures/Results</a>
+            <a th:href="@{/volleyball/teams/show/{id}(id=${team.volleyball_team_id})}" class="btn btn-premium btn-info mr-3">📅 Fixtures/Results</a>
             
             <div th:if="${players.size()} < 6" class="d-inline">
                 <a th:href="@{/volleyball/players/add-form}" class="btn btn-premium btn-primary">➕ Add Player</a>
