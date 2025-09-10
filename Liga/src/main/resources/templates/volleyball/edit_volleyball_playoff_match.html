@@ -1,114 +1,136 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Edit Volleyball Playoff Match</title>
-    <script>
-        function validateForm(event) {
-            let homeTeamPoints = document.getElementById('homeTeamPoints').value;
-            let awayTeamPoints = document.getElementById('awayTeamPoints').value;
-            let homeScorers = document.getElementById('homeScorers').selectedOptions.length;
-            let awayScorers = document.getElementById('awayScorers').selectedOptions.length;
-
-            // Check if points are entered but no players selected
-            if (homeTeamPoints > 0 && homeScorers === 0) {
-                alert('Please select at least one home team scorer for the points.');
-                event.preventDefault();
-                return;
-            }
-            if (awayTeamPoints > 0 && awayScorers === 0) {
-                alert('Please select at least one away team scorer for the points.');
-                event.preventDefault();
-                return;
-            }
-
-            // Check if players selected but no points are entered
-            if (homeTeamPoints === '0' && homeScorers > 0) {
-                alert('Please enter home team points if players are selected.');
-                event.preventDefault();
-                return;
-            }
-            if (awayTeamPoints === '0' && awayScorers > 0) {
-                alert('Please enter away team points if players are selected.');
-                event.preventDefault();
-                return;
-            }
-
-            // Check if more players are selected than points entered
-            if (homeScorers > homeTeamPoints) {
-                alert('You have selected more home team players than the points entered.');
-                event.preventDefault();
-                return;
-            }
-            if (awayScorers > awayTeamPoints) {
-                alert('You have selected more away team players than the points entered.');
-                event.preventDefault();
-                return;
-            }
-
-            if ((homeTeamPoints > 0 && homeScorers > 0 && awayTeamPoints === '0' && awayScorers === 0) ||
-                (awayTeamPoints > 0 && awayScorers > 0 && homeTeamPoints === '0' && homeScorers === 0)) {
-                if (!confirm("You have entered points only for one team. Would you like to continue updating the match?")) {
-                    event.preventDefault();
-                    return;
-                }
-            }
-        }
-    </script>
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Edit Volleyball Playoff Match</h1>
+        <h1 class="mb-0">🏐 Edit Volleyball Playoff Match</h1>
     </div>
 </header>
-<form th:action="@{/volleyball/matches/playoffs/edit}" method="post" onsubmit="validateForm(event)">
-    <!-- Hidden input for match ID -->
-    <input type="hidden" name="id" th:value="${match.volleyball_match_id}" />
 
-    <!-- Hidden inputs for team IDs -->
-    <input type="hidden" name="homeTeamId" th:value="${match.homeTeam.getVolleyball_team_id()}" />
-    <input type="hidden" name="awayTeamId" th:value="${match.awayTeam.getVolleyball_team_id()}" />
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">🏆 Update Playoff Match</h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">Edit volleyball playoff match scores and player statistics</p>
+        </div>
+    </div>
 
-    <!-- Display Home Team -->
-    <label for="homeTeam">Home Team:</label>
-    <select id="homeTeam" name="homeTeamId" disabled>
-        <option th:value="${match.homeTeam.getVolleyball_team_id()}" th:text="${match.homeTeam.teamName}"></option>
-    </select>
+    <form th:action="@{/volleyball/matches/playoffs/edit}" method="post" onsubmit="validateForm(event)" class="needs-validation" novalidate>
+        <!-- Hidden inputs -->
+        <input type="hidden" name="id" th:value="${match.getVolleyball_match_id()}" />
+        <input type="hidden" name="homeTeamId" th:value="${match.homeTeam.getVolleyball_team_id()}" />
+        <input type="hidden" name="awayTeamId" th:value="${match.awayTeam.getVolleyball_team_id()}" />
 
-    <!-- Display Away Team -->
-    <label for="awayTeam">Away Team:</label>
-    <select id="awayTeam" name="awayTeamId" disabled>
-        <option th:value="${match.awayTeam.getVolleyball_team_id()}" th:text="${match.awayTeam.teamName}"></option>
-    </select>
+        <div class="row">
+            <!-- Home Team -->
+            <div class="col-md-6">
+                <div class="premium-card">
+                    <h3 class="text-premium mb-4" style="color: var(--accent-blue);" th:text="${match.homeTeam.getTeamName()}">Home Team</h3>
+                    
+                    <div class="form-group-premium">
+                        <label for="homeTeamPoints" class="form-label-premium">🏐 Home Team Sets Won</label>
+                        <input type="number" id="homeTeamPoints" name="homeTeamPoints" class="form-control-premium" th:value="${match.homeTeamPoints}" min="0" max="3" required placeholder="Enter home team sets won">
+                        <div class="invalid-feedback">Please enter home team sets won.</div>
+                    </div>
 
-    <!-- Input fields for match points -->
-    <label for="homeTeamPoints">Home Team Points:</label>
-    <input type="number" id="homeTeamPoints" name="homeTeamPoints" th:value="${match.homeTeamPoints}" />
+                    <div class="form-group-premium">
+                        <label for="homeScorers" class="form-label-premium">🎯 Select Home Team Scorers</label>
+                        <select id="homeScorers" name="homeScorers" class="form-control-premium" multiple>
+                            <option th:each="player : ${match.homeTeam.players}"
+                                    th:value="${player.getVolleyball_player_id()}"
+                                    th:text="${player.name}">Player Name
+                            </option>
+                        </select>
+                        <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple players</small>
+                    </div>
+                </div>
+            </div>
 
-    <label for="awayTeamPoints">Away Team Points:</label>
-    <input type="number" id="awayTeamPoints" name="awayTeamPoints" th:value="${match.awayTeamPoints}" />
+            <!-- Away Team -->
+            <div class="col-md-6">
+                <div class="premium-card">
+                    <h3 class="text-premium mb-4" style="color: var(--accent-blue);" th:text="${match.awayTeam.getTeamName()}">Away Team</h3>
+                    
+                    <div class="form-group-premium">
+                        <label for="awayTeamPoints" class="form-label-premium">🏐 Away Team Sets Won</label>
+                        <input type="number" id="awayTeamPoints" name="awayTeamPoints" class="form-control-premium" th:value="${match.awayTeamPoints}" min="0" max="3" required placeholder="Enter away team sets won">
+                        <div class="invalid-feedback">Please enter away team sets won.</div>
+                    </div>
 
-    <!-- Home Team Scorers -->
-    <label for="homeScorers">Select Home Team Scorers:</label>
-    <select id="homeScorers" name="homeScorers" multiple>
-        <option th:each="player : ${match.homeTeam.players}"
-                th:value="${player.volleyball_player_id}"
-                th:text="${player.name}">
-        </option>
-    </select>
+                    <div class="form-group-premium">
+                        <label for="awayScorers" class="form-label-premium">🎯 Select Away Team Scorers</label>
+                        <select id="awayScorers" name="awayScorers" class="form-control-premium" multiple>
+                            <option th:each="player : ${match.awayTeam.players}"
+                                    th:value="${player.getVolleyball_player_id()}"
+                                    th:text="${player.name}">Player Name
+                            </option>
+                        </select>
+                        <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple players</small>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Away Team Scorers -->
-    <label for="awayScorers">Select Away Team Scorers:</label>
-    <select id="awayScorers" name="awayScorers" multiple>
-        <option th:each="player : ${match.awayTeam.players}"
-                th:value="${player.volleyball_player_id}"
-                th:text="${player.name}">
-        </option>
-    </select>
+        <div class="d-flex gap-3 mt-4 justify-content-center">
+            <button type="submit" class="btn-premium">💾 Update Match</button>
+            <a type="button" class="btn-premium" onclick="window.history.back()" style="background: var(--gray-600);">⬅️ Back</a>
+        </div>
+    </form>
+</section>
 
-    <button type="submit">Update Match</button>
-    <a type="button" class="btn btn-secondary" onclick="window.history.back()">Back</a>
-</form>
-<a th:href="@{/volleyball/matches/playoffs}">Back to Playoff Matches</a>
-</body>
-</html>
+<script>
+    function validateForm(event) {
+        let homeTeamPoints = document.getElementById('homeTeamPoints').value;
+        let awayTeamPoints = document.getElementById('awayTeamPoints').value;
+        let homeScorers = document.getElementById('homeScorers').selectedOptions.length;
+        let awayScorers = document.getElementById('awayScorers').selectedOptions.length;
+
+        // Check if points are entered but no players selected
+        if (homeTeamPoints > 0 && homeScorers === 0) {
+            alert('Please select at least one home team scorer for the points.');
+            event.preventDefault();
+            return;
+        }
+        if (awayTeamPoints > 0 && awayScorers === 0) {
+            alert('Please select at least one away team scorer for the points.');
+            event.preventDefault();
+            return;
+        }
+
+        // Check if players selected but no points are entered
+        if (homeTeamPoints === '0' && homeScorers > 0) {
+            alert('Please enter home team points if players are selected.');
+            event.preventDefault();
+            return;
+        }
+        if (awayTeamPoints === '0' && awayScorers > 0) {
+            alert('Please enter away team points if players are selected.');
+            event.preventDefault();
+            return;
+        }
+
+        // Check if more players are selected than points entered
+        if (homeScorers > homeTeamPoints) {
+            alert('You have selected more home team players than the points entered.');
+            event.preventDefault();
+            return;
+        }
+        if (awayScorers > awayTeamPoints) {
+            alert('You have selected more away team players than the points entered.');
+            event.preventDefault();
+            return;
+        }
+
+        if ((homeTeamPoints > 0 && homeScorers > 0 && awayTeamPoints === '0' && awayScorers === 0) ||
+            (awayTeamPoints > 0 && awayScorers > 0 && homeTeamPoints === '0' && homeScorers === 0)) {
+            if (!confirm("You have entered points only for one team. Would you like to continue updating the match?")) {
+                event.preventDefault();
+                return;
+            }
+        }
+
+        // If no changes are made, just submit the form and redirect
+        if (homeTeamPoints === '0' && awayTeamPoints === '0' && homeScorers === 0 && awayScorers === 0) {
+            window.location.href = '/volleyball/matches/playoffs';
+            event.preventDefault();
+            return;
+        }
+    }
+</script>

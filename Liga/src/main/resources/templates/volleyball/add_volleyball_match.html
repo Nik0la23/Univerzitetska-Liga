@@ -1,52 +1,66 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Add Match</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Add Volleyball Match</h1>
+        <h1 class="mb-0">🏐 Add Volleyball Match</h1>
     </div>
 </header>
-<div class="container mt-5">
-    <form th:action="@{/volleyball/matches/add}" method="post" onsubmit="return validateForm()">
-        <div class="form-group">
-            <label for="homeTeam">Home Team</label>
-            <select id="homeTeam" name="homeTeamId" class="form-control" required>
-                <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}">Team Name</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="awayTeam">Away Team</label>
-            <select id="awayTeam" name="awayTeamId" class="form-control" required>
-                <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}">Team Name</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="homeTeamPoints">Home Team Points</label>
-            <input type="number" id="homeTeamPoints" name="homeTeamPoints" class="form-control" value="0" required>
-        </div>
-        <div class="form-group">
-            <label for="awayTeamPoints">Away Team Points</label>
-            <input type="number" id="awayTeamPoints" name="awayTeamPoints" class="form-control" value="0" required>
-        </div>
-        <div class="form-group">
-            <label for="startTime">Start Time</label>
-            <input type="datetime-local" id="startTime" name="startTime" class="form-control" required onchange="checkEndTime()">
-        </div>
-        <button type="submit" class="btn btn-primary">Add Match</button>
-    </form>
 
-</div>
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">🏆 Schedule New Match</h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">Create a new volleyball match between two teams</p>
+        </div>
+    </div>
+    
+    <form th:action="@{/volleyball/matches/add}" method="post" onsubmit="return validateForm()" class="needs-validation" novalidate>
+        <div class="form-group-premium">
+            <label for="homeTeam" class="form-label-premium">🏠 Home Team</label>
+            <select id="homeTeam" name="homeTeamId" class="form-control-premium" required>
+                <option value="" disabled selected>Select Home Team</option>
+                <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}">Team Name</option>
+            </select>
+            <div class="invalid-feedback">Please select the home team.</div>
+        </div>
+        
+        <div class="form-group-premium">
+            <label for="awayTeam" class="form-label-premium">✈️ Away Team</label>
+            <select id="awayTeam" name="awayTeamId" class="form-control-premium" required>
+                <option value="" disabled selected>Select Away Team</option>
+                <option th:each="team : ${teams}" th:value="${team.getVolleyball_team_id()}" th:text="${team.getTeamName()}">Team Name</option>
+            </select>
+            <div class="invalid-feedback">Please select the away team.</div>
+        </div>
+        
+        <div class="form-group-premium">
+            <label for="homeTeamPoints" class="form-label-premium">🏠 Home Team Sets Won</label>
+            <input type="number" id="homeTeamPoints" name="homeTeamPoints" class="form-control-premium" value="0" required placeholder="Enter sets won by home team">
+            <div class="invalid-feedback">Please enter home team sets won.</div>
+        </div>
+        
+        <div class="form-group-premium">
+            <label for="awayTeamPoints" class="form-label-premium">✈️ Away Team Sets Won</label>
+            <input type="number" id="awayTeamPoints" name="awayTeamPoints" class="form-control-premium" value="0" required placeholder="Enter sets won by away team">
+            <div class="invalid-feedback">Please enter away team sets won.</div>
+        </div>
+        
+        <div class="form-group-premium">
+            <label for="startTime" class="form-label-premium">⏰ Match Start Time</label>
+            <input type="datetime-local" id="startTime" name="startTime" class="form-control-premium" required onchange="checkEndTime()">
+            <div class="invalid-feedback">Please select the match start time.</div>
+        </div>
+        
+        <div class="d-flex gap-3 mt-4">
+            <button type="submit" class="btn-premium">🏐 Add Match</button>
+            <a type="button" class="btn-premium" onclick="window.history.back()" style="background: var(--gray-600);">⬅️ Back</a>
+        </div>
+    </form>
+</section>
 
 <script>
     function validateForm() {
         const homeTeam = document.getElementById('homeTeam').value;
         const awayTeam = document.getElementById('awayTeam').value;
         const startTime = document.getElementById('startTime').value;
-        const endTime = document.getElementById('endTime').value;
 
         // Check if home and away teams are the same
         if (homeTeam === awayTeam) {
@@ -54,14 +68,12 @@
             return false;
         }
 
-        // Check if end time is before start time
-        if (new Date(endTime) < new Date(startTime)) {
-            alert("End time cannot be before start time.");
+        // Check if start time is in the past
+        if (new Date(startTime) < new Date()) {
+            alert("Start time cannot be in the past.");
             return false;
         }
 
         return true;
     }
 </script>
-</body>
-</html>

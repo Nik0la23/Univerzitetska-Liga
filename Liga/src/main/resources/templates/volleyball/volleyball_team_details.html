@@ -1,99 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Team Details</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volleyball Team Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/premium-design-system.css">
     <style>
-        a.player-link {
-            color: black;
-            text-decoration: none; /* This removes the underline, if needed */
+        .premium-header {
+            background: linear-gradient(135deg, #0f4c75 0%, #3282b8 50%, #0f4c75 100%);
+            border-bottom: 4px solid #bbe1fa;
+            box-shadow: 0 8px 32px rgba(11,76,117,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-header::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(187,225,250,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: volleyballBounce 4s infinite;
+        }
+        
+        @keyframes volleyballBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-30px) scale(1.1); }
+            50% { transform: translateY(0) scale(1); }
+            75% { transform: translateY(-15px) scale(1.05); }
+        }
+        
+        .premium-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 3.2rem;
+            color: #fff;
+            text-shadow: 0 0 25px rgba(187,225,250,0.6);
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        @media (max-width: 768px) {
+            .premium-header h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        .player-link {
+            color: #3282b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        a.player-link:hover {
-            color: grey; /* Optional: Change color on hover */
+        .player-link:hover {
+            color: #0f4c75;
+            text-decoration: none;
+            transform: translateX(5px);
         }
     </style>
 </head>
 <body>
-<header class="bg-primary text-white p-3">
+
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0" th:text="${team.getTeamName()}">Team Name</h1>
+        <h1 class="mb-0">🏐 Volleyball Team Details</h1>
     </div>
 </header>
-<div class="container mt-5">
-    <div th:if="${team != null}">
-        <div class="card">
-            <div class="card-header">
-                <h2 th:text="${team.getTeamName()}">Team Name</h2>
-                <img th:src="@{/volleyball/teams/logo/{id}(id=${team.getVolleyball_team_id})}" alt="Team Image" class="img-fluid mb-3" style="width:200px;height:200px;"/>
 
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="page-title">
+                🏐 Team Information
+            </h2>
+        </div>
+    </div>
+    
+    <div th:if="${team != null}">
+        <div class="premium-card">
+            <div class="text-center mb-4">
+                <h2 class="text-premium" style="color: #3282b8; font-size: var(--text-3xl);" th:text="${team.getTeamName()}">Team Name</h2>
+                <img th:src="@{/volleyball/teams/logo/{id}(id=${team.getVolleyball_team_id})}" alt="Team Image" class="img-fluid mb-3" style="width:200px;height:200px;border-radius:10px;border:3px solid #3282b8;"/>
             </div>
             <div class="card-body">
-                <h3>Team Statistics</h3>
-                <ul>
-                    <li>Matches Played: <span th:text="${team.teamMatchesPlayed}"></span></li>
-                    <li>League Points: <span th:text="${team.teamLeaguePoints}"></span></li>
-                    <li>Wins: <span th:text="${team.teamWins}"></span></li>
-                    <li>Losses: <span th:text="${team.teamLoses}"></span></li>
+                <h3 class="text-premium" style="color: #3282b8; margin-bottom: var(--space-4);">🏐 Team Statistics</h3>
+                <ul class="list-unstyled" style="font-size: var(--text-lg); line-height: 2;">
+                    <li class="text-readable"><strong>🏁 Matches Played:</strong> <span class="badge badge-primary" th:text="${team.getTeamMatchesPlayed()}"></span></li>
+                    <li class="text-readable"><strong>🏆 League Points:</strong> <span class="badge badge-success" th:text="${team.getTeamLeaguePoints()}"></span></li>
+                    <li class="text-readable"><strong>✅ Wins:</strong> <span class="badge badge-success" th:text="${team.getTeamWins()}"></span></li>
+                    <li class="text-readable"><strong>❌ Losses:</strong> <span class="badge badge-danger" th:text="${team.getTeamLoses()}"></span></li>
                 </ul>
-                <h3>Players</h3>
-                <ul>
-                    <li th:each="player : ${players}">
-                        <a th:href="@{/volleyball/players/details/{id}(id=${player.volleyball_player_id})}" th:text="${player.name}" class="player-link">Player Name</a>
-                    </li>
-                </ul>
+                
+                <h3 class="text-premium" style="color: #3282b8; margin-top: var(--space-8); margin-bottom: var(--space-4);">👥 Players</h3>
+                <div class="row">
+                    <div class="col-12">
+                        <ul class="list-unstyled" style="font-size: var(--text-lg); line-height: 2;">
+                            <li th:each="player : ${players}" class="mb-2">
+                                <a th:href="@{/volleyball/players/details/{id}(id=${player.getVolleyball_player_id()})}" 
+                                   th:text="${player.getName()}" 
+                                   class="player-link">Player Name</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a th:href="@{/volleyball/teams/show/{id}(id=${team.getVolleyball_team_id()})}" class="btn btn-premium btn-info mr-3">📅 Fixtures/Results</a>
+            
+            <div th:if="${players.size()} < 6" class="d-inline">
+                <a th:href="@{/volleyball/players/add-form}" class="btn btn-premium btn-primary">➕ Add Player</a>
             </div>
         </div>
     </div>
 
-    <a th:href="@{/volleyball/teams/show/{id}(id=${team.getVolleyball_team_id()})}" class="btn btn-info mt-3">Fixtures/Results</a>
-    <div th:if="${players.size()} < 5">
-        <a th:href="@{/volleyball/players/add-form}" class="btn btn-primary mt-3">Add Player</a>
+    <div th:if="${team == null}" class="premium-card text-center">
+        <h3 class="text-premium" style="color: #3282b8;">❌ Team not found</h3>
+        <p class="text-readable">The requested team could not be found in our database.</p>
+        <a href="/volleyball/teams" class="btn btn-premium btn-secondary">← Back to Teams</a>
     </div>
+</section>
 
-    <div th:if="${team == null}">
-        <p>Team not found.</p>
-    </div>
-
-    <!-- Top Players Section -->
-    <section class="container mt-4">
-        <h2>Top Players</h2>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Image</th>
-                    <th>Player Name</th>
-                    <th>Scored Points</th>
-                    <th>Assists</th>
-                    <th>Blocks</th>
-                    <th>Total Points</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="player : ${topPlayers}">
-                    <td>
-                        <img th:src="@{/volleyball/players/image/{id}(id=${player.volleyball_player_id})}" alt="Player Image" style="width:50px;height:50px;"/>
-                    </td>
-                    <td th:text="${player.name} + ' ' + ${player.surname}"></td>
-                    <td th:text="${player.scoredPoints}"></td>
-                    <td th:text="${player.assists}"></td>
-                    <td th:text="${player.blocks}"></td>
-                    <td th:text="${player.getTotalPoints()}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <a href="/volleyball/teams" class="btn btn-secondary mt-4">Back to Teams</a>
-
-</div>
-
-<!-- Bootstrap JS and jQuery -->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>

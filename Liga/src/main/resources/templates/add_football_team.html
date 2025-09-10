@@ -1,29 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add Football Team</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Add Football Team</h1>
+        <h1 class="mb-0">⚽ Add Football Team</h1>
     </div>
 </header>
-<div class="container mt-5">
-    <form th:action="@{/teams/add}" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="teamName">Team Name</label>
-            <input type="text" class="form-control" id="teamName" name="teamName" required>
+
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">🏆 Create New Team</h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">Add a new football team to the league</p>
         </div>
-        <div class="form-group">
-            <label for="logo">Team Logo</label>
-            <input type="file" class="form-control" id="logo" name="logo" placeholder="Upload team logo" >
+    </div>
+    
+    <form th:action="@{/teams/add}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <div class="form-group-premium">
+            <label for="teamName" class="form-label-premium">🏆 Team Name</label>
+            <input type="text" class="form-control-premium" id="teamName" name="teamName" required placeholder="Enter team name">
+            <div class="invalid-feedback">Please enter the team name.</div>
         </div>
-        <button type="submit" class="btn btn-primary">Add Team</button>
-        <a type="button" class="btn btn-secondary" onclick="window.history.back()">Back</a>
+        
+        <div class="form-group-premium">
+            <label for="logo" class="form-label-premium">🖼️ Team Logo</label>
+            <input type="file" class="form-control-premium" id="logo" name="logo" placeholder="Upload team logo">
+            <div class="invalid-feedback">Please upload a team logo.</div>
+        </div>
+        
+        <div class="d-flex gap-3 mt-4">
+            <button type="submit" class="btn-premium">⚽ Add Team</button>
+            <a type="button" class="btn-premium" onclick="window.history.back()" style="background: var(--gray-600);">⬅️ Back</a>
+        </div>
     </form>
-</div>
-</body>
-</html>
+</section>

@@ -355,10 +355,10 @@
                     </div>
                 </div>
             </a>
-            <div class="actions mt-3">
-                <a th:href="@{/matches/edit-form/{id}(id=${match.football_match_id})}" class="btn btn-warning btn-premium">✏️ Edit</a>
+            <div class="actions mt-3 d-flex justify-content-center align-items-center">
+                <a th:href="@{/matches/edit-form/{id}(id=${match.football_match_id})}" class="btn btn-warning btn-premium me-2">✏️ Edit</a>
                 <form th:if="${!match.isPlayoffMatch}" th:method="POST" th:action="@{'/matches/finish/{id}'(id=${match.football_match_id})}" style="display:inline;" onsubmit="return confirmFinish(this)">
-                    <button type="submit" class="btn btn-success btn-premium">✅ Finish</button>
+                    <button type="submit" class="btn btn-success btn-premium me-2">✅ Finish</button>
                 </form>
                 <form th:method="POST" th:action="@{'/matches/delete/{id}'(id=${match.football_match_id})}" style="display:inline;">
                     <button type="submit" class="btn btn-danger btn-premium">🗑️ Delete</button>

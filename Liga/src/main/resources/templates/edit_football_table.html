@@ -1,57 +1,181 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Team</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Football Team</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/premium-design-system.css">
+    <style>
+        .premium-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d4a3a 100%);
+            border-bottom: 3px solid #4CAF50;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="60" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: floatPattern 20s infinite linear;
+        }
+        
+        @keyframes floatPattern {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(100px); }
+        }
+        
+        .premium-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 2.8rem;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .premium-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<header class="bg-primary text-white p-3">
+
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Edit Football Team</h1>
+        <h1 class="mb-0">⚽ Edit Football Team</h1>
     </div>
 </header>
-<div class="container mt-5">
 
-    <form th:action="@{/teams/edit/{id}(id=${team.id})}" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="logo" class="form-label">Team Logo</label>
-            <input type="file" class="form-control" id="logo" name="logo"
-                   th:value="${team != null ? team.getLogo() : ''}" placeholder="Upload Team Logo">
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="page-title">
+                ✏️ Edit Team Information
+            </h2>
         </div>
-        <div class="form-group">
-            <label for="teamName">Team Name:</label>
-            <input type="text" id="teamName" class="form-control" th:field="*{team.teamName}"  />
-        </div>
-        <div class="form-group">
-            <label for="teamLeaguePoints">League Points:</label>
-            <input type="number" id="teamLeaguePoints" class="form-control" th:field="*{team.teamLeaguePoints}"  readonly/>
-        </div>
-        <div class="form-group">
-            <label for="teamMatchesPlayed">Matches Played:</label>
-            <input type="number" id="teamMatchesPlayed" class="form-control" th:field="*{team.teamMatchesPlayed}" readonly />
-        </div>
-        <div class="form-group">
-            <label for="teamWins">Wins:</label>
-            <input type="number" id="teamWins" class="form-control" th:field="*{team.teamWins}" readonly />
-        </div>
-        <div class="form-group">
-            <label for="teamLoses">Losses:</label>
-            <input type="number" id="teamLoses" class="form-control" th:field="*{team.teamLoses}" readonly />
-        </div>
-        <div class="form-group">
-            <label for="teamDraws">Draws:</label>
-            <input type="number" id="teamDraws" class="form-control" th:field="*{team.teamDraws}" readonly />
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <a th:href="@{/teams}" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
-</div>
+    </div>
+    
+    <div class="premium-card">
+        <form th:action="@{/teams/edit/{id}(id=${team.id})}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+            
+            <div class="form-group-premium">
+                <label for="logo" class="form-label-premium">🏆 Team Logo</label>
+                <input type="file" class="form-control-premium" id="logo" name="logo"
+                       th:value="${team != null ? team.getLogo() : ''}" 
+                       accept="image/*">
+                <small class="form-text text-muted">Upload a new team logo (JPG, PNG, GIF)</small>
+            </div>
+            
+            <div class="form-group-premium">
+                <label for="teamName" class="form-label-premium">📝 Team Name</label>
+                <input type="text" id="teamName" class="form-control-premium" 
+                       th:field="*{team.teamName}" 
+                       placeholder="Enter team name" 
+                       required />
+                <div class="invalid-feedback">
+                    Please provide a valid team name.
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group-premium">
+                        <label for="teamLeaguePoints" class="form-label-premium">🏆 League Points</label>
+                        <input type="number" id="teamLeaguePoints" class="form-control-premium" 
+                               th:field="*{team.teamLeaguePoints}" 
+                               readonly 
+                               style="background-color: var(--gray-100); cursor: not-allowed;" />
+                        <small class="form-text">This field is automatically calculated</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group-premium">
+                        <label for="teamMatchesPlayed" class="form-label-premium">🏁 Matches Played</label>
+                        <input type="number" id="teamMatchesPlayed" class="form-control-premium" 
+                               th:field="*{team.teamMatchesPlayed}" 
+                               readonly 
+                               style="background-color: var(--gray-100); cursor: not-allowed;" />
+                        <small class="form-text">This field is automatically calculated</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group-premium">
+                        <label for="teamWins" class="form-label-premium">✅ Wins</label>
+                        <input type="number" id="teamWins" class="form-control-premium" 
+                               th:field="*{team.teamWins}" 
+                               readonly 
+                               style="background-color: var(--gray-100); cursor: not-allowed;" />
+                        <small class="form-text">Auto-calculated</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group-premium">
+                        <label for="teamLoses" class="form-label-premium">❌ Losses</label>
+                        <input type="number" id="teamLoses" class="form-control-premium" 
+                               th:field="*{team.teamLoses}" 
+                               readonly 
+                               style="background-color: var(--gray-100); cursor: not-allowed;" />
+                        <small class="form-text">Auto-calculated</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group-premium">
+                        <label for="teamDraws" class="form-label-premium">🤝 Draws</label>
+                        <input type="number" id="teamDraws" class="form-control-premium" 
+                               th:field="*{team.teamDraws}" 
+                               readonly 
+                               style="background-color: var(--gray-100); cursor: not-allowed;" />
+                        <small class="form-text">Auto-calculated</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-3 justify-content-center mt-5">
+                <button type="submit" class="btn btn-premium btn-success">💾 Save Changes</button>
+                <a th:href="@{/teams}" class="btn btn-premium btn-secondary">❌ Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script>
+// Bootstrap form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>

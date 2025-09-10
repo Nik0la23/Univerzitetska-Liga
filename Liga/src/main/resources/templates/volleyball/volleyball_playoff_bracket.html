@@ -1,218 +1,107 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Playoff Bracket</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .bracket {
-            display: flex;
-            justify-content: space-between;
-            width: 80%;
-            margin: 0 auto;
-        }
-
-        .round {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .match-box {
-            display: block;
-            text-align: center;
-            padding: 15px;
-            background-color: #fff;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 30px;
-            width: 160px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-decoration: none;
-            color: inherit;
-            position: relative;
-        }
-
-        .match-box:hover {
-            background-color: #f0f0f0;
-        }
-
-        .team {
-            padding: 10px;
-            background-color: #f4f4f4;
-            margin: 5px 0;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
-        .team.winner {
-            font-weight: bold;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-
-        .round-header {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-
-        .quarter-finals {
-            color: #3498db;
-        }
-
-        .semi-finals {
-            color: #e67e22;
-        }
-
-        .finals {
-            color: #e74c3c;
-        }
-
-        .score {
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-        .actions {
-            margin-top: 10px;
-        }
-
-        .edit-button {
-            display: block;
-            margin-top: 10px;
-            text-decoration: none;
-            padding: 5px 10px;
-            background-color: #2c3e50;
-            color: white;
-            border-radius: 5px;
-            font-size: 0.9em;
-        }
-
-        .edit-button:hover {
-            background-color: #34495e;
-        }
-
-        .init-button {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .init-button a {
-            text-decoration: none;
-            padding: 10px 20px;
-            background-color: #2c3e50;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .init-button a:hover {
-            background-color: #34495e;
-        }
-
-        .winner-section {
-            text-align: center;
-            font-size: 2em;
-            font-weight: bold;
-            color: #27ae60;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #ecf0f1;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            margin: 50px auto;
-        }
-    </style>
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Playoff Bracket</h1>
+        <h1 class="mb-0">🏐 Volleyball Playoff Bracket</h1>
     </div>
 </header>
-<div class="bracket">
-    <!-- Quarter-Finals -->
-    <div class="round quarter-finals">
-        <div class="round-header">Quarter-Finals</div>
-        <div th:each="match, iterStat : ${matches}" th:if="${iterStat.index < 4}" class="match-box">
-            <a th:href="@{/volleyball/matches/details/{id}(id=${match.volleyball_match_id})}">
-                <div class="team" th:classappend="${match.homeTeamPoints > match.awayTeamPoints} ? 'winner' : ''">
-                    <span th:text="${match.homeTeam.teamName}"></span>
-                    <span class="score" th:text="${match.homeTeamPoints}"></span>
-                </div>
-                <div class="team" th:classappend="${match.awayTeamPoints > match.homeTeamPoints} ? 'winner' : ''">
-                    <span th:text="${match.awayTeam.teamName}"></span>
-                    <span class="score" th:text="${match.awayTeamPoints}"></span>
-                </div>
-            </a>
-            <a th:if="${match.homeTeamPoints == match.awayTeamPoints}" th:href="@{/volleyball/matches/playoffs/edit/{id}(id=${match.volleyball_match_id})}" class="edit-button">Edit</a>
+
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">🏆 Playoff Tournament</h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">Follow the tournament bracket and see which teams advance to the next round</p>
         </div>
     </div>
 
-    <!-- Semi-Finals -->
-    <div class="round semi-finals">
-        <div class="round-header">Semi-Finals</div>
-        <div th:each="match, iterStat : ${matches}" th:if="${iterStat.index >= 4 && iterStat.index < 6}" class="match-box">
-            <a th:href="@{/volleyball/matches/details/{id}(id=${match.volleyball_match_id})}">
-                <div class="team" th:classappend="${match.homeTeamPoints > match.awayTeamPoints} ? 'winner' : ''">
-                    <span th:text="${match.homeTeam.teamName}"></span>
-                    <span class="score" th:text="${match.homeTeamPoints}"></span>
+    <div class="row">
+        <!-- Quarter-Finals -->
+        <div class="col-md-4">
+            <div class="premium-card">
+                <h3 class="text-premium mb-4" style="color: var(--accent-blue);">🏆 Quarter-Finals</h3>
+                <div th:each="match, iterStat : ${matches}" th:if="${iterStat.index < 4}" class="premium-card mb-3">
+                    <a th:href="@{/volleyball/matches/details/{id}(id=${match.getVolleyball_match_id()})}" class="text-decoration-none">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-readable" th:text="${match.homeTeam.getTeamName()}">Home Team</span>
+                            <span class="badge badge-premium" th:classappend="${match.homeTeamPoints > match.awayTeamPoints} ? 'badge-success' : 'badge-secondary'" th:text="${match.homeTeamPoints}">0</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-readable" th:text="${match.awayTeam.getTeamName()}">Away Team</span>
+                            <span class="badge badge-premium" th:classappend="${match.awayTeamPoints > match.homeTeamPoints} ? 'badge-success' : 'badge-secondary'" th:text="${match.awayTeamPoints}">0</span>
+                        </div>
+                    </a>
+                    <a th:if="${match.homeTeamPoints == match.awayTeamPoints}" th:href="@{/volleyball/matches/playoffs/edit/{id}(id=${match.getVolleyball_match_id()})}" class="btn-premium btn-sm mt-2">✏️ Edit</a>
                 </div>
-                <div class="team" th:classappend="${match.awayTeamPoints > match.homeTeamPoints} ? 'winner' : ''">
-                    <span th:text="${match.awayTeam.teamName}"></span>
-                    <span class="score" th:text="${match.awayTeamPoints}"></span>
+            </div>
+        </div>
+
+        <!-- Semi-Finals -->
+        <div class="col-md-4">
+            <div class="premium-card">
+                <h3 class="text-premium mb-4" style="color: var(--accent-blue);">🏆 Semi-Finals</h3>
+                <div th:each="match, iterStat : ${matches}" th:if="${iterStat.index >= 4 && iterStat.index < 6}" class="premium-card mb-3">
+                    <a th:href="@{/volleyball/matches/details/{id}(id=${match.getVolleyball_match_id()})}" class="text-decoration-none">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-readable" th:text="${match.homeTeam.getTeamName()}">Home Team</span>
+                            <span class="badge badge-premium" th:classappend="${match.homeTeamPoints > match.awayTeamPoints} ? 'badge-success' : 'badge-secondary'" th:text="${match.homeTeamPoints}">0</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-readable" th:text="${match.awayTeam.getTeamName()}">Away Team</span>
+                            <span class="badge badge-premium" th:classappend="${match.awayTeamPoints > match.homeTeamPoints} ? 'badge-success' : 'badge-secondary'" th:text="${match.awayTeamPoints}">0</span>
+                        </div>
+                    </a>
+                    <a th:if="${match.homeTeamPoints == match.awayTeamPoints}" th:href="@{/volleyball/matches/playoffs/edit/{id}(id=${match.getVolleyball_match_id()})}" class="btn-premium btn-sm mt-2">✏️ Edit</a>
                 </div>
-            </a>
-            <a th:if="${match.homeTeamPoints == match.awayTeamPoints}" th:href="@{/volleyball/matches/playoffs/edit/{id}(id=${match.volleyball_match_id})}" class="edit-button">Edit</a>
+            </div>
+        </div>
+
+        <!-- Finals -->
+        <div class="col-md-4">
+            <div class="premium-card">
+                <h3 class="text-premium mb-4" style="color: var(--accent-blue);">🏆 Final</h3>
+                <div th:each="match, iterStat : ${matches}" th:if="${iterStat.index >= 6}" class="premium-card mb-3">
+                    <a th:href="@{/volleyball/matches/details/{id}(id=${match.getVolleyball_match_id()})}" class="text-decoration-none">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-readable" th:text="${match.homeTeam.getTeamName()}">Home Team</span>
+                            <span class="badge badge-premium" th:classappend="${match.homeTeamPoints > match.awayTeamPoints} ? 'badge-success' : 'badge-secondary'" th:text="${match.homeTeamPoints}">0</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-readable" th:text="${match.awayTeam.getTeamName()}">Away Team</span>
+                            <span class="badge badge-premium" th:classappend="${match.awayTeamPoints > match.homeTeamPoints} ? 'badge-success' : 'badge-secondary'" th:text="${match.awayTeamPoints}">0</span>
+                        </div>
+                    </a>
+                    <a th:if="${match.homeTeamPoints == match.awayTeamPoints}" th:href="@{/volleyball/matches/playoffs/edit/{id}(id=${match.getVolleyball_match_id()})}" class="btn-premium btn-sm mt-2">✏️ Edit</a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Finals -->
-    <div class="round finals">
-        <div class="round-header">Final</div>
-        <div th:each="match, iterStat : ${matches}" th:if="${iterStat.index >= 6}" class="match-box">
-            <a th:href="@{/volleyball/matches/details/{id}(id=${match.volleyball_match_id})}">
-                <div class="team" th:classappend="${match.homeTeamPoints > match.awayTeamPoints} ? 'winner' : ''">
-                    <span th:text="${match.homeTeam.teamName}"></span>
-                    <span class="score" th:text="${match.homeTeamPoints}"></span>
+    <!-- Tournament Control Buttons -->
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="premium-card">
+                <h4 class="text-premium mb-4">🎮 Tournament Controls</h4>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a th:if="${matches.size() >= 4 && matches[0].homeTeamPoints != matches[0].awayTeamPoints
+                    && matches[1].homeTeamPoints != matches[1].awayTeamPoints
+                    && matches[2].homeTeamPoints != matches[2].awayTeamPoints
+                    && matches[3].homeTeamPoints != matches[3].awayTeamPoints}"
+                       th:href="@{/volleyball/matches/playoffs/semi-finals_Init}" class="btn-premium">🏆 Start Semi-Finals</a>
+                    
+                    <a th:if="${matches.size() >= 6 && matches[4].homeTeamPoints != matches[4].awayTeamPoints
+                    && matches[5].homeTeamPoints != matches[5].awayTeamPoints}"
+                       th:href="@{/volleyball/matches/playoffs/finals_Init}" class="btn-premium">🏆 Start Final</a>
                 </div>
-                <div class="team" th:classappend="${match.awayTeamPoints > match.homeTeamPoints} ? 'winner' : ''">
-                    <span th:text="${match.awayTeam.teamName}"></span>
-                    <span class="score" th:text="${match.awayTeamPoints}"></span>
-                </div>
-            </a>
-            <a th:if="${match.homeTeamPoints == match.awayTeamPoints}" th:href="@{/volleyball/matches/playoffs/edit/{id}(id=${match.volleyball_match_id})}" class="edit-button">Edit</a>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Semi-Finals Initialization Button -->
-<div class="init-button">
-    <a th:if="${matches.size() >= 4 && matches[0].homeTeamPoints != matches[0].awayTeamPoints
-    && matches[1].homeTeamPoints != matches[1].awayTeamPoints
-    && matches[2].homeTeamPoints != matches[2].awayTeamPoints
-    && matches[3].homeTeamPoints != matches[3].awayTeamPoints}"
-       th:href="@{/volleyball/matches/playoffs/semi-finals_Init}">Start Semi-Finals</a>
-</div>
-
-<!-- Finals Initialization Button -->
-<div class="init-button">
-    <a th:if="${matches.size() >= 6 && matches[4].homeTeamPoints != matches[4].awayTeamPoints
-    && matches[5].homeTeamPoints != matches[5].awayTeamPoints}"
-       th:href="@{/volleyball/matches/playoffs/finals_Init}">Start Final</a>
-</div>
-
-<div class="winner-section" th:if="${matches.size() >= 7 && matches[6].homeTeamPoints != matches[6].awayTeamPoints}">
-    Congratulations to the Winner:
-    <span th:text="${matches[6].homeTeamPoints > matches[6].awayTeamPoints ? matches[6].homeTeam.teamName : matches[6].awayTeam.teamName}"></span>!
-</div>
-
-</body>
-</html>
+    <!-- Winner Announcement -->
+    <div class="row mt-5" th:if="${matches.size() >= 7 && matches[6].homeTeamPoints != matches[6].awayTeamPoints}">
+        <div class="col-12">
+            <div class="premium-card text-center" style="background: linear-gradient(135deg, var(--accent-blue), var(--info)); color: white;">
+                <h2 class="mb-3">🎉 Tournament Champion! 🎉</h2>
+                <h1 class="text-white mb-0" th:text="${matches[6].homeTeamPoints > matches[6].awayTeamPoints ? matches[6].homeTeam.getTeamName() : matches[6].awayTeam.getTeamName()}">Winner Team</h1>
+                <p class="text-white mt-3 mb-0">Congratulations on winning the tournament!</p>
+            </div>
+        </div>
+    </div>
+</section>

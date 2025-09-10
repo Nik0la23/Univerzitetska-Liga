@@ -1,35 +1,121 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Basketball News Details</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/premium-design-system.css">
+    <style>
+        .premium-header {
+            background: linear-gradient(135deg, #000000 0%, #1a0f0a 50%, #ff6b35 100%);
+            border-bottom: 4px solid #ff6b35;
+            box-shadow: 0 8px 32px rgba(255,107,53,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,107,53,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: bounce 3s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+        
+        .premium-header h1 {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255,107,53,0.8);
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .premium-header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        .news-meta {
+            background: linear-gradient(135deg, #fff8f5, #ffe8e0);
+            border-left: 4px solid #ff6b35;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .news-content {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+    </style>
 </head>
 <body>
-<header class="bg-primary text-white p-3">
+
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0" th:text="${news.title}">News Title</h1>
+        <h1 class="mb-0">🏀 <span th:text="${news.title}">News Title</span></h1>
     </div>
 </header>
 
-<div class="container mt-5">
-    <div class="mb-3">
-        <p><strong>Published Date:</strong> <span th:text="${news.publishedDate}"></span></p>
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="page-title">
+                📰 News Article
+            </h2>
+        </div>
+    </div>
+    
+    <div class="news-meta">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h4 class="text-premium mb-2" style="color: #ff6b35;">📅 Published Date</h4>
+                <p class="text-readable mb-0" style="font-size: 1.1rem; font-weight: 500;">
+                    <span th:text="${#temporals.format(news.publishedDate, 'EEEE, MMMM dd, yyyy')}">Date</span>
+                </p>
+            </div>
+            <div class="col-md-4 text-md-right">
+                <span class="badge badge-warning" style="background: #ff6b35; padding: 8px 16px; font-size: 0.9rem;">🏀 Basketball News</span>
+            </div>
+        </div>
     </div>
 
-    <div class="mb-4">
-        <h3>Content:</h3>
-        <p th:text="${news.content}">News Content</p>
+    <div class="news-content">
+        <h3 class="text-premium mb-4" style="color: #ff6b35;">📖 Article Content</h3>
+        <div class="text-readable" style="font-size: 1.1rem; line-height: 1.8;" th:text="${news.content}">
+            News Content
+        </div>
     </div>
-
-    <div>
-        <a th:href="@{/basketball/news/edit/{id}(id=${news.news_id})}" class="btn btn-primary">Edit</a>
-        <a th:href="@{/basketball/news}" class="btn btn-secondary" th:text="'Back to News List'">Back to News List</a>
+    
+    <div class="d-flex gap-3 justify-content-center mt-5">
+        <a th:href="@{/basketball/news/edit/{id}(id=${news.news_id})}" class="btn-premium btn-warning">✏️ Edit Article</a>
+        <a th:href="@{/basketball/news}" class="btn-premium btn-secondary">⬅️ Back to News List</a>
     </div>
-</div>
+</section>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>

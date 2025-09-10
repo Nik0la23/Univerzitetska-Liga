@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Basketball Matches</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/premium-design-system.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Roboto:wght@300;400;500;600&display=swap');
         
@@ -72,52 +73,53 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
+
+        @media (max-width: 768px) {
+            .premium-header h1 {
+                font-size: 2rem;
+            }
+        }
         
         .premium-nav {
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(15px);
-            border-bottom: 2px solid rgba(255,107,53,0.5);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,107,53,0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
         
         .premium-nav .nav-link {
             color: #ff6b35 !important;
-            font-weight: 600;
+            font-weight: 500;
             padding: 15px 20px !important;
             margin: 0 5px;
-            border-radius: 12px;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-radius: 8px;
+            transition: all 0.3s ease;
             position: relative;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
+            overflow: hidden;
         }
         
         .premium-nav .nav-link::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: radial-gradient(circle, rgba(255,107,53,0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            transition: all 0.4s ease;
-            transform: translate(-50%, -50%);
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,107,53,0.2), transparent);
+            transition: left 0.5s ease;
         }
         
         .premium-nav .nav-link:hover::before {
-            width: 120%;
-            height: 120%;
+            left: 100%;
         }
         
         .premium-nav .nav-link:hover {
             background: linear-gradient(135deg, #ff6b35, #ff8a65);
             color: white !important;
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(255,107,53,0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,107,53,0.3);
         }
-        
+
         .premium-container {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(15px);
@@ -427,9 +429,6 @@
                 padding: 25px;
             }
             
-            .premium-header h1 {
-                font-size: 2rem;
-            }
         }
     </style>
 </head>

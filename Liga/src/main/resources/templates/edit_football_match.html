@@ -1,75 +1,85 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Match</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <script>
-        function validateTeams(){
-            const homeTeam = document.getElementById("homeTeam").value;
-            const awayTeam = document.getElementById("awayTeam").value;
-            if(homeTeam == awayTeam){
-                alert("Home team and away team cannot be the same")
-                return false;
-            }
-            return true;
-        }
-    </script>
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Edit Football Match</h1>
+        <h1 class="mb-0">⚽ Edit Football Match</h1>
     </div>
 </header>
-<div class="container mt-5">
-    <form action="/matches/edit" method="post" onsubmit="return validateTeams()">
-        <input type="hidden" name="id" th:value="${match.football_match_id}"> <!-- Match ID to identify the match to update -->
 
-        <div class="form-group">
-            <label for="homeTeam">Home Team</label>
-            <select class="form-control" id="homeTeam" name="homeTeamId" required>
-                <!-- Dynamically populate options -->
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">🏆 Update Match Information</h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">Edit football match details and scores</p>
+        </div>
+    </div>
+    
+    <form action="/matches/edit" method="post" onsubmit="return validateTeams()" class="needs-validation" novalidate>
+        <input type="hidden" name="id" th:value="${match.football_match_id}">
+
+        <div class="form-group-premium">
+            <label for="homeTeam" class="form-label-premium">🏠 Home Team</label>
+            <select class="form-control-premium" id="homeTeam" name="homeTeamId" required>
+                <option value="" disabled>Select Home Team</option>
                 <option th:each="team : ${teams}"
                         th:value="${team.id}"
                         th:text="${team.teamName}"
                         th:selected="${team.id == match.homeTeam.id}"></option>
             </select>
+            <div class="invalid-feedback">Please select the home team.</div>
         </div>
-        <div class="form-group">
-            <label for="awayTeam">Away Team</label>
-            <select class="form-control" id="awayTeam" name="awayTeamId" required>
-                <!-- Dynamically populate options -->
+        
+        <div class="form-group-premium">
+            <label for="awayTeam" class="form-label-premium">✈️ Away Team</label>
+            <select class="form-control-premium" id="awayTeam" name="awayTeamId" required>
+                <option value="" disabled>Select Away Team</option>
                 <option th:each="team : ${teams}"
                         th:value="${team.id}"
                         th:text="${team.teamName}"
                         th:selected="${team.id == match.awayTeam.id}"></option>
             </select>
+            <div class="invalid-feedback">Please select the away team.</div>
         </div>
-        <div class="form-group">
-            <label for="homeTeamPoints">Home Team Points</label>
-            <input type="number" class="form-control" id="homeTeamPoints" name="homeTeamPoints"
-                   th:value="${match.homeTeamPoints}" min="0" required>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group-premium">
+                    <label for="homeTeamPoints" class="form-label-premium">🏠 Home Team Goals</label>
+                    <input type="number" class="form-control-premium" id="homeTeamPoints" name="homeTeamPoints"
+                           th:value="${match.homeTeamPoints}" min="0" required placeholder="Enter home team goals">
+                    <div class="invalid-feedback">Please enter home team goals.</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group-premium">
+                    <label for="awayTeamPoints" class="form-label-premium">✈️ Away Team Goals</label>
+                    <input type="number" class="form-control-premium" id="awayTeamPoints" name="awayTeamPoints"
+                           th:value="${match.awayTeamPoints}" min="0" required placeholder="Enter away team goals">
+                    <div class="invalid-feedback">Please enter away team goals.</div>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="awayTeamPoints">Away Team Points</label>
-            <input type="number" class="form-control" id="awayTeamPoints" name="awayTeamPoints"
-                   th:value="${match.awayTeamPoints}" min="0" required>
+        
+        <div class="form-group-premium">
+            <label for="startTime" class="form-label-premium">⏰ Match Start Time</label>
+            <input type="datetime-local" class="form-control-premium" id="startTime" name="startTime"
+                   th:value="${#temporals.format(match.startTime, 'yyyy-MM-dd''T''HH:mm')}" required>
+            <div class="invalid-feedback">Please select the match start time.</div>
         </div>
-        <div class="form-group">
-            <label for="startTime">Start Time</label>
-            <input type="datetime-local" class="form-control" id="startTime" name="startTime"
-                   th:value="${#temporals.format(match.startTime, 'yyyy-MM-dd''T''HH:mm')}" >
+        
+        <div class="d-flex gap-3 mt-4">
+            <button type="submit" class="btn-premium">💾 Update Match</button>
+            <a type="button" class="btn-premium" onclick="window.history.back()" style="background: var(--gray-600);">⬅️ Back</a>
         </div>
-<!--        <div class="form-group">-->
-<!--            <label for="endTime">End Time</label>-->
-<!--            <input type="datetime-local" class="form-control" id="endTime" name="endTime"-->
-<!--                   th:value="${#temporals.format(match.endTime, 'yyyy-MM-dd''T''HH:mm')}" >-->
-<!--        </div>-->
-        <button type="submit" class="btn btn-primary">Update Match</button>
-        <a type="button" class="btn btn-secondary" onclick="window.history.back()">Back</a>
     </form>
-</div>
-</body>
-</html>
+</section>
+
+<script>
+    function validateTeams(){
+        const homeTeam = document.getElementById("homeTeam").value;
+        const awayTeam = document.getElementById("awayTeam").value;
+        if(homeTeam == awayTeam){
+            alert("Home team and away team cannot be the same")
+            return false;
+        }
+        return true;
+    }
+</script>

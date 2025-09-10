@@ -1,97 +1,135 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Details</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Basketball Team Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/premium-design-system.css">
     <style>
-        a.player-link {
-            color: black;
-            text-decoration: none; /* This removes the underline, if needed */
+        .premium-header {
+            background: linear-gradient(135deg, #000000 0%, #1a0f0a 50%, #ff6b35 100%);
+            border-bottom: 4px solid #ff6b35;
+            box-shadow: 0 8px 32px rgba(255,107,53,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,107,53,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: bounce 3s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+        
+        .premium-header h1 {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255,107,53,0.8);
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .premium-header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        .player-link {
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        a.player-link:hover {
-            color: grey; /* Optional: Change color on hover */
+        .player-link:hover {
+            color: #ff8a65;
+            text-decoration: none;
+            transform: translateX(5px);
         }
     </style>
 </head>
 <body>
-<header class="bg-primary text-white p-3">
+
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Basketball Team Details</h1>
+        <h1 class="mb-0">🏀 Basketball Team Details</h1>
     </div>
 </header>
-<div class="container mt-5">
-    <div th:if="${team != null}">
-        <div class="card">
-            <div class="card-header">
-                <h2 th:text="${team.teamName}">Team Name</h2>
-                <img th:src="@{/basketball/teams/logo/{id}(id=${team.id})}" alt="Team Image" class="img-fluid mb-3" style="width:200px;height:200px;"/>
 
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="page-title">
+                🏀 Team Information
+            </h2>
+        </div>
+    </div>
+    
+    <div th:if="${team != null}">
+        <div class="premium-card">
+            <div class="text-center mb-4">
+                <h2 class="text-premium" style="color: #ff6b35; font-size: var(--text-3xl);" th:text="${team.teamName}">Team Name</h2>
+                <img th:src="@{/basketball/teams/logo/{id}(id=${team.id})}" alt="Team Image" class="img-fluid mb-3" style="width:200px;height:200px;border-radius:10px;border:3px solid #ff6b35;"/>
             </div>
             <div class="card-body">
-                <h3>Team Statistics</h3>
-                <ul>
-                    <li>Matches Played: <span th:text="${team.teamMatchesPlayed}"></span></li>
-                    <li>League Points: <span th:text="${team.teamLeaguePoints}"></span></li>
-                    <li>Wins: <span th:text="${team.teamWins}"></span></li>
-                    <li>Losses: <span th:text="${team.teamLoses}"></span></li>
+                <h3 class="text-premium" style="color: #ff6b35; margin-bottom: var(--space-4);">🏀 Team Statistics</h3>
+                <ul class="list-unstyled" style="font-size: var(--text-lg); line-height: 2;">
+                    <li class="text-readable"><strong>🏁 Matches Played:</strong> <span class="badge badge-primary" th:text="${team.teamMatchesPlayed}"></span></li>
+                    <li class="text-readable"><strong>🏆 League Points:</strong> <span class="badge badge-success" th:text="${team.teamLeaguePoints}"></span></li>
+                    <li class="text-readable"><strong>✅ Wins:</strong> <span class="badge badge-success" th:text="${team.teamWins}"></span></li>
+                    <li class="text-readable"><strong>❌ Losses:</strong> <span class="badge badge-danger" th:text="${team.teamLoses}"></span></li>
                 </ul>
-                <h3>Players</h3>
-                <ul>
-                    <li th:each="player : ${players}">
-                        <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" th:text="${player.name}" class="player-link">Player Name</a>
-                    </li>
-                </ul>
+                
+                <h3 class="text-premium" style="color: #ff6b35; margin-top: var(--space-8); margin-bottom: var(--space-4);">👥 Players</h3>
+                <div class="row">
+                    <div class="col-12">
+                        <ul class="list-unstyled" style="font-size: var(--text-lg); line-height: 2;">
+                            <li th:each="player : ${players}" class="mb-2">
+                                <a th:href="@{/basketball/players/details/{id}(id=${player.basketball_player_id})}" 
+                                   th:text="${player.name}" 
+                                   class="player-link">Player Name</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a th:href="@{/basketball/teams/show/{id}(id=${team.id})}" class="btn btn-premium btn-info mr-3">📅 Fixtures/Results</a>
+            
+            <div th:if="${players.size()} < 5" class="d-inline">
+                <a th:href="@{/basketball/players/add-form}" class="btn btn-premium btn-primary">➕ Add Player</a>
             </div>
         </div>
     </div>
 
-    <!-- Fixtures/Results button -->
-    <a th:href="@{/basketball/teams/show/{id}(id=${team.id})}" class="btn btn-info mt-3">Fixtures/Results</a>
-    <div th:if="${players.size()} < 5">
-        <a type="button" class="btn btn-primary mt-3" href="/basketball/players/add-form">Add Player</a>
+    <div th:if="${team == null}" class="premium-card text-center">
+        <h3 class="text-premium" style="color: #ff6b35;">❌ Team not found</h3>
+        <p class="text-readable">The requested team could not be found in our database.</p>
+        <a href="/basketball/teams" class="btn btn-premium btn-secondary">← Back to Teams</a>
     </div>
-    <div th:if="${team == null}">
-        <p>Team not found.</p>
-    </div>
+</section>
 
-    <!-- Top Players Section -->
-    <section class="container mt-4">
-        <h2>Top Players</h2>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Image</th>
-                    <th>Player Name</th>
-                    <th>Points</th>
-                    <th>Assists</th>
-                    <th>Rebounds</th>
-                    <th>Points Contribution</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="player : ${topPlayers}">
-                    <td>
-                        <img th:src="@{/players/image/{id}(id=${player.basketball_player_id})}" alt="Player Image" style="width:50px;height:50px;"/>
-                    </td>
-                    <td th:text="${player.name} + ' ' + ${player.surname}"></td>
-                    <td th:text="${player.points}"></td>
-                    <td th:text="${player.assists}"></td>
-                    <td th:text="${player.rebounds}"></td>
-                    <td th:text="${player.points * 2 + player.assists}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-</div>
-
-<!-- Bootstrap JS and jQuery -->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>

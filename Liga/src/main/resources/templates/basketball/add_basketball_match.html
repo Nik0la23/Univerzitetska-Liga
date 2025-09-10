@@ -1,119 +1,107 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Match</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <script>
-        function validateTeams() {
-            const homeTeam = document.getElementById("homeTeam").value;
-            const awayTeam = document.getElementById("awayTeam").value;
-            if (homeTeam === awayTeam) {
-                alert("Home team and away team cannot be the same.");
-                return false;
-            }
-            return true;
-        }
-        function validateDate() {
-            const startTime = new Date(document.getElementById("startTime").value);
-            const now = new Date();
-            if (startTime < now) {
-                alert("The start time cannot be in the past.");
-                return false;
-            }
-            return true;
-        }
-        function validateForm() {
-            return validateTeams() && validateDate();
-        }
-    </script>
-</head>
-<body>
-<header class="bg-primary text-white p-3">
+<header class="premium-header text-white">
     <div class="container">
-        <h1 class="mb-0">Add Basketball Match</h1>
+        <h1 class="mb-0">🏀 Add Basketball Match</h1>
     </div>
 </header>
-<div class="container mt-5">
-    <form action="/basketball/matches/add" method="post" onsubmit="return validateForm()">
-        <div class="form-group">
-            <label for="homeTeam">Home Team</label>
-            <select class="form-control" id="homeTeam" name="homeTeamId" required>
+
+<section class="premium-container section-spacing">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="page-title">🏆 Schedule New Match</h2>
+            <p class="text-premium-light" style="font-size: var(--text-lg);">Create a new basketball match between two teams</p>
+        </div>
+    </div>
+    
+    <form action="/basketball/matches/add" method="post" onsubmit="return validateForm()" class="needs-validation" novalidate>
+        <div class="form-group-premium">
+            <label for="homeTeam" class="form-label-premium">🏠 Home Team</label>
+            <select class="form-control-premium" id="homeTeam" name="homeTeamId" required>
+                <option value="" disabled selected>Select Home Team</option>
                 <option th:each="team : ${teams}"
                         th:value="${team.id}"
                         th:text="${team.teamName}"></option>
             </select>
+            <div class="invalid-feedback">Please select the home team.</div>
         </div>
-        <div class="form-group">
-            <label for="awayTeam">Away Team</label>
-            <select class="form-control" id="awayTeam" name="awayTeamId" required>
+        
+        <div class="form-group-premium">
+            <label for="awayTeam" class="form-label-premium">✈️ Away Team</label>
+            <select class="form-control-premium" id="awayTeam" name="awayTeamId" required>
+                <option value="" disabled selected>Select Away Team</option>
                 <option th:each="team : ${teams}"
                         th:value="${team.id}"
                         th:text="${team.teamName}"></option>
             </select>
+            <div class="invalid-feedback">Please select the away team.</div>
         </div>
-        <div class="form-group">
-            <label for="homeTeamPoints">Home Team Points</label>
-            <input type="number" class="form-control" id="homeTeamPoints" name="homeTeamPoints" min="0" required readonly>
+        
+        <div class="form-group-premium">
+            <label for="homeTeamPoints" class="form-label-premium">🏠 Home Team Total Points</label>
+            <input type="number" class="form-control-premium" id="homeTeamPoints" name="homeTeamPoints" min="0" required readonly placeholder="Auto-calculated">
         </div>
-        <div class="form-group">
-            <label for="awayTeamPoints">Away Team Points</label>
-            <input type="number" class="form-control" id="awayTeamPoints" name="awayTeamPoints" min="0" required readonly>
+        
+        <div class="form-group-premium">
+            <label for="awayTeamPoints" class="form-label-premium">✈️ Away Team Total Points</label>
+            <input type="number" class="form-control-premium" id="awayTeamPoints" name="awayTeamPoints" min="0" required readonly placeholder="Auto-calculated">
         </div>
 
         <div class="row">
             <div class="col-md-6">
-                <h4>Home Team Quarter Points</h4>
-                <div class="form-group">
-                    <label for="homeTeamQ1Points">Q1 Points</label>
-                    <input type="number" class="form-control quarter-points" id="homeTeamQ1Points" name="homeTeamQ1Points"
-                           value="0" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="homeTeamQ2Points">Q2 Points</label>
-                    <input type="number" class="form-control quarter-points" id="homeTeamQ2Points" name="homeTeamQ2Points"
-                           value="0" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="homeTeamQ3Points">Q3 Points</label>
-                    <input type="number" class="form-control quarter-points" id="homeTeamQ3Points" name="homeTeamQ3Points"
-                           value="0" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="homeTeamQ4Points">Q4 Points</label>
-                    <input type="number" class="form-control quarter-points" id="homeTeamQ4Points" name="homeTeamQ4Points"
-                           value="0" min="0" required>
+                <div class="premium-card">
+                    <h4 class="text-premium mb-4" style="color: var(--accent-orange);">🏠 Home Team Quarter Points</h4>
+                    <div class="form-group-premium">
+                        <label for="homeTeamQ1Points" class="form-label-premium">Q1 Points</label>
+                        <input type="number" class="form-control-premium quarter-points" id="homeTeamQ1Points" name="homeTeamQ1Points"
+                               value="0" min="0" required placeholder="Enter Q1 points">
+                    </div>
+                    <div class="form-group-premium">
+                        <label for="homeTeamQ2Points" class="form-label-premium">Q2 Points</label>
+                        <input type="number" class="form-control-premium quarter-points" id="homeTeamQ2Points" name="homeTeamQ2Points"
+                               value="0" min="0" required placeholder="Enter Q2 points">
+                    </div>
+                    <div class="form-group-premium">
+                        <label for="homeTeamQ3Points" class="form-label-premium">Q3 Points</label>
+                        <input type="number" class="form-control-premium quarter-points" id="homeTeamQ3Points" name="homeTeamQ3Points"
+                               value="0" min="0" required placeholder="Enter Q3 points">
+                    </div>
+                    <div class="form-group-premium">
+                        <label for="homeTeamQ4Points" class="form-label-premium">Q4 Points</label>
+                        <input type="number" class="form-control-premium quarter-points" id="homeTeamQ4Points" name="homeTeamQ4Points"
+                               value="0" min="0" required placeholder="Enter Q4 points">
+                    </div>
                 </div>
             </div>
             <div class="col-md-6">
-                <h4>Away Team Quarter Points</h4>
-                <div class="form-group">
-                    <label for="awayTeamQ1Points">Q1 Points</label>
-                    <input type="number" class="form-control quarter-points" id="awayTeamQ1Points" name="awayTeamQ1Points"
-                           value="0" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="awayTeamQ2Points">Q2 Points</label>
-                    <input type="number" class="form-control quarter-points" id="awayTeamQ2Points" name="awayTeamQ2Points"
-                           value="0" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="awayTeamQ3Points">Q3 Points</label>
-                    <input type="number" class="form-control quarter-points" id="awayTeamQ3Points" name="awayTeamQ3Points"
-                           value="0" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="awayTeamQ4Points">Q4 Points</label>
-                    <input type="number" class="form-control quarter-points" id="awayTeamQ4Points" name="awayTeamQ4Points"
-                           value="0" min="0" required>
+                <div class="premium-card">
+                    <h4 class="text-premium mb-4" style="color: var(--accent-orange);">✈️ Away Team Quarter Points</h4>
+                    <div class="form-group-premium">
+                        <label for="awayTeamQ1Points" class="form-label-premium">Q1 Points</label>
+                        <input type="number" class="form-control-premium quarter-points" id="awayTeamQ1Points" name="awayTeamQ1Points"
+                               value="0" min="0" required placeholder="Enter Q1 points">
+                    </div>
+                    <div class="form-group-premium">
+                        <label for="awayTeamQ2Points" class="form-label-premium">Q2 Points</label>
+                        <input type="number" class="form-control-premium quarter-points" id="awayTeamQ2Points" name="awayTeamQ2Points"
+                               value="0" min="0" required placeholder="Enter Q2 points">
+                    </div>
+                    <div class="form-group-premium">
+                        <label for="awayTeamQ3Points" class="form-label-premium">Q3 Points</label>
+                        <input type="number" class="form-control-premium quarter-points" id="awayTeamQ3Points" name="awayTeamQ3Points"
+                               value="0" min="0" required placeholder="Enter Q3 points">
+                    </div>
+                    <div class="form-group-premium">
+                        <label for="awayTeamQ4Points" class="form-label-premium">Q4 Points</label>
+                        <input type="number" class="form-control-premium quarter-points" id="awayTeamQ4Points" name="awayTeamQ4Points"
+                               value="0" min="0" required placeholder="Enter Q4 points">
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="startTime">Start Time</label>
-            <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
+        <div class="form-group-premium">
+            <label for="startTime" class="form-label-premium">⏰ Match Start Time</label>
+            <input type="datetime-local" class="form-control-premium" id="startTime" name="startTime" required>
+            <div class="invalid-feedback">Please select the match start time.</div>
         </div>
 
         <script>
@@ -148,8 +136,63 @@
             });
         </script>
 
-        <button type="submit" class="btn btn-primary">Add Match</button>
+        <div class="d-flex gap-3 mt-4">
+            <button type="submit" class="btn-premium">🏀 Add Match</button>
+            <a type="button" class="btn-premium" onclick="window.history.back()" style="background: var(--gray-600);">⬅️ Back</a>
+        </div>
     </form>
-</div>
-</body>
-</html>
+</section>
+
+    <script>
+        function validateTeams() {
+            const homeTeam = document.getElementById("homeTeam").value;
+            const awayTeam = document.getElementById("awayTeam").value;
+            if (homeTeam === awayTeam) {
+                alert("Home team and away team cannot be the same.");
+                return false;
+            }
+            return true;
+        }
+        function validateDate() {
+            const startTime = new Date(document.getElementById("startTime").value);
+            const now = new Date();
+            if (startTime < now) {
+                alert("The start time cannot be in the past.");
+                return false;
+            }
+            return true;
+        }
+        function validateForm() {
+            return validateTeams() && validateDate();
+        }
+    
+            // Auto-calculate total points when quarter points change
+            document.addEventListener('DOMContentLoaded', function() {
+                const homeQuarterInputs = ['homeTeamQ1Points', 'homeTeamQ2Points', 'homeTeamQ3Points', 'homeTeamQ4Points'];
+                const awayQuarterInputs = ['awayTeamQ1Points', 'awayTeamQ2Points', 'awayTeamQ3Points', 'awayTeamQ4Points'];
+
+                function updateTotalPoints() {
+                    let homeTotal = 0;
+                    let awayTotal = 0;
+
+                    homeQuarterInputs.forEach(id => {
+                        homeTotal += parseInt(document.getElementById(id).value) || 0;
+                    });
+
+                    awayQuarterInputs.forEach(id => {
+                        awayTotal += parseInt(document.getElementById(id).value) || 0;
+                    });
+
+                    document.getElementById('homeTeamPoints').value = homeTotal;
+                    document.getElementById('awayTeamPoints').value = awayTotal;
+                }
+
+                // Add event listeners to all quarter point inputs
+                document.querySelectorAll('.quarter-points').forEach(input => {
+                    input.addEventListener('input', updateTotalPoints);
+                });
+
+                // Initialize totals
+                updateTotalPoints();
+            });
+        </script>
