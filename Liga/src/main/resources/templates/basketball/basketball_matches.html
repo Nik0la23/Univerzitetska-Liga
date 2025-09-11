@@ -493,9 +493,7 @@
                 <form th:if="${!match.isPlayoffMatch}" th:method="POST" th:action="@{'/basketball/matches/finish/{id}'(id=${match.basketball_match_id})}" style="display:inline;" onsubmit="return confirmFinish(this)">
                     <button type="submit" class="btn btn-success btn-premium">✅ Finish</button>
                 </form>
-                <form th:method="POST" th:action="@{'/basketball/matches/delete/{id}'(id=${match.basketball_match_id})}" style="display:inline;">
-                    <button type="submit" class="btn btn-danger btn-premium">🗑️ Delete</button>
-                </form>
+                <!-- Deletion disabled intentionally -->
             </div>
         </div>
     </div>

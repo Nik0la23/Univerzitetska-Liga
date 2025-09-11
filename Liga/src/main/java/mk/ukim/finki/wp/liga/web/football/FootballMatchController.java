@@ -274,8 +274,8 @@ public class FootballMatchController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteMatch(@PathVariable Long id) {
-        footballMatchService.delete(id);
+    public String deleteMatch(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Deleting matches is disabled. Matches are kept forever.");
         return "redirect:/matches";
     }
 

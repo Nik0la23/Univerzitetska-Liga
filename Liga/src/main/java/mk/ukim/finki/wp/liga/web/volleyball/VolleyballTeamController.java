@@ -135,8 +135,8 @@ public class VolleyballTeamController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteTeam(@PathVariable Long id) {
-        volleyballTeamService.delete(id);
+    public String deleteTeam(@PathVariable Long id, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Deleting teams is disabled. Teams are kept forever.");
         return "redirect:/volleyball/teams";
     }
     @GetMapping("/standings")

@@ -313,8 +313,8 @@ public class BasketballMatchController {
 
 
     @PostMapping("/delete/{id}")
-    public String deleteMatch(@PathVariable Long id) {
-        basketballMatchService.delete(id);
+    public String deleteMatch(@PathVariable Long id, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Deleting matches is disabled. Matches are kept forever.");
         return "redirect:/basketball/matches";
     }
 

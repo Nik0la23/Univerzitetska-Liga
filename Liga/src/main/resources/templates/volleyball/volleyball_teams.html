@@ -83,7 +83,6 @@
                 <th>👥 Team Name</th>
                 <th>👁️ Details</th>
                 <th th:if="${session.user != null and session.user.isAdmin}">✏️ Edit</th>
-                <th th:if="${session.user != null and session.user.isAdmin}">🗑️ Delete</th>
             </tr>
             </thead>
             <tbody>
@@ -100,11 +99,7 @@
                 <td th:if="${session.user != null and session.user.isAdmin}">
                     <a th:href="@{/volleyball/teams/edit/{id}(id=${team.getVolleyball_team_id})}" class="btn btn-premium btn-warning" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">✏️ Edit</a>
                 </td>
-                <td th:if="${session.user != null and session.user.isAdmin}">
-                    <form th:method="POST" th:action="@{'/volleyball/teams/delete/{id}'(id=${team.getVolleyball_team_id})}" style="display:inline;">
-                        <button type="submit" class="btn btn-premium btn-danger" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">🗑️ Delete</button>
-                    </form>
-                </td>
+                
             </tr>
             </tbody>
         </table>

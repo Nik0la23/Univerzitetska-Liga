@@ -515,9 +515,7 @@
                         <input id="awayTeamScoreInput" type="hidden" name="awayTeamScore" th:value="${match.awayTeamPoints}">
                     <button th:disabled="${match.homeTeamPoints == match.awayTeamPoints}" type="submit" class="btn btn-success btn-premium">✅ Finish</button>
                         </form>
-                        <form th:method="POST" th:action="@{'/volleyball/matches/delete/{id}'(id=${match.volleyball_match_id})}" style="display:inline;">
-                    <button type="submit" class="btn btn-danger btn-premium">🗑️ Delete</button>
-                        </form>
+                        <!-- Deletion disabled intentionally -->
                     </div>
         </div>
     </div>

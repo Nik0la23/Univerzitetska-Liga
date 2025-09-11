@@ -131,8 +131,8 @@ public byte[] getTeamLogo(@PathVariable Long id) {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteTeam(@PathVariable Long id){
-        basketballTeamService.delete(id);
+    public String deleteTeam(@PathVariable Long id, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("errorMessage", "Deleting teams is disabled. Teams are kept forever.");
         return "redirect:/basketball/teams";
     }
     @GetMapping("/standings")
