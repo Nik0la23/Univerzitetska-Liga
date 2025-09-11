@@ -238,7 +238,7 @@ public class DatabaseSeeder {
         System.out.println("⚽ Creating football data...");
         
         // Create football teams with real logos
-        FootballTeam team1 = footballTeamService.create("Пумбарски факултет", readImageFile(getTeamLogoPath(0)));
+        FootballTeam team1 = footballTeamService.create("Градежен факултет", readImageFile(getTeamLogoPath(0)));
         FootballTeam team2 = footballTeamService.create("Медицински факултет", readImageFile(getTeamLogoPath(1)));
         FootballTeam team3 = footballTeamService.create("Технички факултет", readImageFile(getTeamLogoPath(2)));
         FootballTeam team4 = footballTeamService.create("Економски факултет", readImageFile(getTeamLogoPath(3)));
@@ -248,7 +248,7 @@ public class DatabaseSeeder {
         FootballTeam team8 = footballTeamService.create("Факултет за информатички науки", readImageFile(getTeamLogoPath(3)));
 
         // Create football players
-        createFootballPlayers(team1, "Пумбарски");
+        createFootballPlayers(team1, "Градежен");
         createFootballPlayers(team2, "Медицински");
         createFootballPlayers(team3, "Технички");
         createFootballPlayers(team4, "Економски");
@@ -478,7 +478,7 @@ public class DatabaseSeeder {
         System.out.println("🏀 Creating basketball data...");
         
         // Create basketball teams with real logos
-        BasketballTeam team1 = basketballTeamService.create("Пумбарски факултет", readImageFile(getTeamLogoPath(0)));
+        BasketballTeam team1 = basketballTeamService.create("Градежен факултет", readImageFile(getTeamLogoPath(0)));
         BasketballTeam team2 = basketballTeamService.create("Медицински факултет", readImageFile(getTeamLogoPath(1)));
         BasketballTeam team3 = basketballTeamService.create("Технички факултет", readImageFile(getTeamLogoPath(2)));
         BasketballTeam team4 = basketballTeamService.create("Економски факултет", readImageFile(getTeamLogoPath(3)));
@@ -488,7 +488,7 @@ public class DatabaseSeeder {
         BasketballTeam team8 = basketballTeamService.create("Факултет за информатички науки", readImageFile(getTeamLogoPath(3)));
 
         // Create basketball players
-        createBasketballPlayers(team1, "Пумбарски");
+        createBasketballPlayers(team1, "Градежен");
         createBasketballPlayers(team2, "Медицински");
         createBasketballPlayers(team3, "Технички");
         createBasketballPlayers(team4, "Економски");
@@ -710,7 +710,7 @@ public class DatabaseSeeder {
         System.out.println("🏐 Creating volleyball data...");
         
         // Create volleyball teams with real logos
-        VolleyballTeam team1 = volleyballTeamService.create("Пумбарски факултет", readImageFile(getTeamLogoPath(0)));
+        VolleyballTeam team1 = volleyballTeamService.create("Градежен факултет", readImageFile(getTeamLogoPath(0)));
         VolleyballTeam team2 = volleyballTeamService.create("Медицински факултет", readImageFile(getTeamLogoPath(1)));
         VolleyballTeam team3 = volleyballTeamService.create("Технички факултет", readImageFile(getTeamLogoPath(2)));
         VolleyballTeam team4 = volleyballTeamService.create("Економски факултет", readImageFile(getTeamLogoPath(3)));
@@ -720,7 +720,7 @@ public class DatabaseSeeder {
         VolleyballTeam team8 = volleyballTeamService.create("Факултет за информатички науки", readImageFile(getTeamLogoPath(3)));
 
         // Create volleyball players
-        createVolleyballPlayers(team1, "Пумбарски");
+        createVolleyballPlayers(team1, "Градежен");
         createVolleyballPlayers(team2, "Медицински");
         createVolleyballPlayers(team3, "Технички");
         createVolleyballPlayers(team4, "Економски");
@@ -986,11 +986,11 @@ public class DatabaseSeeder {
         try {
             newsService.create("Универзитетската лига започнува со 8 тимови!", 
                 "FOOTBALL", 
-                "Голема радост на УКИМ како започна новата сезона на Универзитетската лига. Оваа сезона се натпреваруваат 8 факултети во фудбал, кошарка и одбојка: Пумбарски, Медицински, Технички, Економски, Филолошки, Правен, Педагошки и Факултет за информатички науки.");
+                "Голема радост на УКИМ како започна новата сезона на Универзитетската лига. Оваа сезона се натпреваруваат 8 факултети во фудбал, кошарка и одбојка: Градежен, Медицински, Технички, Економски, Филолошки, Правен, Педагошки и Факултет за информатички науки.");
             
-            newsService.create("Пумбарски факултет победник во фудбал", 
+            newsService.create("Градежен факултет победник во фудбал", 
                 "FOOTBALL", 
-                "Во драматичен натпревар, Пумбарски факултет го победи Медицински факултет со резултат 2:1. Головите ги постигнаа Александар Петровски и Марко Јовановски.");
+                "Во драматичен натпревар, Градежен факултет го победи Медицински факултет со резултат 2:1. Головите ги постигнаа Александар Петровски и Марко Јовановски.");
             
             newsService.create("Педагошки факултет дебитира со победа", 
                 "FOOTBALL", 
@@ -1006,7 +1006,7 @@ public class DatabaseSeeder {
             
             newsService.create("Одбојкарски натпревар во пет сета", 
                 "VOLLEYBALL", 
-                "Во најдолгиот натпревар до сега, Пумбарски факултет го победи Медицински факултет во одбојка со резултат 3:2. Натпреварот траеше преку 2 часа.");
+                "Во најдолгиот натпревар до сега, Градежен факултет го победи Медицински факултет во одбојка со резултат 3:2. Натпреварот траеше преку 2 часа.");
             
             newsService.create("Новите тимови се прилагодуваат", 
                 "VOLLEYBALL", 
