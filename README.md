@@ -284,13 +284,3 @@ spring.servlet.multipart.max-file-size=10MB
 spring.datasource.url=jdbc:postgresql://localhost:5432/Liga
 spring.datasource.username=liga_user
 spring.datasource.password=admin
-
-
-
-
-### Production
-1. Конфигурирај PostgreSQL база
-2. Промени `application.properties` за production
-3. Build на JAR фајл: `./mvnw clean package`
-4. Покрени: `java -jar target/Liga-0.0.1-SNAPSHOT.jar`
-
